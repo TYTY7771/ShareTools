@@ -1,0 +1,578 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ShareTools - Professional tool sharing platform providing quality tool rental services">
+    <meta name="keywords" content="tool sharing,tool rental,ShareTools,online tools">
+    <title>ShareTools - Tool Sharing Platform</title>
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="{% static 'css/main.css' %}" as="style">
+    <link rel="preload" href="{% static 'css/components.css' %}" as="style">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'css/components.css' %}">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔧</text></svg>">
+    
+    <style>
+        /* User state related styles */
+        .user-state-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .user-state-actions .btn {
+            transition: all 0.3s ease;
+        }
+        
+        /* Login state transition animation */
+        .user-state-actions.fade-out {
+            opacity: 0;
+            transform: translateX(10px);
+        }
+        
+        .user-state-actions.fade-in {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        /* Responsive adaptation */
+        @media (max-width: 768px) {
+            .user-state-actions {
+                gap: var(--spacing-xs);
+            }
+            
+            .user-state-actions .btn {
+                padding: var(--spacing-xs) var(--spacing-sm);
+                font-size: var(--font-size-caption);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <header class="header" role="banner">
+        <div class="container">
+            <div class="header-content">
+                <!-- Logo Area -->
+                <a href="{% url 'home' %}" class="logo" aria-label="ShareTools Home">
+                    <img src="{% static 'images/ShareTools Web Logo.png' %}" alt="ShareTools Logo" class="logo-image">
+                    <span>ShareTools</span>
+                </a>
+                
+                <!-- Navigation Menu -->
+                <nav class="nav-menu" role="navigation" aria-label="Main Navigation">
+                    <ul>
+                        <li class="nav-item">
+                            <a href="{% url 'browse_things' %}" class="nav-link">The Things</a>
+                        </li>
+                        <li class="nav-item nav-dropdown">
+                            <a href="{% url 'locations' %}" class="nav-link">Locations</a>
+                            <div class="dropdown-menu">
+                                <div class="dropdown-content">
+                                    <div class="dropdown-section">
+                                        <h4 class="dropdown-section-title">NORTH GLASGOW</h4>
+                                        <ul class="dropdown-list">
+                                            <li><a href="{% url 'browse_things' %}?location=maryhill" class="dropdown-link">Maryhill</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=hillhead" class="dropdown-link">Hillhead</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=partick" class="dropdown-link">Partick</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=springburn" class="dropdown-link">Springburn</a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="dropdown-section">
+                                        <h4 class="dropdown-section-title">SOUTH GLASGOW</h4>
+                                        <ul class="dropdown-list">
+                                            <li><a href="{% url 'browse_things' %}?location=gorbals" class="dropdown-link">Gorbals</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=pollokshields" class="dropdown-link">Pollokshields</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=shawlands" class="dropdown-link">Shawlands</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=giffnock" class="dropdown-link">Giffnock</a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="dropdown-section">
+                                        <h4 class="dropdown-section-title">EAST GLASGOW</h4>
+                                        <ul class="dropdown-list">
+                                            <li><a href="{% url 'browse_things' %}?location=dennistoun" class="dropdown-link">Dennistoun</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=bridgeton" class="dropdown-link">Bridgeton</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=calton" class="dropdown-link">Calton</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=parkhead" class="dropdown-link">Parkhead</a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="dropdown-section">
+                                        <h4 class="dropdown-section-title">WEST GLASGOW</h4>
+                                        <ul class="dropdown-list">
+                                            <li><a href="{% url 'browse_things' %}?location=finnieston" class="dropdown-link">Finnieston</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=kelvingrove" class="dropdown-link">Kelvingrove</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=byres-road" class="dropdown-link">Byres Road</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'about' %}" class="nav-link">About</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'list_item' %}" class="nav-link">List an Item</a>
+                        </li>
+                    </ul>
+                </nav>
+                
+                <!-- User Actions -->
+                <div class="nav-actions">
+                    <button class="cart-icon" aria-label="Shopping Cart" title="View Cart">
+                        🛒
+                    </button>
+                    
+                    <!-- Buttons for guest state -->
+                    <div id="guest-actions" class="user-state-actions">
+                        <a href="{% url 'login' %}" class="btn btn-secondary">Sign in</a>
+                        <a href="{% url 'login' %}#signup" class="btn btn-primary">Join</a>
+                    </div>
+                    
+                    <!-- Buttons for logged-in state -->
+                    <div id="logged-in-actions" class="user-state-actions" style="display: none;">
+                        <a href="{% url 'profile' %}" class="btn btn-secondary">Profile</a>
+                        <a href="{% url 'list_item' %}" class="btn btn-primary">List an Item</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main role="main">
+        <!-- Hero Section -->
+        <section class="hero-section" aria-labelledby="hero-title">
+            <div class="container">
+                <div class="grid grid-2" style="align-items: center; gap: var(--spacing-3xl);">
+                    <!-- Text Content -->
+                    <div>
+                        <h1 id="hero-title" class="hero-title">Browse the Things</h1>
+                        <p class="hero-subtitle">
+                            Select from our locations to see what's available near you
+                        </p>
+                    </div>
+                    
+                    <!-- Illustration Area -->
+                    <div class="hero-illustration">
+                        <!-- SVG Illustration -->
+                        <svg width="400" height="300" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <!-- Background -->
+                            <rect width="400" height="300" fill="#F9F9F9" rx="8"/>
+                            
+                            <!-- Main graphic - toolbox -->
+                            <rect x="100" y="120" width="200" height="120" fill="#2879FF" rx="8"/>
+                            <rect x="110" y="130" width="180" height="20" fill="#4A93FF" rx="4"/>
+                            
+                            <!-- Tool icons -->
+                            <circle cx="150" cy="180" r="15" fill="#FFFFFF"/>
+                            <path d="M145 175 L155 185 M155 175 L145 185" stroke="#2879FF" stroke-width="2" stroke-linecap="round"/>
+                            
+                            <circle cx="200" cy="180" r="15" fill="#FFFFFF"/>
+                            <rect x="195" y="175" width="10" height="10" fill="#2879FF" rx="2"/>
+                            
+                            <circle cx="250" cy="180" r="15" fill="#FFFFFF"/>
+                            <circle cx="250" cy="180" r="8" fill="#2879FF"/>
+                            
+                            <!-- Decorative elements -->
+                            <circle cx="80" cy="80" r="4" fill="#27AE60"/>
+                            <circle cx="320" cy="60" r="6" fill="#E2B93B"/>
+                            <circle cx="350" cy="200" r="5" fill="#E04E4E"/>
+                            
+                            <!-- Floating tools -->
+                            <g transform="translate(50, 50)">
+                                <circle cx="0" cy="0" r="12" fill="#FFFFFF" stroke="#2879FF" stroke-width="2"/>
+                                <text x="0" y="4" text-anchor="middle" font-size="12" fill="#2879FF">🔧</text>
+                            </g>
+                            
+                            <g transform="translate(320, 100)">
+                                <circle cx="0" cy="0" r="10" fill="#FFFFFF" stroke="#27AE60" stroke-width="2"/>
+                                <text x="0" y="3" text-anchor="middle" font-size="10" fill="#27AE60">⚙️</text>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Product Showcase -->
+        <section class="section" aria-labelledby="products-title">
+            <div class="container">
+                <h2 id="products-title" class="section-title">Recently active items</h2>
+                
+                <!-- Product Cards Container -->
+                <div id="products-container" class="products-grid" role="region" aria-label="Product List">
+                    <!-- Product cards will be generated dynamically via JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="section" style="background: var(--color-surface);" aria-labelledby="features-title">
+            <div class="container">
+                <h2 id="features-title" class="section-title text-center">Why choose ShareTools?</h2>
+                <p class="section-subtitle text-center">
+                    Discover the advantages that make our platform the best choice for tool sharing
+                </p>
+                
+                <!-- Feature Cards Container -->
+                <div id="features-container" class="features-grid" role="region" aria-label="Features List">
+                    <!-- Feature cards will be generated dynamically via JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Call to Action Section -->
+        <section class="section" aria-labelledby="cta-title">
+            <div class="container text-center">
+                <h2 id="cta-title" class="hero-title">Ready to get started?</h2>
+                <p class="hero-subtitle">
+                    Join thousands of users who are already sharing and renting tools in their community
+                </p>
+                <div class="flex justify-center" style="gap: var(--spacing-md); margin-top: var(--spacing-xl);">
+                    <a href="{% url 'browse_things' %}" class="btn btn-primary" style="padding: var(--spacing-md) var(--spacing-xl);">
+                        Browse Tools
+                    </a>
+                    <a href="{% url 'list_item' %}" class="btn btn-secondary" style="padding: var(--spacing-md) var(--spacing-xl);">
+                        List Your Tools
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="section" style="background: var(--color-secondary); color: var(--color-accent); padding: var(--spacing-2xl) 0;" role="contentinfo">
+        <div class="container">
+            <div class="grid grid-4" style="gap: var(--spacing-xl);">
+                <!-- Company Info -->
+                <div>
+                    <div class="logo" style="color: var(--color-accent); margin-bottom: var(--spacing-md);">
+                        <div class="logo-icon">🔧</div>
+                        <span>ShareTools</span>
+                    </div>
+                    <p style="color: var(--color-secondary-tint); font-size: var(--font-size-caption);">
+                        Making tool sharing simple, safe, and sustainable for everyone.
+                    </p>
+                </div>
+                
+                <!-- Quick Links -->
+                <div>
+                    <h3 style="color: var(--color-accent); margin-bottom: var(--spacing-md);">Quick Links</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: var(--spacing-xs);"><a href="#" style="color: var(--color-secondary-tint); text-decoration: none;">How it works</a></li>
+                        <li style="margin-bottom: var(--spacing-xs);"><a href="#" style="color: var(--color-secondary-tint); text-decoration: none;">Safety</a></li>
+                        <li style="margin-bottom: var(--spacing-xs);"><a href="#" style="color: var(--color-secondary-tint); text-decoration: none;">Insurance</a></li>
+                        <li style="margin-bottom: var(--spacing-xs);"><a href="#" style="color: var(--color-secondary-tint); text-decoration: none;">Support</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Community -->
+                <div>
+                    <h3 style="color: var(--color-accent); margin-bottom: var(--spacing-md);">Community</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: var(--spacing-xs);"><a href="#" style="color: var(--color-secondary-tint); text-decoration: none;">Blog</a></li>
+                        <li style="margin-bottom: var(--spacing-xs);"><a href="#" style="color: var(--color-secondary-tint); text-decoration: none;">Forum</a></li>
+                        <li style="margin-bottom: var(--spacing-xs);"><a href="#" style="color: var(--color-secondary-tint); text-decoration: none;">Events</a></li>
+                        <li style="margin-bottom: var(--spacing-xs);"><a href="#" style="color: var(--color-secondary-tint); text-decoration: none;">Newsletter</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Contact -->
+                <div>
+                    <h3 style="color: var(--color-accent); margin-bottom: var(--spacing-md);">Contact</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: var(--spacing-xs); color: var(--color-secondary-tint); font-size: var(--font-size-caption);">📧 hello@sharetools.com</li>
+                        <li style="margin-bottom: var(--spacing-xs); color: var(--color-secondary-tint); font-size: var(--font-size-caption);">📞 +44 1234567-213</li>
+                        <li style="margin-bottom: var(--spacing-xs); color: var(--color-secondary-tint); font-size: var(--font-size-caption);">📍 </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Copyright -->
+            <div style="border-top: 1px solid var(--color-secondary-tint); margin-top: var(--spacing-xl); padding-top: var(--spacing-lg); text-align: center;">
+                <p style="color: var(--color-secondary-tint); font-size: var(--font-size-caption); margin: 0;">
+                    © 2025 ShareTools. All rights reserved. | 
+                    <a href="#" style="color: var(--color-secondary-tint);">Privacy Policy</a> | 
+                    <a href="#" style="color: var(--color-secondary-tint);">Terms of Service</a>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript files -->
+    <script src="{% static 'js/api-config.js' %}"></script>
+    <script src="{% static 'js/components.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    
+    <!-- User state management and navigation logic -->
+    <script>
+        // User login state management
+        class UserAuthManager {
+            constructor() {
+                this.storageKey = 'sharetools_user_logged_in';
+                this.userDataKey = 'sharetools_user_data';
+                this.init();
+            }
+
+            // Initialize
+            init() {
+                this.updateNavigation();
+                this.bindEvents();
+                console.log('User authentication manager initialized');
+            }
+
+            // Check if user is logged in
+            isLoggedIn() {
+                // Check login status in localStorage
+                const loginStatus = localStorage.getItem(this.storageKey);
+                const userData = localStorage.getItem(this.userDataKey);
+                
+                // Check sessionStorage (for session-level login status)
+                const sessionLogin = sessionStorage.getItem(this.storageKey);
+                
+                return (loginStatus === 'true' && userData) || sessionLogin === 'true';
+            }
+
+            // Set login status
+            setLoginStatus(isLoggedIn, userData = null, rememberMe = false) {
+                if (isLoggedIn) {
+                    // Set login status
+                    if (rememberMe) {
+                        localStorage.setItem(this.storageKey, 'true');
+                        if (userData) {
+                            localStorage.setItem(this.userDataKey, JSON.stringify(userData));
+                        }
+                    } else {
+                        // Keep login only during session
+                        sessionStorage.setItem(this.storageKey, 'true');
+                        if (userData) {
+                            sessionStorage.setItem(this.userDataKey, JSON.stringify(userData));
+                        }
+                    }
+                    console.log('User login status has been set');
+                } else {
+                    // Clear login status
+                    localStorage.removeItem(this.storageKey);
+                    localStorage.removeItem(this.userDataKey);
+                    sessionStorage.removeItem(this.storageKey);
+                    sessionStorage.removeItem(this.userDataKey);
+                    console.log('User login status has been cleared');
+                }
+                
+                this.updateNavigation();
+            }
+
+            // Get user data
+            getUserData() {
+                const localData = localStorage.getItem(this.userDataKey);
+                const sessionData = sessionStorage.getItem(this.userDataKey);
+                
+                if (localData) {
+                    try {
+                        return JSON.parse(localData);
+                    } catch (e) {
+                        console.error('Failed to parse user data:', e);
+                    }
+                }
+                
+                if (sessionData) {
+                    try {
+                        return JSON.parse(sessionData);
+                    } catch (e) {
+                        console.error('Failed to parse session user data:', e);
+                    }
+                }
+                
+                return null;
+            }
+
+            // Update navigation display
+            updateNavigation() {
+                const guestActions = document.getElementById('guest-actions');
+                const loggedInActions = document.getElementById('logged-in-actions');
+                
+                if (!guestActions || !loggedInActions) {
+                    console.warn('Navigation elements not found');
+                    return;
+                }
+
+                const isLoggedIn = this.isLoggedIn();
+                
+                if (isLoggedIn) {
+                    // Show logged-in navigation state
+                    this.showElement(loggedInActions);
+                    this.hideElement(guestActions);
+                    console.log('Showing logged-in navigation state');
+                } else {
+                    // Show logged-out navigation state
+                    this.showElement(guestActions);
+                    this.hideElement(loggedInActions);
+                    console.log('Showing logged-out navigation state');
+                }
+            }
+
+            // Show element (with animation)
+            showElement(element) {
+                element.style.display = 'flex';
+                element.classList.remove('fade-out');
+                element.classList.add('fade-in');
+            }
+
+            // Hide element (with animation)
+            hideElement(element) {
+                element.classList.remove('fade-in');
+                element.classList.add('fade-out');
+                setTimeout(() => {
+                    element.style.display = 'none';
+                }, 300);
+            }
+
+            // Bind events
+            bindEvents() {
+                // Listen for storage changes (cross-tab sync)
+                window.addEventListener('storage', (e) => {
+                    if (e.key === this.storageKey || e.key === this.userDataKey) {
+                        console.log('Detected cross-tab login status change');
+                        this.updateNavigation();
+                    }
+                });
+
+                // Listen for custom login events
+                window.addEventListener('userLogin', (e) => {
+                    console.log('Received user login event:', e.detail);
+                    this.setLoginStatus(true, e.detail.userData, e.detail.rememberMe);
+                });
+
+                // Listen for custom logout events
+                window.addEventListener('userLogout', () => {
+                    console.log('Received user logout event');
+                    this.setLoginStatus(false);
+                });
+            }
+
+            // Simulate login (for testing)
+            simulateLogin(userData = null, rememberMe = true) {
+                const defaultUserData = {
+                    id: 'user_123',
+                    email: 'user@example.com',
+                    name: 'Test User',
+                    avatar: null,
+                    loginTime: new Date().toISOString()
+                };
+                
+                this.setLoginStatus(true, userData || defaultUserData, rememberMe);
+                
+                // Trigger custom event
+                window.dispatchEvent(new CustomEvent('userLogin', {
+                    detail: { userData: userData || defaultUserData, rememberMe }
+                }));
+            }
+
+            // Simulate logout (for testing)
+            simulateLogout() {
+                this.setLoginStatus(false);
+                
+                // Trigger custom event
+                window.dispatchEvent(new CustomEvent('userLogout'));
+            }
+            
+            // Real logout
+            async logout() {
+                try {
+                    // Call real logout API
+                    if (typeof AuthAPI !== 'undefined') {
+                        await AuthAPI.logout();
+                    }
+                    
+                    // Clear locally stored authentication info
+                    localStorage.removeItem('sharetools_auth_token');
+                    sessionStorage.removeItem('sharetools_auth_token');
+                    
+                    // Set logout status
+                    this.setLoginStatus(false);
+                    
+                    // Trigger custom event
+                    window.dispatchEvent(new CustomEvent('userLogout'));
+                    
+                    console.log('User successfully logged out');
+                    
+                    // Optional: redirect to homepage
+                    // window.location.href = '/';
+                    
+                } catch (error) {
+                    console.error('Logout failed:', error);
+                    // Clear local state even if API call fails
+                    this.setLoginStatus(false);
+                    window.dispatchEvent(new CustomEvent('userLogout'));
+                }
+            }
+        }
+
+        // Global user authentication manager instance
+        let userAuthManager;
+
+        // Initialize after DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            userAuthManager = new UserAuthManager();
+            
+            // Add test buttons (for development, remove in production)
+            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                addTestControls();
+            }
+        });
+
+        // Add test controls (development only)
+        function addTestControls() {
+            const testControls = document.createElement('div');
+            testControls.style.cssText = `
+                position: fixed;
+                top: 10px;
+                right: 10px;
+                background: rgba(0, 0, 0, 0.8);
+                color: white;
+                padding: 10px;
+                border-radius: 5px;
+                font-size: 12px;
+                z-index: 10000;
+                display: flex;
+                gap: 5px;
+                flex-direction: column;
+            `;
+            
+            testControls.innerHTML = `
+                <div style="margin-bottom: 5px; font-weight: bold;">Dev Test</div>
+                <button onclick="userAuthManager.simulateLogin()" style="padding: 5px; font-size: 11px;">Simulate Login</button>
+                <button onclick="userAuthManager.simulateLogout()" style="padding: 5px; font-size: 11px;">Simulate Logout</button>
+                <button onclick="console.log('Login Status:', userAuthManager.isLoggedIn())" style="padding: 5px; font-size: 11px;">Check Status</button>
+            `;
+            
+            document.body.appendChild(testControls);
+        }
+
+        // Page load performance monitoring
+        window.addEventListener('load', () => {
+            if ('performance' in window) {
+                const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
+                console.log(`Page load time: ${loadTime}ms`);
+            }
+        });
+        
+        // Error monitoring
+        window.addEventListener('error', (e) => {
+            console.error('Page error:', e.error);
+        });
+        
+        // Unhandled Promise errors
+        window.addEventListener('unhandledrejection', (e) => {
+            console.error('Unhandled Promise error:', e.reason);
+        });
+    </script>
+</body>
+</html>

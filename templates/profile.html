@@ -1,0 +1,916 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ShareTools - Personal homepage, manage your account and settings">
+    <meta name="keywords" content="personal homepage,account management,settings,ShareTools">
+    <title>Personal Homepage - ShareTools</title>
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="{% static 'css/main.css' %}" as="style">
+    <link rel="preload" href="{% static 'css/components.css' %}" as="style">
+    
+    <!-- Style files -->
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'css/components.css' %}">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔧</text></svg>">
+    
+    <style>
+        /* User state related styles */
+        .user-state-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .user-state-actions .btn {
+            transition: all 0.3s ease;
+        }
+        
+        /* Login state switching animation */
+        .user-state-actions.fade-out {
+            opacity: 0;
+            transform: translateX(10px);
+        }
+        
+        .user-state-actions.fade-in {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        /* Responsive adaptation */
+        @media (max-width: 768px) {
+            .user-state-actions {
+                gap: var(--spacing-xs);
+            }
+            
+            .user-state-actions .btn {
+                padding: var(--spacing-xs) var(--spacing-sm);
+                font-size: var(--font-size-caption);
+            }
+        }
+
+        /* Profile page specific styles */
+        .profile-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--spacing-2xl) var(--spacing-lg);
+        }
+        
+        .profile-header {
+            margin-bottom: var(--spacing-3xl);
+        }
+        
+        .profile-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--color-text-primary);
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .profile-sections {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+        
+        .profile-section {
+            background: var(--color-background);
+            border: 1px solid #F0F0F0;
+            border-radius: 12px;
+            padding: var(--spacing-lg);
+            transition: all var(--animation-duration) var(--animation-easing);
+            cursor: pointer;
+        }
+        
+        .profile-section:hover {
+            box-shadow: var(--shadow-medium);
+            border-color: var(--color-primary);
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .section-content {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-lg);
+        }
+        
+        .section-icon {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .section-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--color-text-primary);
+        }
+        
+        .section-info {
+            flex: 1;
+        }
+        
+        .section-title {
+            font-size: var(--font-size-body);
+            font-weight: 400;
+            color: var(--color-text-primary);
+            margin: 0 0 var(--spacing-xs) 0;
+        }
+        
+        .section-description {
+            font-size: var(--font-size-caption);
+            font-weight: 500;
+            color: #808080;
+            margin: 0;
+            line-height: 1.3;
+        }
+        
+        .section-arrow {
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .section-arrow svg {
+            width: 12px;
+            height: 12px;
+            fill: var(--color-text-primary);
+        }
+        
+        .section-category {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--color-text-primary);
+            margin: var(--spacing-2xl) 0 var(--spacing-lg) 0;
+            padding-top: var(--spacing-xl);
+            border-top: 1px solid #F0F0F0;
+        }
+        
+        .section-category:first-of-type {
+            margin-top: 0;
+            padding-top: 0;
+            border-top: none;
+        }
+        
+        .beta-section {
+            background: linear-gradient(135deg, #F8F9FF 0%, #E8F2FF 100%);
+            border-color: var(--color-primary);
+        }
+        
+        .sign-out-section {
+            border-color: #FF6B84;
+        }
+        
+        .sign-out-section:hover {
+            border-color: #FF5A7A;
+            background: #FFF8F9;
+        }
+        
+        .delete-section {
+            border-color: #E04E4E;
+        }
+        
+        .delete-section:hover {
+            border-color: #D43D3D;
+            background: #FFF5F5;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .profile-container {
+                padding: var(--spacing-lg) var(--spacing-md);
+            }
+            
+            .profile-title {
+                font-size: 2rem;
+            }
+            
+            .profile-section {
+                padding: var(--spacing-md);
+            }
+            
+            .section-content {
+                gap: var(--spacing-md);
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .section-title {
+                font-size: var(--font-size-caption);
+            }
+            
+            .section-description {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <header class="header" role="banner">
+        <div class="container">
+            <div class="header-content">
+                <!-- Logo Area -->
+                <a href="{% url 'home' %}" class="logo" aria-label="ShareTools Home">
+                    <img src="{% static 'images/ShareTools Web Logo.png' %}" alt="ShareTools Logo" class="logo-image">
+                    <span>ShareTools</span>
+                </a>
+                
+                <!-- Navigation Menu -->
+                <nav class="nav-menu" role="navigation" aria-label="Main Navigation">
+                    <ul>
+                        <li class="nav-item">
+                            <a href="{% url 'browse_things' %}" class="nav-link">The Things</a>
+                        </li>
+                        <li class="nav-item nav-dropdown">
+                            <a href="{% url 'locations' %}" class="nav-link">Locations</a>
+                            <div class="dropdown-menu">
+                                <div class="dropdown-content">
+                                    <div class="dropdown-section">
+                                        <h4 class="dropdown-section-title">NORTH GLASGOW</h4>
+                                        <ul class="dropdown-list">
+                                            <li><a href="{% url 'browse_things' %}?location=maryhill" class="dropdown-link">Maryhill</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=hillhead" class="dropdown-link">Hillhead</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=partick" class="dropdown-link">Partick</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=springburn" class="dropdown-link">Springburn</a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="dropdown-section">
+                                        <h4 class="dropdown-section-title">SOUTH GLASGOW</h4>
+                                        <ul class="dropdown-list">
+                                            <li><a href="{% url 'browse_things' %}?location=gorbals" class="dropdown-link">Gorbals</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=pollokshields" class="dropdown-link">Pollokshields</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=shawlands" class="dropdown-link">Shawlands</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=giffnock" class="dropdown-link">Giffnock</a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="dropdown-section">
+                                        <h4 class="dropdown-section-title">EAST GLASGOW</h4>
+                                        <ul class="dropdown-list">
+                                            <li><a href="{% url 'browse_things' %}?location=dennistoun" class="dropdown-link">Dennistoun</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=bridgeton" class="dropdown-link">Bridgeton</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=calton" class="dropdown-link">Calton</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=parkhead" class="dropdown-link">Parkhead</a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="dropdown-section">
+                                        <h4 class="dropdown-section-title">WEST GLASGOW</h4>
+                                        <ul class="dropdown-list">
+                                            <li><a href="{% url 'browse_things' %}?location=finnieston" class="dropdown-link">Finnieston</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=kelvingrove" class="dropdown-link">Kelvingrove</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=byres-road" class="dropdown-link">Byres Road</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'about' %}" class="nav-link">About</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'list_item' %}" class="nav-link">List an Item</a>
+                        </li>
+                    </ul>
+                </nav>
+                
+                <!-- User Actions -->
+                <div class="nav-actions">
+                    <button class="cart-icon" aria-label="Shopping Cart" title="View Cart">
+                        🛒
+                    </button>
+                    
+                    <!-- Buttons for non-logged-in state -->
+                    <div id="guest-actions" class="user-state-actions">
+                        <a href="{% url 'login' %}" class="btn btn-secondary">Sign in</a>
+                        <a href="{% url 'login' %}#signup" class="btn btn-primary">Join</a>
+                    </div>
+                    
+                    <!-- Buttons for logged-in state -->
+                    <div id="logged-in-actions" class="user-state-actions" style="display: none;">
+                        <a href="{% url 'profile' %}" class="btn btn-secondary">Profile</a>
+                        <a href="{% url 'list_item' %}" class="btn btn-primary">List an Item</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main role="main" class="profile-container">
+        <!-- Header -->
+        <div class="profile-header">
+            <h1 class="profile-title">My profile</h1>
+        </div>
+
+        <!-- Profile Sections -->
+        <div class="profile-sections">
+            <!-- Edit Profile -->
+            <div class="profile-section" data-href="{% url 'edit_profile' %}" style="cursor: pointer;">
+                <div class="section-content">
+                    <div class="section-icon">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M12 12C14.7614 12 17 9.76142 17 7C17 4.23858 14.7614 2 12 2C9.23858 2 7 4.23858 7 7C7 9.76142 9.23858 12 12 12Z" fill="currentColor"/>
+                            <path d="M20 21C20 17.134 16.6459 14 12.5 14C8.35413 14 5 17.134 5 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div class="section-info">
+                        <h3 class="section-title">Edit profile</h3>
+                        <p class="section-description">Edit your contact details</p>
+                    </div>
+                    <div class="section-arrow">
+                        <svg viewBox="0 0 16 16" fill="none">
+                            <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- My Favorites -->
+            <div class="profile-section" onclick="navigateTo('#favorites')">
+                <div class="section-content">
+                    <div class="section-icon">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z" fill="currentColor"/>
+                        </svg>
+                    </div>
+                    <div class="section-info">
+                        <h3 class="section-title">My favorites</h3>
+                    </div>
+                    <div class="section-arrow">
+                        <svg viewBox="0 0 16 16" fill="none">
+                            <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vouchers -->
+            <div class="profile-section" onclick="navigateTo('#vouchers')">
+                <div class="section-content">
+                    <div class="section-icon">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M21 9V7C21 5.89543 20.1046 5 19 5H5C3.89543 5 3 5.89543 3 7V9C4.10457 9 5 9.89543 5 11C5 12.1046 4.10457 13 3 13V15C3 16.1046 3.89543 17 5 17H19C20.1046 17 21 16.1046 21 15V13C19.8954 13 19 12.1046 19 11C19 9.89543 19.8954 9 21 9Z" fill="currentColor"/>
+                        </svg>
+                    </div>
+                    <div class="section-info">
+                        <h3 class="section-title">Vouchers</h3>
+                        <p class="section-description">Vouchers and account balance</p>
+                    </div>
+                    <div class="section-arrow">
+                        <svg viewBox="0 0 16 16" fill="none">
+                            <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sign Out -->
+            <div class="profile-section sign-out-section" onclick="signOut()">
+                <div class="section-content">
+                    <div class="section-icon">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M17 16L21 12M21 12L17 8M21 12H7M13 16V17C13 18.6569 11.6569 20 10 20H6C4.34315 20 3 18.6569 3 17V7C3 5.34315 4.34315 4 6 4H10C11.6569 4 13 5.34315 13 7V8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="section-info">
+                        <h3 class="section-title">Sign out</h3>
+                    </div>
+                    <div class="section-arrow">
+                        <svg viewBox="0 0 16 16" fill="none">
+                            <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Help Section -->
+            <h2 class="section-category">Help</h2>
+
+            <!-- Start Chat -->
+            <div class="profile-section" onclick="navigateTo('#chat')">
+                <div class="section-content">
+                    <div class="section-icon">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z" fill="currentColor"/>
+                        </svg>
+                    </div>
+                    <div class="section-info">
+                        <h3 class="section-title">Start chat</h3>
+                        <p class="section-description">Contact ShareTools</p>
+                    </div>
+                    <div class="section-arrow">
+                        <svg viewBox="0 0 16 16" fill="none">
+                            <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ -->
+            <div class="profile-section" onclick="navigateTo('#faq')">
+                <div class="section-content">
+                    <div class="section-icon">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                            <path d="M9.09 9C9.3251 8.33167 9.78915 7.76811 10.4 7.40913C11.0108 7.05016 11.7289 6.91894 12.4272 7.03871C13.1255 7.15849 13.7588 7.52152 14.2151 8.06353C14.6713 8.60553 14.9211 9.29152 14.92 10C14.92 12 11.92 13 11.92 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 17H12.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="section-info">
+                        <h3 class="section-title">Frequently asked questions</h3>
+                        <p class="section-description">Here you will find information about most things about ShareTools and our services.</p>
+                    </div>
+                    <div class="section-arrow">
+                        <svg viewBox="0 0 16 16" fill="none">
+                            <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Terms and Conditions -->
+            <div class="profile-section" onclick="navigateTo('#terms')">
+                <div class="section-content">
+                    <div class="section-icon">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M14 2H6C4.89543 2 4 2.89543 4 4V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V8L14 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <polyline points="14,2 14,8 20,8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="section-info">
+                        <h3 class="section-title">Read our terms and conditions</h3>
+                        <p class="section-description">Terms and Conditions</p>
+                    </div>
+                    <div class="section-arrow">
+                        <svg viewBox="0 0 16 16" fill="none">
+                            <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Delete Account -->
+            <div class="profile-section delete-section" onclick="deleteAccount()">
+                <div class="section-content">
+                    <div class="section-icon">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M3 6H5H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M8 6V4C8 3.46957 8.21071 2.96086 8.58579 2.58579C8.96086 2.21071 9.46957 2 10 2H14C14.5304 2 15.0391 2.21071 15.4142 2.58579C15.7893 2.96086 16 3.46957 16 4V6M19 6V20C19 20.5304 18.7893 21.0391 18.4142 21.4142C18.0391 21.7893 17.5304 22 17 22H7C6.46957 22 5.96086 21.7893 5.58579 21.4142C5.21071 21.0391 5 20.5304 5 20V6H19Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="section-info">
+                        <h3 class="section-title">Delete account</h3>
+                    </div>
+                    <div class="section-arrow">
+                        <svg viewBox="0 0 16 16" fill="none">
+                            <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Beta Section -->
+            <h2 class="section-category">Beta</h2>
+
+            <!-- Appearance Settings -->
+            <div class="profile-section beta-section" onclick="navigateTo('#appearance')">
+                <div class="section-content">
+                    <div class="section-icon">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2"/>
+                            <path d="M12 1V3M12 21V23M4.22 4.22L5.64 5.64M18.36 18.36L19.78 19.78M1 12H3M21 12H23M4.22 19.78L5.64 18.36M18.36 5.64L19.78 4.22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="section-info">
+                        <h3 class="section-title">Appearance: Light</h3>
+                        <p class="section-description">To change appearance you need to restart the application</p>
+                    </div>
+                    <div class="section-arrow">
+                        <svg viewBox="0 0 16 16" fill="none">
+                            <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="section" style="background: var(--color-secondary); color: var(--color-accent); padding: var(--spacing-2xl) 0;" role="contentinfo">
+        <div class="container">
+            <div class="grid grid-4" style="gap: var(--spacing-xl);">
+                <!-- Company Info -->
+                <div>
+                    <div class="logo" style="color: var(--color-accent); margin-bottom: var(--spacing-md);">
+                        <div class="logo-icon">🔧</div>
+                        <span>ShareTools</span>
+                    </div>
+                    <p style="color: var(--color-secondary-tint); font-size: var(--font-size-caption);">
+                        Making tool sharing simple, safe, and sustainable for everyone.
+                    </p>
+                </div>
+                
+                <!-- Quick Links -->
+                <div>
+                    <h3 style="color: var(--color-accent); margin-bottom: var(--spacing-md);">Quick Links</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: var(--spacing-xs);"><a href="#" style="color: var(--color-secondary-tint); text-decoration: none;">How it works</a></li>
+                        <li style="margin-bottom: var(--spacing-xs);"><a href="#" style="color: var(--color-secondary-tint); text-decoration: none;">Safety</a></li>
+                        <li style="margin-bottom: var(--spacing-xs);"><a href="#" style="color: var(--color-secondary-tint); text-decoration: none;">Insurance</a></li>
+                        <li style="margin-bottom: var(--spacing-xs);"><a href="#" style="color: var(--color-secondary-tint); text-decoration: none;">Support</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Community -->
+                <div>
+                    <h3 style="color: var(--color-accent); margin-bottom: var(--spacing-md);">Community</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: var(--spacing-xs);"><a href="#" style="color: var(--color-secondary-tint); text-decoration: none;">Blog</a></li>
+                        <li style="margin-bottom: var(--spacing-xs);"><a href="#" style="color: var(--color-secondary-tint); text-decoration: none;">Forum</a></li>
+                        <li style="margin-bottom: var(--spacing-xs);"><a href="#" style="color: var(--color-secondary-tint); text-decoration: none;">Events</a></li>
+                        <li style="margin-bottom: var(--spacing-xs);"><a href="#" style="color: var(--color-secondary-tint); text-decoration: none;">Newsletter</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Contact -->
+                <div>
+                    <h3 style="color: var(--color-accent); margin-bottom: var(--spacing-md);">Contact</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: var(--spacing-xs); color: var(--color-secondary-tint); font-size: var(--font-size-caption);">📧 hello@sharetools.com</li>
+                        <li style="margin-bottom: var(--spacing-xs); color: var(--color-secondary-tint); font-size: var(--font-size-caption);">📞 +44 1234567-213</li>
+                        <li style="margin-bottom: var(--spacing-xs); color: var(--color-secondary-tint); font-size: var(--font-size-caption);">📍 </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Copyright -->
+            <div style="border-top: 1px solid var(--color-secondary-tint); margin-top: var(--spacing-xl); padding-top: var(--spacing-lg); text-align: center;">
+                <p style="color: var(--color-secondary-tint); font-size: var(--font-size-caption); margin: 0;">
+                    © 2025 ShareTools. All rights reserved. | 
+                    <a href="#" style="color: var(--color-secondary-tint);">Privacy Policy</a> | 
+                    <a href="#" style="color: var(--color-secondary-tint);">Terms of Service</a>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="{% static 'js/api-config.js' %}"></script>
+    <script src="{% static 'js/components.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    
+    <!-- User state management script -->
+    
+    <!-- User state management script -->
+    <script>
+        // User login state management
+        class UserAuthManager {
+            constructor() {
+                this.storageKey = 'sharetools_user_logged_in';
+                this.userDataKey = 'sharetools_user_data';
+                this.init();
+            }
+
+            // Initialize
+            init() {
+                this.updateNavigation();
+                this.bindEvents();
+                console.log('User authentication manager initialized');
+            }
+
+            // Check if user is logged in
+            isLoggedIn() {
+                // Check login status in localStorage
+                const loginStatus = localStorage.getItem(this.storageKey);
+                const userData = localStorage.getItem(this.userDataKey);
+                
+                // Check sessionStorage (for session-level login status)
+                const sessionLogin = sessionStorage.getItem(this.storageKey);
+                
+                return (loginStatus === 'true' && userData) || sessionLogin === 'true';
+            }
+
+            // Set login status
+            setLoginStatus(isLoggedIn, userData = null, rememberMe = false) {
+                if (isLoggedIn) {
+                    // Set login status
+                    if (rememberMe) {
+                        localStorage.setItem(this.storageKey, 'true');
+                        if (userData) {
+                            localStorage.setItem(this.userDataKey, JSON.stringify(userData));
+                        }
+                    } else {
+                        // Keep logged in only during session
+                        sessionStorage.setItem(this.storageKey, 'true');
+                        if (userData) {
+                            sessionStorage.setItem(this.userDataKey, JSON.stringify(userData));
+                        }
+                    }
+                    console.log('User login status set');
+                } else {
+                    // Clear login status
+                    localStorage.removeItem(this.storageKey);
+                    localStorage.removeItem(this.userDataKey);
+                    sessionStorage.removeItem(this.storageKey);
+                    sessionStorage.removeItem(this.userDataKey);
+                    console.log('User login status cleared');
+                }
+                
+                this.updateNavigation();
+            }
+
+            // Get user data
+            getUserData() {
+                const localData = localStorage.getItem(this.userDataKey);
+                const sessionData = sessionStorage.getItem(this.userDataKey);
+                
+                if (localData) {
+                    try {
+                        return JSON.parse(localData);
+                    } catch (e) {
+                        console.error('Failed to parse user data:', e);
+                    }
+                }
+                
+                if (sessionData) {
+                    try {
+                        return JSON.parse(sessionData);
+                    } catch (e) {
+                        console.error('Failed to parse session user data:', e);
+                    }
+                }
+                
+                return null;
+            }
+
+            // Update navigation display
+            updateNavigation() {
+                const guestActions = document.getElementById('guest-actions');
+                const loggedInActions = document.getElementById('logged-in-actions');
+                
+                if (!guestActions || !loggedInActions) {
+                    console.warn('Navigation elements not found');
+                    return;
+                }
+
+                const isLoggedIn = this.isLoggedIn();
+                
+                if (isLoggedIn) {
+                    // Show logged-in navigation
+                    this.showElement(loggedInActions);
+                    this.hideElement(guestActions);
+                    console.log('Showing logged-in navigation state');
+                } else {
+                    // Show non-logged-in navigation
+                    this.showElement(guestActions);
+                    this.hideElement(loggedInActions);
+                    console.log('Showing non-logged-in navigation state');
+                }
+            }
+
+            // Show element (with animation)
+            showElement(element) {
+                element.style.display = 'flex';
+                element.classList.remove('fade-out');
+                element.classList.add('fade-in');
+            }
+
+            // Hide element (with animation)
+            hideElement(element) {
+                element.classList.remove('fade-in');
+                element.classList.add('fade-out');
+                setTimeout(() => {
+                    element.style.display = 'none';
+                }, 300);
+            }
+
+            // Bind events
+            bindEvents() {
+                // Listen for storage changes (cross-tab synchronization)
+                window.addEventListener('storage', (e) => {
+                    if (e.key === this.storageKey || e.key === this.userDataKey) {
+                        console.log('Detected cross-tab login status change');
+                        this.updateNavigation();
+                    }
+                });
+
+                // Listen for custom login events
+                window.addEventListener('userLogin', (e) => {
+                    console.log('Received user login event:', e.detail);
+                    this.setLoginStatus(true, e.detail.userData, e.detail.rememberMe);
+                });
+
+                // Listen for custom logout events
+                window.addEventListener('userLogout', () => {
+                    console.log('Received user logout event');
+                    this.setLoginStatus(false);
+                });
+            }
+        }
+
+        // Initialize user authentication manager
+        let userAuthManager;
+        document.addEventListener('DOMContentLoaded', () => {
+            userAuthManager = new UserAuthManager();
+            window.userAuthManager = userAuthManager;
+        });
+    </script>
+    
+    <script>
+        // Page navigation functionality
+        function navigateTo(section) {
+            console.log(`Navigate to: ${section}`);
+            
+            // Execute different operations based on different sections
+            switch(section) {
+                case '#edit-profile':
+                    alert('Navigate to edit profile page');
+                    break;
+                case '#favorites':
+                    alert('Navigate to my favorites page');
+                    break;
+                case '#vouchers':
+                    alert('Navigate to vouchers page');
+                    break;
+                case '#chat':
+                    alert('Start customer service chat');
+                    break;
+                case '#faq':
+                    alert('Navigate to FAQ page');
+                    break;
+                case '#terms':
+                    alert('Navigate to terms and conditions page');
+                    break;
+                case '#appearance':
+                    toggleAppearance();
+                    break;
+                default:
+                    console.log('Unknown navigation target');
+            }
+        }
+
+        // Logout functionality
+        async function signOut() {
+            if (confirm('Are you sure you want to log out?')) {
+                console.log('User logging out');
+                
+                try {
+                    // Call real logout API
+                    if (typeof AuthAPI !== 'undefined') {
+                        await AuthAPI.logout();
+                        console.log('API logout successful');
+                    }
+                } catch (error) {
+                    console.error('API logout failed:', error);
+                    // Continue clearing local state even if API fails
+                }
+                
+                // Clear all login-related local storage
+                localStorage.removeItem('sharetools_user_logged_in');
+                localStorage.removeItem('sharetools_user_data');
+                localStorage.removeItem('sharetools_auth_token');
+                sessionStorage.removeItem('sharetools_user_logged_in');
+                sessionStorage.removeItem('sharetools_user_data');
+                sessionStorage.removeItem('sharetools_auth_token');
+                
+                // Trigger custom logout event (notify other pages)
+                window.dispatchEvent(new CustomEvent('userLogout'));
+                
+                console.log('Login status cleared');
+                alert('Logged out successfully, redirecting to login page...');
+                
+                // Redirect to login page
+                setTimeout(() => {
+                    window.location.href = '{% url "login" %}';
+                }, 1000);
+            }
+        }
+
+        // Delete account functionality
+        async function deleteAccount() {
+            if (confirm('Warning: Account deletion is irreversible. Are you sure you want to continue?')) {
+                    if (confirm('Confirm again: Do you really want to delete your account? All data will be permanently lost!')) {
+                        console.log('User deleting account');
+                    
+                    try {
+                        // Here you can add actual delete account API call
+                        // Currently using simulated logic
+                        alert('Account deletion request submitted, we will process it within 24 hours');
+                        
+                        // If there is a delete account API, you can call it like this:
+                        // await AuthAPI.deleteAccount();
+                        
+                    } catch (error) {
+                        console.error('Account deletion failed:', error);
+                        alert('Account deletion request failed, please try again later or contact customer service');
+                    }
+                }
+            }
+        }
+
+        // Appearance toggle functionality
+        function toggleAppearance() {
+            const currentTheme = localStorage.getItem('theme') || 'light';
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            localStorage.setItem('theme', newTheme);
+            
+            alert(`Appearance switched to ${newTheme === 'light' ? 'light' : 'dark'} mode\nPlease restart the application to apply changes`);
+            
+            // Update page display
+            const appearanceSection = document.querySelector('.beta-section .section-title');
+            if (appearanceSection) {
+                appearanceSection.textContent = `Appearance: ${newTheme === 'light' ? 'Light' : 'Dark'}`;
+            }
+        }
+
+        // Check login status
+        function checkLoginStatus() {
+            const isLoggedIn = localStorage.getItem('sharetools_user_logged_in') === 'true' || 
+                              sessionStorage.getItem('sharetools_user_logged_in') === 'true';
+            
+            if (!isLoggedIn) {
+                alert('Please log in first to access the profile page');
+                window.location.href = '{% url "login" %}';
+                return false;
+            }
+            
+            return true;
+        }
+
+        // Load user information
+        function loadUserInfo() {
+            const userData = localStorage.getItem('sharetools_user_data') || 
+                            sessionStorage.getItem('sharetools_user_data');
+            
+            if (userData) {
+                try {
+                    const user = JSON.parse(userData);
+                    console.log('Current user:', user);
+                    
+                    // Here you can update user information display on the page
+                    // Such as username, avatar, etc.
+                    
+                } catch (e) {
+                    console.error('Failed to parse user data:', e);
+                }
+            }
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Profile page loaded');
+            
+            // Check user login status
+            if (!checkLoginStatus()) {
+                return; // If not logged in, terminate initialization
+            }
+            
+            // Load user information
+            loadUserInfo();
+            
+            // Load user preference settings
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            const appearanceSection = document.querySelector('.beta-section .section-title');
+            if (appearanceSection) {
+                appearanceSection.textContent = `Appearance: ${savedTheme === 'light' ? 'Light' : 'Dark'}`;
+            }
+            
+            // Add data-href click handlers
+            document.querySelectorAll('[data-href]').forEach(function(element) {
+                element.addEventListener('click', function() {
+                    const href = this.getAttribute('data-href');
+                    if (href) {
+                        window.location.href = href;
+                    }
+                });
+            });
+        });
+
+        // Add keyboard navigation support
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                // ESC key can close modals, etc.
+                console.log('ESC key pressed');
+            }
+        });
+    </script>
+</body>
+</html>

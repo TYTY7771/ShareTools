@@ -1,0 +1,299 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Upload Navigation - ShareTools</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .header {
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+        
+        .upload-options {
+            display: grid;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .upload-card {
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8f0ff 100%);
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        
+        .upload-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.2);
+            border-color: #667eea;
+        }
+        
+        .upload-card.new {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .upload-card.new:hover {
+            transform: translateY(-5px) scale(1.02);
+        }
+        
+        .card-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+            display: block;
+        }
+        
+        .card-title {
+            font-size: 1.5em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .card-description {
+            opacity: 0.8;
+            line-height: 1.5;
+        }
+        
+        .features {
+            background: #f8f9ff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .features h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+        
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            text-align: left;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: center;
+            color: #555;
+            font-size: 0.9em;
+        }
+        
+        .feature-item::before {
+            content: '✨';
+            margin-right: 8px;
+        }
+        
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+        
+        .back-link:hover {
+            color: #764ba2;
+        }
+        
+        .back-link::before {
+            content: '←';
+            margin-right: 8px;
+            font-size: 1.2em;
+        }
+        
+        .status {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        
+        .status.new {
+            background: #28a745;
+            color: white;
+        }
+        
+        .status.legacy {
+            background: #ffc107;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <header class="header" role="banner">
+        <div class="container">
+            <div class="header-content">
+                <!-- Logo Area -->
+                <a href="{% url 'home' %}" class="logo" aria-label="ShareTools Home">
+                    <img src="{% static 'images/ShareTools Web Logo.png' %}" alt="ShareTools Logo" class="logo-image">
+                    <span>ShareTools</span>
+                </a>
+
+                <!-- Navigation Links -->
+                <nav class="navigation" role="navigation" aria-label="Main navigation">
+                    <ul class="nav-list">
+                        <li class="nav-item"><a href="{% url 'browse_things' %}" class="nav-link">The Things</a></li>
+                        <li class="nav-item dropdown">
+                            <a href="{% url 'locations' %}" class="nav-link dropdown-toggle" aria-expanded="false">Locations</a>
+                            <div class="dropdown-menu">
+                                <a href="{% url 'location_things' location_name='New York' %}" class="dropdown-item">New York</a>
+                                <a href="{% url 'location_things' location_name='Los Angeles' %}" class="dropdown-item">Los Angeles</a>
+                                <a href="{% url 'location_things' location_name='London' %}" class="dropdown-item">London</a>
+                                <a href="{% url 'location_things' location_name='Paris' %}" class="dropdown-item">Paris</a>
+                                <a href="{% url 'location_things' location_name='Tokyo' %}" class="dropdown-item">Tokyo</a>
+                            </div>
+                        </li>
+                        <li class="nav-item"><a href="{% url 'about' %}" class="nav-link">About</a></li>
+                        <li class="nav-item"><a href="{% url 'list_item' %}" class="nav-link primary-button">List an Item</a></li>
+                    </ul>
+                </nav>
+
+                <!-- User Actions / Mobile Menu Toggle -->
+                <div class="header-actions">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'profile' %}" class="profile-link" aria-label="User Profile">
+                            <img src="{% if user.profile.avatar %}{{ user.profile.avatar.url }}{% else %}{% static 'images/default-avatar.png' %}{% endif %}" alt="User Avatar" class="avatar-small">
+                        </a>
+                        <a href="{% url 'logout_api' %}" class="button button-sm">Sign Out</a>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="button button-sm button-secondary">Sign In</a>
+                    {% endif %}
+                    <button class="menu-toggle" aria-controls="mobile-menu" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="menu-icon"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Menu (Off-canvas) -->
+    <div class="mobile-menu" id="mobile-menu" aria-hidden="true">
+        <div class="mobile-menu-header">
+            <a href="{% url 'home' %}" class="logo">
+                <img src="{% static 'images/ShareTools Web Logo.png' %}" alt="ShareTools Logo" class="logo-image">
+                <span>ShareTools</span>
+            </a>
+            <button class="close-menu" aria-label="Close menu">&times;</button>
+        </div>
+        <ul class="mobile-nav-list">
+            <li class="mobile-nav-item"><a href="{% url 'browse_things' %}" class="mobile-nav-link">The Things</a></li>
+            <li class="mobile-nav-item mobile-dropdown">
+                <a href="#" class="mobile-nav-link mobile-dropdown-toggle">Locations</a>
+                <ul class="mobile-dropdown-menu">
+                    <li><a href="{% url 'location_things' location_name='New York' %}" class="mobile-dropdown-item">New York</a></li>
+                    <li><a href="{% url 'location_things' location_name='Los Angeles' %}" class="mobile-dropdown-item">Los Angeles</a></li>
+                    <li><a href="{% url 'location_things' location_name='London' %}" class="mobile-dropdown-item">London</a></li>
+                    <li><a href="{% url 'location_things' location_name='Paris' %}" class="mobile-dropdown-item">Paris</a></li>
+                    <li><a href="{% url 'location_things' location_name='Tokyo' %}" class="mobile-dropdown-item">Tokyo</a></li>
+                </ul>
+            </li>
+            <li class="mobile-nav-item"><a href="{% url 'about' %}" class="mobile-nav-link">About</a></li>
+            <li class="mobile-nav-item"><a href="{% url 'list_item' %}" class="mobile-nav-link primary-button">List an Item</a></li>
+            {% if user.is_authenticated %}
+                <li class="mobile-nav-item"><a href="{% url 'profile' %}" class="mobile-nav-link">Profile</a></li>
+                <li class="mobile-nav-item"><a href="{% url 'logout_api' %}" class="mobile-nav-link button button-sm">Sign Out</a></li>
+            {% else %}
+                <li class="mobile-nav-item"><a href="{% url 'login' %}" class="mobile-nav-link button button-sm button-secondary">Sign In</a></li>
+                <li class="mobile-nav-item"><a href="{% url 'login' %}" class="mobile-nav-link button button-sm">Sign Up</a></li>
+            {% endif %}
+        </ul>
+    </div>
+    <div class="container">
+        <div class="header">
+            <h1>🖼️ Image Upload Center</h1>
+        <p>Choose your preferred upload method</p>
+        </div>
+        
+        <div class="upload-options">
+            <a href="/new-image-upload/" class="upload-card new">
+                <div class="card-icon">🚀</div>
+                <div class="card-title">
+                    New Image Upload
+            <span class="status new">Recommended</span>
+                </div>
+                <div class="card-description">
+                    Brand new image upload experience with drag & drop, real-time preview, batch processing and progress display
+                </div>
+            </a>
+            
+            <a href="/list-item/" class="upload-card">
+                <div class="card-icon">📝</div>
+                <div class="card-title">
+                    Item Listing Page
+            <span class="status legacy">Traditional</span>
+                </div>
+                <div class="card-description">
+                    Upload images while publishing items, suitable for creating new items
+                </div>
+            </a>
+        </div>
+        
+        <div class="features">
+            <h3>🌟 New Upload Features</h3>
+            <div class="feature-list">
+                <div class="feature-item">Drag & Drop Support</div>
+            <div class="feature-item">Real-time Image Preview</div>
+            <div class="feature-item">Batch File Upload</div>
+            <div class="feature-item">Upload Progress Display</div>
+            <div class="feature-item">Smart Error Handling</div>
+            <div class="feature-item">File Format Validation</div>
+            <div class="feature-item">File Size Check</div>
+            <div class="feature-item">Beautiful Modern Interface</div>
+            </div>
+        </div>
+        
+        <a href="/" class="back-link">Back to Home</a>
+    </div>
+</body>
+</html>

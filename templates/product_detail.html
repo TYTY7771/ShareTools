@@ -1,0 +1,780 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Basic page information -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details - ShareTools</title>
+    <meta name="description" content="View detailed product information, rental rates, and availability">
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="{% static 'css/main.css' %}" as="style">
+    <link rel="preload" href="{% static 'css/components.css' %}" as="style">
+    
+    <!-- Import stylesheets -->
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'css/components.css' %}">
+    <link rel="stylesheet" href="{% static 'css/product_detail.css' %}">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔧</text></svg>">
+    
+    <!-- Font imports -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icon library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <header class="header" role="banner">
+        <div class="container">
+            <div class="header-content">
+                <!-- Logo Area -->
+                <a href="{% url 'home' %}" class="logo" aria-label="ShareTools Home">
+                    <img src="{% static 'images/ShareTools Web Logo.png' %}" alt="ShareTools Logo" class="logo-image">
+                    <span>ShareTools</span>
+                </a>
+                
+                <!-- Navigation Menu -->
+                <nav class="nav-menu" role="navigation" aria-label="Main Navigation">
+                    <ul>
+                        <li class="nav-item">
+                            <a href="{% url 'browse_things' %}" class="nav-link">The Things</a>
+                        </li>
+                        <li class="nav-item nav-dropdown">
+                            <a href="{% url 'locations' %}" class="nav-link">Locations</a>
+                            <div class="dropdown-menu">
+                                <div class="dropdown-content">
+                                    <div class="dropdown-section">
+                                        <h4 class="dropdown-section-title">NORTH GLASGOW</h4>
+                                        <ul class="dropdown-list">
+                                            <li><a href="{% url 'browse_things' %}?location=maryhill" class="dropdown-link">Maryhill</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=hillhead" class="dropdown-link">Hillhead</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=partick" class="dropdown-link">Partick</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=springburn" class="dropdown-link">Springburn</a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="dropdown-section">
+                                        <h4 class="dropdown-section-title">SOUTH GLASGOW</h4>
+                                        <ul class="dropdown-list">
+                                            <li><a href="{% url 'browse_things' %}?location=gorbals" class="dropdown-link">Gorbals</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=pollokshields" class="dropdown-link">Pollokshields</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=shawlands" class="dropdown-link">Shawlands</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=giffnock" class="dropdown-link">Giffnock</a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="dropdown-section">
+                                        <h4 class="dropdown-section-title">EAST GLASGOW</h4>
+                                        <ul class="dropdown-list">
+                                            <li><a href="{% url 'browse_things' %}?location=dennistoun" class="dropdown-link">Dennistoun</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=bridgeton" class="dropdown-link">Bridgeton</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=calton" class="dropdown-link">Calton</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=parkhead" class="dropdown-link">Parkhead</a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="dropdown-section">
+                                        <h4 class="dropdown-section-title">WEST GLASGOW</h4>
+                                        <ul class="dropdown-list">
+                                            <li><a href="{% url 'browse_things' %}?location=finnieston" class="dropdown-link">Finnieston</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=kelvingrove" class="dropdown-link">Kelvingrove</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=byres-road" class="dropdown-link">Byres Road</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'about' %}" class="nav-link">About</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'list_item' %}" class="nav-link">List an Item</a>
+                        </li>
+                    </ul>
+                </nav>
+                
+                <!-- User Actions -->
+                <div class="nav-actions">
+                    <button class="cart-icon" aria-label="Shopping Cart" title="View Cart">
+                        🛒
+                    </button>
+                    
+                    <!-- Buttons for guest state -->
+                    <div id="guest-actions" class="user-state-actions">
+                        <a href="{% url 'login' %}" class="btn btn-secondary">Sign in</a>
+                        <a href="{% url 'login' %}#signup" class="btn btn-primary">Join</a>
+                    </div>
+                    
+                    <!-- Buttons for logged-in state -->
+                    <div id="logged-in-actions" class="user-state-actions" style="display: none;">
+                        <a href="{% url 'profile' %}" class="btn btn-secondary">Profile</a>
+                        <a href="{% url 'list_item' %}" class="btn btn-primary">List an Item</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Breadcrumb Navigation -->
+    <nav class="breadcrumb" aria-label="Breadcrumb Navigation">
+        <div class="container">
+            <ol class="breadcrumb-list">
+                <li class="breadcrumb-item">
+                    <a href="{% url 'home' %}" class="breadcrumb-link">
+                        <i class="fas fa-home"></i>
+                        Home
+                    </a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="{% url 'browse_things' %}" class="breadcrumb-link">Browse Things</a>
+                </li>
+                <li class="breadcrumb-item active">
+                    <span class="breadcrumb-current">{{ item.title|default:"Product Details" }}</span>
+                </li>
+            </ol>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <div class="product-detail-container">
+                <!-- Product Gallery -->
+                <section class="product-gallery">
+                    <div class="gallery-main">
+                        {% if item and item.primary_image %}
+                            <img src="{{ item.primary_image.image.url }}" 
+                                 alt="{{ item.title }}" 
+                                 class="gallery-main-image" 
+                                 id="mainImage">
+                        {% elif item and item.images.first %}
+                            <img src="{{ item.images.first.image.url }}" 
+                                 alt="{{ item.title }}" 
+                                 class="gallery-main-image" 
+                                 id="mainImage">
+                        {% else %}
+                            <img src="{% static 'images/pressure_washer.png' %}" 
+                                 alt="Heavy Duty Pressure Washer" 
+                                 class="gallery-main-image" 
+                                 id="mainImage">
+                        {% endif %}
+                        <div class="gallery-badge">
+                            {% if item and item.view_count > 100 %}
+                                <span class="badge badge-popular">Popular</span>
+                            {% elif item and item.status == 'featured' %}
+                                <span class="badge badge-featured">Featured</span>
+                            {% else %}
+                                <span class="badge badge-popular">Popular</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="gallery-thumbnails">
+                        {% if item and item.images.all %}
+                            {% for image in item.images.all %}
+                                <button class="thumbnail-btn {% if forloop.first %}active{% endif %}" data-image="{{ image.image.url }}">
+                                    <img src="{{ image.image.url }}" alt="{{ image.alt_text|default:item.title }}" class="thumbnail-image">
+                                </button>
+                            {% endfor %}
+                        {% else %}
+                            <button class="thumbnail-btn active" data-image="{% static 'images/pressure_washer.png' %}">
+                                <img src="{% static 'images/pressure_washer.png' %}" alt="Main View" class="thumbnail-image">
+                            </button>
+                            <button class="thumbnail-btn" data-image="{% static 'images/steam_cleaner.png' %}">
+                                <img src="{% static 'images/steam_cleaner.png' %}" alt="Side View" class="thumbnail-image">
+                            </button>
+                            <button class="thumbnail-btn" data-image="{% static 'images/hedge_trimmer.png' %}">
+                                <img src="{% static 'images/hedge_trimmer.png' %}" alt="Accessories View" class="thumbnail-image">
+                            </button>
+                        {% endif %}
+                    </div>
+                </section>
+
+                <!-- Product Information -->
+                <section class="product-info">
+                    <div class="product-header">
+                        <h1 class="product-title">{{ item.title|default:"Heavy Duty Pressure Washer" }}</h1>
+                        <div class="product-rating">
+                            <div class="rating-stars">
+                                <i class="fas fa-star star-filled"></i>
+                                <i class="fas fa-star star-filled"></i>
+                                <i class="fas fa-star star-filled"></i>
+                                <i class="fas fa-star star-filled"></i>
+                                <i class="fas fa-star star-half"></i>
+                            </div>
+                            <span class="rating-text">4.5 ({{ item.view_count|default:24 }} views)</span>
+                        </div>
+                    </div>
+
+                    <div class="price-info">
+                        <div class="price-main">
+                            {% if item and item.min_daily_price %}
+                                <span class="price-amount" id="mainPriceDisplay">£{{ item.min_daily_price|floatformat:0 }}</span>
+                            {% elif item and item.prices.exists %}
+                                <span class="price-amount" id="mainPriceDisplay">£{{ item.prices.first.daily_price|floatformat:0 }}</span>
+                            {% else %}
+                                <span class="price-amount" id="mainPriceDisplay">£20</span>
+                            {% endif %}
+                            <span class="price-period">/ day</span>
+                        </div>
+                        <div class="price-details">
+                            <p class="price-note" id="discountNote">10% discount for 3+ day rentals</p>
+                            {% if item and item.item_value %}
+                                <p class="price-deposit">Deposit: £{{ item.item_value|floatformat:0 }}</p>
+                            {% else %}
+                                <p class="price-deposit">Deposit: £500</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Rental Period Selection -->
+                    <div class="rental-dates">
+                        <h3 class="section-title">Select Rental Period</h3>
+                        <div class="date-picker-container">
+                            <div class="date-input-group">
+                                <label for="startDate" class="date-label">Start Date</label>
+                                <input type="date" id="startDate" class="date-input" min="" required>
+                            </div>
+                            <div class="date-input-group">
+                                <label for="endDate" class="date-label">End Date</label>
+                                <input type="date" id="endDate" class="date-input" min="" required>
+                            </div>
+                        </div>
+                        <div class="rental-summary" id="rentalSummary" style="display: none;">
+                            <div class="summary-row">
+                                <span>Rental Days:</span>
+                                <span id="totalDays">-</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Daily Rate:</span>
+                                <span id="dailyRateDisplay">
+                                    {% if item and item.min_daily_price %}
+                                        £{{ item.min_daily_price|floatformat:0 }} / day
+                                    {% elif item and item.prices.exists %}
+                                        £{{ item.prices.first.daily_price|floatformat:0 }} / day
+                                    {% else %}
+                                        £20 / day
+                                    {% endif %}
+                                </span>
+                            </div>
+                            <div class="summary-row total">
+                                <span>Total:</span>
+                                <span id="totalPrice">£0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="action-buttons">
+                        <button class="btn btn-primary btn-large add-to-cart" id="addToCartBtn">
+                            <i class="fas fa-shopping-cart"></i>
+                            Add to Cart
+                        </button>
+                        <button class="btn btn-secondary btn-large rent-now" id="rentNowBtn">
+                            <i class="fas fa-bolt"></i>
+                            Book Now
+                        </button>
+                        <button class="btn-icon favorite-btn" id="favoriteBtn" title="Add to Favorites">
+                            <i class="far fa-heart"></i>
+                        </button>
+                    </div>
+
+                    <!-- Location Information -->
+                    <div class="location-info">
+                        <h3 class="section-title">Pickup Location</h3>
+                        <div class="location-details">
+                            <div class="location-item">
+                                <i class="fas fa-map-marker-alt location-icon"></i>
+                                <div class="location-text">
+                                    {% if item and item.address %}
+                                        <p class="location-address">{{ item.address }}</p>
+                                    {% elif item and item.location %}
+                                        <p class="location-address">{{ item.location.name }}</p>
+                                    {% else %}
+                                        <p class="location-address">Maryhill, North Glasgow</p>
+                                    {% endif %}
+                                    <p class="location-distance">2.3 km away from you</p>
+                                    
+                                    <!-- Address tag display -->
+                                    <div class="location-tag-display">
+                                        {% if item and item.location_tag %}
+                                            <span class="location-tag">{{ item.location_tag }}</span>
+                                        {% endif %}
+                                        {% if item and item.area_tag %}
+                                            <span class="area-tag">{{ item.area_tag }}</span>
+                                        {% elif item and item.location and item.location.area %}
+                                            <span class="area-tag">{{ item.location.area }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="btn btn-outline btn-small view-map-btn">
+                                <i class="fas fa-map"></i>
+                                View Map
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Product Details -->
+            <section class="product-details">
+                <div class="details-tabs">
+                    <button class="tab-btn active" data-tab="description">Description</button>
+                    <!-- <button class="tab-btn" data-tab="specifications">Specifications</button> -->
+                    <!-- <button class="tab-btn" data-tab="reviews">Reviews</button> -->
+                    <button class="tab-btn" data-tab="owner">Owner Info</button>
+                </div>
+
+                <div class="tab-content">
+                    <!-- Product Description -->
+                    <div class="tab-panel active" id="description">
+                        <div class="description-content">
+                            <h3>About This {{ item.title|default:"Item" }}</h3>
+                            {% if item and item.description %}
+                                <div class="item-description">
+                                    {{ item.description|linebreaks }}
+                                </div>
+                            {% else %}
+                                <p>This is a high-quality tool available for rent. Perfect for your project needs, well-maintained and ready to use.</p>
+                            {% endif %}
+                            
+                            {% if item %}
+                                <div class="item-details-grid">
+                                    <div class="detail-item">
+                                        <span class="detail-label">Category:</span>
+                                        <span class="detail-value">{{ item.category.name|default:"Tools" }}</span>
+                                    </div>
+                                    
+                                    <div class="detail-item">
+                                        <span class="detail-label">Condition:</span>
+                                        <span class="detail-value">{{ item.get_condition_display|default:"Good" }}</span>
+                                    </div>
+                                    
+                                    {% if item.item_value %}
+                                        <div class="detail-item">
+                                            <span class="detail-label">Item Value:</span>
+                                            <span class="detail-value">£{{ item.item_value|floatformat:0 }}</span>
+                                        </div>
+                                    {% endif %}
+                                    
+                                    <div class="detail-item">
+                                        <span class="detail-label">Available Since:</span>
+                                        <span class="detail-value">{{ item.created_at|date:"M d, Y" }}</span>
+                                    </div>
+                                </div>
+                                
+                                {% if item.prices.exists %}
+                                    <h4>Rental Rates</h4>
+                                    <div class="pricing-grid">
+                                        {% for price in item.prices.all %}
+                                            {% if price.is_active %}
+                                                <div class="price-option">
+                                                    <span class="duration">{{ price.duration_days }} day{% if price.duration_days > 1 %}s{% endif %}</span>
+                                                    <span class="price">£{{ price.daily_price|floatformat:2 }}/day</span>
+                                                    <span class="total">(£{{ price.price|floatformat:2 }} total)</span>
+                                                </div>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            {% else %}
+                                <h4>Key Features</h4>
+                                <ul class="feature-list">
+                                    <li><i class="fas fa-check"></i> High-quality tool suitable for various projects</li>
+                                    <li><i class="fas fa-check"></i> Well-maintained and regularly serviced</li>
+                                    <li><i class="fas fa-check"></i> Easy to use with clear instructions</li>
+                                    <li><i class="fas fa-check"></i> Flexible rental periods available</li>
+                                </ul>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Technical Specifications -->
+                    <!-- <div class="tab-panel" id="specifications">
+                        <div class="specs-content">
+                            <h3>Technical Parameters</h3>
+                            <div class="specs-grid">
+                                <div class="spec-item">
+                                    <span class="spec-label">Maximum Pressure</span>
+                                    <span class="spec-value">2000 PSI / 140 Bar</span>
+                                </div>
+                                <div class="spec-item">
+                                    <span class="spec-label">Motor Power</span>
+                                    <span class="spec-value">1800W</span>
+                                </div>
+                                <div class="spec-item">
+                                    <span class="spec-label">Flow Rate</span>
+                                    <span class="spec-value">7.5 L/min</span>
+                                </div>
+                                <div class="spec-item">
+                                    <span class="spec-label">Hose Length</span>
+                                    <span class="spec-value">15 m</span>
+                                </div>
+                                <div class="spec-item">
+                                    <span class="spec-label">Weight</span>
+                                    <span class="spec-value">12 kg</span>
+                                </div>
+                                <div class="spec-item">
+                                    <span class="spec-label">Power Requirements</span>
+                                    <span class="spec-value">220V / 50Hz</span>
+                                </div>
+                            </div>
+
+                            <h4>Included Accessories</h4>
+                            <ul class="included-items">
+                                <li><i class="fas fa-check"></i> High-pressure spray gun</li>
+                                <li><i class="fas fa-check"></i> 15-meter high-pressure hose</li>
+                                <li><i class="fas fa-check"></i> Adjustable nozzles x3</li>
+                                <li><i class="fas fa-check"></i> Detergent spray bottle</li>
+                                <li><i class="fas fa-check"></i> User manual</li>
+                            </ul>
+                        </div>
+                    </div> -->
+
+                    <!-- User Reviews -->
+                    <!-- <div class="tab-panel" id="reviews">
+                        <div class="reviews-content">
+                            <div class="reviews-summary">
+                                <div class="rating-overview">
+                                    <span class="average-rating">4.5</span>
+                                    <div class="rating-stars-large">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star-half-alt"></i>
+                                    </div>
+                                    <p class="reviews-count">Based on 24 reviews</p>
+                                </div>
+                            </div>
+
+                            <div class="reviews-list">
+                                <div class="review-item">
+                                    <div class="review-header">
+                                        <div class="reviewer-info">
+                                            <span class="reviewer-name">James M.</span>
+                                            <div class="review-rating">
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                            </div>
+                                        </div>
+                                        <span class="review-date">15 January 2024</span>
+                                    </div>
+                                    <p class="review-text">Excellent pressure washer! Very powerful cleaning capability, got my car spotless. Easy to operate and the owner provided great service.</p>
+                                </div>
+
+                                <div class="review-item">
+                                    <div class="review-header">
+                                        <div class="reviewer-info">
+                                            <span class="reviewer-name">Sarah L.</span>
+                                            <div class="review-rating">
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="far fa-star"></i>
+                                            </div>
+                                        </div>
+                                        <span class="review-date">8 January 2024</span>
+                                    </div>
+                                    <p class="review-text">Great for cleaning the patio, plenty of pressure. The machine is a bit heavy, but considering its functionality, I'm very satisfied.</p>
+                                </div>
+
+                                <div class="review-item">
+                                    <div class="review-header">
+                                        <div class="reviewer-info">
+                                            <span class="reviewer-name">Robert W.</span>
+                                            <div class="review-rating">
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                            </div>
+                                        </div>
+                                        <span class="review-date">28 December 2023</span>
+                                    </div>
+                                    <p class="review-text">Excellent value for money! Outstanding cleaning performance, complete accessories. Flexible rental period and reasonable price. Will definitely rent again.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div> -->
+
+                    <!-- Owner Information -->
+                    <div class="tab-panel" id="owner">
+                        <div class="owner-content">
+                            <div class="owner-profile">
+                                <div class="owner-avatar">
+                                    <i class="fas fa-user-circle"></i>
+                                </div>
+                                <div class="owner-info">
+                                    {% if item and item.owner %}
+                                        <h3 class="owner-name">{{ item.owner.get_full_name|default:item.owner.username }}</h3>
+                                    {% else %}
+                                        <h3 class="owner-name">John Smith</h3>
+                                    {% endif %}
+                                    <div class="owner-rating">
+                                        <div class="rating-stars">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                        <span class="rating-text">5.0 (18 reviews)</span>
+                                    </div>
+                                    {% if item and item.owner and item.owner.profile %}
+                                        <p class="owner-bio">{{ item.owner.profile.bio|default:"Experienced tool collector with 10 years of tool rental experience. All tools are regularly maintained to ensure optimal performance." }}</p>
+                                    {% else %}
+                                        <p class="owner-bio">Experienced tool collector with 10 years of tool rental experience. All tools are regularly maintained to ensure optimal performance.</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="owner-stats">
+                                <div class="stat-item">
+                                    {% if item and item.owner %}
+                                        <span class="stat-number">{{ item.owner.items.count|default:45 }}</span>
+                                    {% else %}
+                                        <span class="stat-number">45</span>
+                                    {% endif %}
+                                    <span class="stat-label">Tools for Rent</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-number">156</span>
+                                    <span class="stat-label">Orders Completed</span>
+                                </div>
+                                <div class="stat-item">
+                                    {% if item and item.owner %}
+                                        <span class="stat-number">{{ item.owner.date_joined|timesince }}</span>
+                                    {% else %}
+                                        <span class="stat-number">2 years</span>
+                                    {% endif %}
+                                    <span class="stat-label">Platform Experience</span>
+                                </div>
+                            </div>
+
+                            <div class="contact-owner">
+                                <button class="btn btn-secondary">
+                                    <i class="fas fa-comment"></i>
+                                    Contact Owner
+                                </button>
+                                <button class="btn btn-outline">
+                                    <i class="fas fa-store"></i>
+                                    View More Tools
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Related Products -->
+            <section class="related-products">
+                <h2 class="section-title">Related Products</h2>
+                <div class="products-grid">
+                    <article class="product-card">
+                        <div class="product-image-container">
+                            <img src="{% static 'images/steam_cleaner.png' %}" alt="Steam Cleaner" class="product-image">
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-title">Steam Cleaner</h3>
+                            <p class="product-price">£12 / day</p>
+                        </div>
+                    </article>
+
+                    <article class="product-card">
+                        <div class="product-image-container">
+                            <img src="{% static 'images/vacuum_cleaner.png' %}" alt="Wet & Dry Vacuum Cleaner" class="product-image">
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-title">Wet & Dry Vacuum Cleaner</h3>
+                            <p class="product-price">£12 / day</p>
+                        </div>
+                    </article>
+
+                    <article class="product-card">
+                        <div class="product-image-container">
+                            <img src="{% static 'images/hedge_trimmer.png' %}" alt="Hedge Trimmer (Cordless)" class="product-image">
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-title">Hedge Trimmer (Cordless)</h3>
+                            <p class="product-price">£13 / day</p>
+                        </div>
+                    </article>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="section" style="background: var(--color-secondary); color: var(--color-accent); padding: var(--spacing-2xl) 0;" role="contentinfo">
+        <div class="container">
+            <div class="grid grid-4" style="gap: var(--spacing-xl);">
+                <!-- Company Info -->
+                <div>
+                    <div class="logo" style="color: var(--color-accent); margin-bottom: var(--spacing-md);">
+                        <div class="logo-icon">🔧</div>
+                        <span>ShareTools</span>
+                    </div>
+                    <p style="color: var(--color-secondary-tint); font-size: var(--font-size-caption);">
+                        Making tool sharing simple, safe, and sustainable for everyone.
+                    </p>
+                </div>
+                
+                <!-- Quick Links -->
+                <div>
+                    <h3 style="color: var(--color-accent); margin-bottom: var(--spacing-md);">Quick Links</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: var(--spacing-xs);"><a href="#" style="color: var(--color-secondary-tint); text-decoration: none;">How it works</a></li>
+                        <li style="margin-bottom: var(--spacing-xs);"><a href="#" style="color: var(--color-secondary-tint); text-decoration: none;">Safety</a></li>
+                        <li style="margin-bottom: var(--spacing-xs);"><a href="#" style="color: var(--color-secondary-tint); text-decoration: none;">Insurance</a></li>
+                        <li style="margin-bottom: var(--spacing-xs);"><a href="#" style="color: var(--color-secondary-tint); text-decoration: none;">Support</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Community -->
+                <div>
+                    <h3 style="color: var(--color-accent); margin-bottom: var(--spacing-md);">Community</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: var(--spacing-xs);"><a href="#" style="color: var(--color-secondary-tint); text-decoration: none;">Blog</a></li>
+                        <li style="margin-bottom: var(--spacing-xs);"><a href="#" style="color: var(--color-secondary-tint); text-decoration: none;">Forum</a></li>
+                        <li style="margin-bottom: var(--spacing-xs);"><a href="#" style="color: var(--color-secondary-tint); text-decoration: none;">Events</a></li>
+                        <li style="margin-bottom: var(--spacing-xs);"><a href="#" style="color: var(--color-secondary-tint); text-decoration: none;">Newsletter</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Contact -->
+                <div>
+                    <h3 style="color: var(--color-accent); margin-bottom: var(--spacing-md);">Contact</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: var(--spacing-xs); color: var(--color-secondary-tint); font-size: var(--font-size-caption);">📧 hello@sharetools.com</li>
+                        <li style="margin-bottom: var(--spacing-xs); color: var(--color-secondary-tint); font-size: var(--font-size-caption);">📞 +44 1234567-213</li>
+                        <li style="margin-bottom: var(--spacing-xs); color: var(--color-secondary-tint); font-size: var(--font-size-caption);">📍 Glasgow, Scotland</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Copyright -->
+            <div style="border-top: 1px solid var(--color-secondary-tint); margin-top: var(--spacing-xl); padding-top: var(--spacing-lg); text-align: center;">
+                <p style="color: var(--color-secondary-tint); font-size: var(--font-size-caption); margin: 0;">
+                    © 2025 ShareTools. All rights reserved. | 
+                    <a href="#" style="color: var(--color-secondary-tint);">Privacy Policy</a> | 
+                    <a href="#" style="color: var(--color-secondary-tint);">Terms of Service</a>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Import JavaScript files -->
+    <script src="{% static 'js/components.js' %}"></script>
+    <script src="{% static 'js/product_detail.js' %}"></script>
+    
+    <!-- Product data for page functionality -->
+    {{ product_data_json|json_script:"product-data" }}
+    <script>
+        // Safely pass product price data from Django
+        const productDataElement = document.getElementById('product-data');
+        window.productData = productDataElement ? JSON.parse(productDataElement.textContent) : {
+            id: null,
+            title: 'Demo Product',
+            itemValue: 500,
+            minDailyPrice: 20,
+            prices: [
+                {duration: 1, totalPrice: 20, dailyPrice: 20},
+                {duration: 3, totalPrice: 54, dailyPrice: 18},
+                {duration: 7, totalPrice: 105, dailyPrice: 15},
+                {duration: 30, totalPrice: 360, dailyPrice: 12}
+            ]
+        };
+        console.log('Product data loaded:', window.productData);
+    </script>
+    
+    <!-- User state management and navigation logic -->
+    <script>
+        // User login state management
+        class UserAuthManager {
+            constructor() {
+                this.storageKey = 'sharetools_user_logged_in';
+                this.userDataKey = 'sharetools_user_data';
+                this.init();
+            }
+
+            // Initialize
+            init() {
+                this.updateNavigation();
+                this.bindEvents();
+                console.log('User authentication manager initialized');
+            }
+
+            // Check if user is logged in
+            isLoggedIn() {
+                const loginStatus = localStorage.getItem(this.storageKey);
+                const userData = localStorage.getItem(this.userDataKey);
+                const sessionLogin = sessionStorage.getItem(this.storageKey);
+                
+                return (loginStatus === 'true' && userData) || sessionLogin === 'true';
+            }
+
+            // Update navigation display
+            updateNavigation() {
+                const guestActions = document.getElementById('guest-actions');
+                const loggedInActions = document.getElementById('logged-in-actions');
+                
+                if (!guestActions || !loggedInActions) {
+                    console.warn('Navigation elements not found');
+                    return;
+                }
+
+                const isLoggedIn = this.isLoggedIn();
+                
+                if (isLoggedIn) {
+                    guestActions.style.display = 'none';
+                    loggedInActions.style.display = 'flex';
+                    console.log('Showing logged-in navigation state');
+                } else {
+                    guestActions.style.display = 'flex';
+                    loggedInActions.style.display = 'none';
+                    console.log('Showing logged-out navigation state');
+                }
+            }
+
+            // Bind events
+            bindEvents() {
+                // Listen for storage changes (cross-tab synchronization)
+                window.addEventListener('storage', (e) => {
+                    if (e.key === this.storageKey || e.key === this.userDataKey) {
+                        console.log('Cross-tab login status change detected');
+                        this.updateNavigation();
+                    }
+                });
+
+                // Listen for custom login events
+                window.addEventListener('userLogin', (e) => {
+                    console.log('User login event received:', e.detail);
+                    this.updateNavigation();
+                });
+
+                // Listen for custom logout events
+                window.addEventListener('userLogout', () => {
+                    console.log('User logout event received');
+                    this.updateNavigation();
+                });
+            }
+        }
+
+        // Global user authentication manager instance
+        let userAuthManager;
+
+        // Initialize after DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            userAuthManager = new UserAuthManager();
+        });
+    </script>
+</body>
+</html>

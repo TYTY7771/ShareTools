@@ -1,0 +1,429 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Basic webpage information -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse the Things - ShareTools</title>
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="{% static 'css/main.css' %}" as="style">
+    <link rel="preload" href="{% static 'css/components.css' %}" as="style">
+    
+    <!-- Import stylesheets -->
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'css/components.css' %}">
+    <link rel="stylesheet" href="{% static 'css/browse_things.css' %}">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔧</text></svg>">
+    
+    <!-- Font imports -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- Icon library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <header class="header" role="banner">
+        <div class="container">
+            <div class="header-content">
+                <!-- Logo Area -->
+                <a href="{% url 'home' %}" class="logo" aria-label="ShareTools Home">
+                    <img src="{% static 'images/ShareTools Web Logo.png' %}" alt="ShareTools Logo" class="logo-image">
+                    <span>ShareTools</span>
+                </a>
+                
+                <!-- Navigation Menu -->
+                <nav class="nav-menu" role="navigation" aria-label="Main Navigation">
+                    <ul>
+                        <li class="nav-item">
+                            <a href="{% url 'browse_things' %}" class="nav-link active">The Things</a>
+                        </li>
+                        <li class="nav-item nav-dropdown">
+                            <a href="{% url 'locations' %}" class="nav-link">Locations</a>
+                            <div class="dropdown-menu">
+                                <div class="dropdown-content">
+                                    <div class="dropdown-section">
+                                        <h4 class="dropdown-section-title">NORTH GLASGOW</h4>
+                                        <ul class="dropdown-list">
+                                            <li><a href="{% url 'browse_things' %}?location=maryhill" class="dropdown-link">Maryhill</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=hillhead" class="dropdown-link">Hillhead</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=partick" class="dropdown-link">Partick</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=springburn" class="dropdown-link">Springburn</a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="dropdown-section">
+                                        <h4 class="dropdown-section-title">SOUTH GLASGOW</h4>
+                                        <ul class="dropdown-list">
+                                            <li><a href="{% url 'browse_things' %}?location=gorbals" class="dropdown-link">Gorbals</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=pollokshields" class="dropdown-link">Pollokshields</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=shawlands" class="dropdown-link">Shawlands</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=giffnock" class="dropdown-link">Giffnock</a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="dropdown-section">
+                                        <h4 class="dropdown-section-title">EAST GLASGOW</h4>
+                                        <ul class="dropdown-list">
+                                            <li><a href="{% url 'browse_things' %}?location=dennistoun" class="dropdown-link">Dennistoun</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=bridgeton" class="dropdown-link">Bridgeton</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=calton" class="dropdown-link">Calton</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=parkhead" class="dropdown-link">Parkhead</a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="dropdown-section">
+                                        <h4 class="dropdown-section-title">WEST GLASGOW</h4>
+                                        <ul class="dropdown-list">
+                                            <li><a href="{% url 'browse_things' %}?location=finnieston" class="dropdown-link">Finnieston</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=kelvingrove" class="dropdown-link">Kelvingrove</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=byres-road" class="dropdown-link">Byres Road</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'about' %}" class="nav-link">About</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'list_item' %}" class="nav-link">List an Item</a>
+                        </li>
+                    </ul>
+                </nav>
+                
+                <!-- User Actions -->
+                <div class="nav-actions">
+                    <button class="cart-icon" aria-label="Shopping Cart" title="View Cart">
+                        🛒
+                    </button>
+                    
+                    <!-- Buttons for guest state -->
+                    <div id="guest-actions" class="user-state-actions">
+                        <a href="{% url 'login' %}" class="btn btn-secondary">Sign in</a>
+                        <a href="{% url 'login' %}#signup" class="btn btn-primary">Join</a>
+                    </div>
+                    
+                    <!-- Buttons for logged-in state -->
+                    <div id="logged-in-actions" class="user-state-actions" style="display: none;">
+                        <a href="{% url 'profile' %}" class="btn btn-secondary">Profile</a>
+                        <a href="{% url 'list_item' %}" class="btn btn-primary">List an Item</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main container -->
+    <div class="main-container">
+        <!-- Page title area -->
+        <header class="page-header">
+            <h1 class="page-title">Browse the Things</h1>
+            <p class="page-subtitle">Select from our locations to see what's available near you</p>
+        </header>
+
+        <!-- Search area -->
+        <section class="search-section">
+            <div class="search-container">
+                <div class="search-input-wrapper">
+                    <input type="text" class="search-input" placeholder="Search for a Thing" id="searchInput">
+                    <button class="search-button" id="searchBtn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main content area -->
+        <main class="main-content">
+            <!-- Left sidebar category menu -->
+            <aside class="categories-sidebar">
+                <div class="categories-header">
+                    <h2 class="categories-title">Categories</h2>
+                    <button class="categories-toggle" id="categoriesToggle">
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+                
+                <nav class="categories-nav" id="categoriesNav">
+                    <ul class="categories-list">
+                        <li class="category-item active" data-category="all" data-filter-type="category">
+                            <span class="category-icon">🔧</span>
+                            <span class="category-text">All Items</span>
+                        </li>
+                        <li class="category-item" data-category="tools" data-filter-type="category">
+                            <span class="category-icon">🔧</span>
+                            <span class="category-text">Tools</span>
+                        </li>
+                        <li class="category-item" data-category="electronics" data-filter-type="category">
+                            <span class="category-icon">📱</span>
+                            <span class="category-text">Electronics</span>
+                        </li>
+                        <li class="category-item" data-category="garden" data-filter-type="category">
+                            <span class="category-icon">🌱</span>
+                            <span class="category-text">Garden Equipment</span>
+                        </li>
+                        <li class="category-item" data-category="sports" data-filter-type="category">
+                            <span class="category-icon">⚽</span>
+                            <span class="category-text">Sports Equipment</span>
+                        </li>
+                        <li class="category-item" data-category="automotive" data-filter-type="category">
+                            <span class="category-icon">🚗</span>
+                            <span class="category-text">Automotive</span>
+                        </li>
+                        <li class="category-item" data-category="home" data-filter-type="category">
+                            <span class="category-icon">🏠</span>
+                            <span class="category-text">DIY & Home</span>
+                        </li>
+                        <li class="category-divider"></li>
+                        <li class="category-section-title">
+                            <span class="category-text">By Location</span>
+                        </li>
+                        <li class="category-item" data-category="maryhill" data-filter-type="location">
+                            <span class="category-icon">📍</span>
+                            <span class="category-text">Maryhill</span>
+                        </li>
+                        <li class="category-item" data-category="hillhead" data-filter-type="location">
+                            <span class="category-icon">📍</span>
+                            <span class="category-text">Hillhead</span>
+                        </li>
+                        <li class="category-item" data-category="partick" data-filter-type="location">
+                            <span class="category-icon">📍</span>
+                            <span class="category-text">Partick</span>
+                        </li>
+                        <li class="category-item" data-category="gorbals" data-filter-type="location">
+                            <span class="category-icon">📍</span>
+                            <span class="category-text">Gorbals</span>
+                        </li>
+                        <li class="category-item" data-category="dennistoun" data-filter-type="location">
+                            <span class="category-icon">📍</span>
+                            <span class="category-text">Dennistoun</span>
+                        </li>
+                        <li class="category-item" data-category="finnieston" data-filter-type="location">
+                            <span class="category-icon">📍</span>
+                            <span class="category-text">Finnieston</span>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Right product display area -->
+            <section class="products-section">
+                <div class="products-grid" id="productsGrid">
+                    {% if items %}
+                        {% for item in items %}
+                            <article class="product-card" data-category="{{ item.category.name|default:'tools' }}" data-location="{{ item.location.slug|default:'unknown' }}">
+                                <a href="{% url 'product_detail' product_id=item.id %}" class="product-link">
+                                    <div class="product-image-container">
+                                        {% if item.primary_image %}
+                                            <img src="{{ item.primary_image.image.url }}" alt="{{ item.title }}" class="product-image">
+                                        {% else %}
+                                            <img src="{% static 'images/pressure_washer.png' %}" alt="{{ item.title }}" class="product-image">
+                                        {% endif %}
+                                    </div>
+                                    <div class="product-info">
+                                        <h3 class="product-title">{{ item.title }}</h3>
+                                        <p class="product-price">£{{ item.min_daily_price|default:'20'|floatformat:1 }} per day</p>
+                                    </div>
+                                </a>
+                            </article>
+                        {% endfor %}
+                    {% else %}
+                        <!-- If no products, show default demo products -->
+                        <article class="product-card" data-category="tools">
+                            <a href="{% url 'product_detail_demo' %}" class="product-link">
+                                <div class="product-image-container">
+                                    <img src="{% static 'images/pressure_washer.png' %}" alt="Heavy Duty Pressure Washer" class="product-image">
+                                </div>
+                                <div class="product-info">
+                                    <h3 class="product-title">Heavy Duty Pressure Washer</h3>
+                                    <p class="product-price">£20.0 per day</p>
+                                </div>
+                            </a>
+                        </article>
+                    {% endif %}
+                </div>
+            </section>
+        </main>
+
+        <!-- Bottom CTA area -->
+        <section class="cta-section">
+            <div class="cta-container">
+                <div class="cta-content">
+                    <h2 class="cta-title">Still scrolling?</h2>
+                    <p class="cta-subtitle">Tell us what you'd like to borrow.</p>
+                    <button class="cta-button" id="makeWishBtn">Make a wish!</button>
+                </div>
+                <div class="cta-decoration">
+                    <!-- Decorative image elements -->
+                    <img src="{% static 'images/assets_task_01jzqsmq34et6acdk720chjfhp_1752071606_img_1.webp' %}" 
+                         alt="Decoration Image 1" 
+                         class="decoration-image decoration-image-1">
+                    <img src="{% static 'images/assets_task_01jzqsxxa3f8e90pg2zfrdgefj_1752071909_img_0.webp' %}" 
+                         alt="Decoration Image 2" 
+                         class="decoration-image decoration-image-2">
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="section" style="background: var(--color-secondary); color: var(--color-accent); padding: var(--spacing-2xl) 0;" role="contentinfo">
+        <div class="container">
+            <div class="grid grid-4" style="gap: var(--spacing-xl);">
+                <!-- Company Info -->
+                <div>
+                    <div class="logo" style="color: var(--color-accent); margin-bottom: var(--spacing-md);">
+                        <div class="logo-icon">🔧</div>
+                        <span>ShareTools</span>
+                    </div>
+                    <p style="color: var(--color-secondary-tint); font-size: var(--font-size-caption);">
+                        Making tool sharing simple, safe, and sustainable for everyone.
+                    </p>
+                </div>
+                
+                <!-- Quick Links -->
+                <div>
+                    <h3 style="color: var(--color-accent); margin-bottom: var(--spacing-md);">Quick Links</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: var(--spacing-xs);"><a href="#" style="color: var(--color-secondary-tint); text-decoration: none;">How it works</a></li>
+                        <li style="margin-bottom: var(--spacing-xs);"><a href="#" style="color: var(--color-secondary-tint); text-decoration: none;">Safety</a></li>
+                        <li style="margin-bottom: var(--spacing-xs);"><a href="#" style="color: var(--color-secondary-tint); text-decoration: none;">Insurance</a></li>
+                        <li style="margin-bottom: var(--spacing-xs);"><a href="#" style="color: var(--color-secondary-tint); text-decoration: none;">Support</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Community -->
+                <div>
+                    <h3 style="color: var(--color-accent); margin-bottom: var(--spacing-md);">Community</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: var(--spacing-xs);"><a href="#" style="color: var(--color-secondary-tint); text-decoration: none;">Blog</a></li>
+                        <li style="margin-bottom: var(--spacing-xs);"><a href="#" style="color: var(--color-secondary-tint); text-decoration: none;">Forum</a></li>
+                        <li style="margin-bottom: var(--spacing-xs);"><a href="#" style="color: var(--color-secondary-tint); text-decoration: none;">Events</a></li>
+                        <li style="margin-bottom: var(--spacing-xs);"><a href="#" style="color: var(--color-secondary-tint); text-decoration: none;">Newsletter</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Contact -->
+                <div>
+                    <h3 style="color: var(--color-accent); margin-bottom: var(--spacing-md);">Contact</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: var(--spacing-xs); color: var(--color-secondary-tint); font-size: var(--font-size-caption);">📧 hello@sharetools.com</li>
+                        <li style="margin-bottom: var(--spacing-xs); color: var(--color-secondary-tint); font-size: var(--font-size-caption);">📞 +44 1234567-213</li>
+                        <li style="margin-bottom: var(--spacing-xs); color: var(--color-secondary-tint); font-size: var(--font-size-caption);">📍 Glasgow, Scotland</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Copyright -->
+            <div style="border-top: 1px solid var(--color-secondary-tint); margin-top: var(--spacing-xl); padding-top: var(--spacing-lg); text-align: center;">
+                <p style="color: var(--color-secondary-tint); font-size: var(--font-size-caption); margin: 0;">
+                    © 2025 ShareTools. All rights reserved. | 
+                    <a href="#" style="color: var(--color-secondary-tint);">Privacy Policy</a> | 
+                    <a href="#" style="color: var(--color-secondary-tint);">Terms of Service</a>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Import JavaScript files -->
+    <script src="{% static 'js/components.js' %}"></script>
+    <script src="{% static 'js/browse_things.js' %}"></script>
+    
+    <!-- User state management and navigation logic -->
+    <script>
+        // User login state management
+        class UserAuthManager {
+            constructor() {
+                this.storageKey = 'sharetools_user_logged_in';
+                this.userDataKey = 'sharetools_user_data';
+                this.init();
+            }
+
+            // Initialize
+            init() {
+                this.updateNavigation();
+                this.bindEvents();
+                console.log('User authentication manager initialized');
+            }
+
+            // Check if user is logged in
+            isLoggedIn() {
+                const loginStatus = localStorage.getItem(this.storageKey);
+                const userData = localStorage.getItem(this.userDataKey);
+                const sessionLogin = sessionStorage.getItem(this.storageKey);
+                
+                return (loginStatus === 'true' && userData) || sessionLogin === 'true';
+            }
+
+            // Update navigation display
+            updateNavigation() {
+                const guestActions = document.getElementById('guest-actions');
+                const loggedInActions = document.getElementById('logged-in-actions');
+                
+                if (!guestActions || !loggedInActions) {
+                    console.warn('Navigation elements not found');
+                    return;
+                }
+
+                const isLoggedIn = this.isLoggedIn();
+                
+                if (isLoggedIn) {
+                    guestActions.style.display = 'none';
+                    loggedInActions.style.display = 'flex';
+                    console.log('Showing logged-in navigation state');
+                } else {
+                    guestActions.style.display = 'flex';
+                    loggedInActions.style.display = 'none';
+                    console.log('Showing logged-out navigation state');
+                }
+            }
+
+            // Bind events
+            bindEvents() {
+                // Listen for storage changes (cross-tab sync)
+                window.addEventListener('storage', (e) => {
+                    if (e.key === this.storageKey || e.key === this.userDataKey) {
+                        console.log('Detected cross-tab login status change');
+                        this.updateNavigation();
+                    }
+                });
+
+                // Listen for custom login events
+                window.addEventListener('userLogin', (e) => {
+                    console.log('Received user login event:', e.detail);
+                    this.updateNavigation();
+                });
+
+                // Listen for custom logout events
+                window.addEventListener('userLogout', () => {
+                    console.log('Received user logout event');
+                    this.updateNavigation();
+                });
+            }
+        }
+
+        // Global user authentication manager instance
+        let userAuthManager;
+
+        // Initialize after DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            userAuthManager = new UserAuthManager();
+        });
+
+        // Page load performance monitoring
+        window.addEventListener('load', () => {
+            if ('performance' in window) {
+                const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
+                console.log(`Browse Things page load time: ${loadTime}ms`);
+            }
+        });
+        
+        // Error monitoring
+        window.addEventListener('error', (e) => {
+            console.error('Page error:', e.error);
+        });
+    </script>
+</body>
+</html>

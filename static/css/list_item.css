@@ -1,0 +1,459 @@
+/* 物品发布页面专用样式 */
+/* 基于Figma设计稿实现 */
+
+.list-item-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: var(--spacing-2xl) var(--spacing-lg);
+}
+
+.list-item-header {
+    text-align: center;
+    margin-bottom: var(--spacing-3xl);
+}
+
+.list-item-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-md);
+}
+
+.step-container {
+    background: var(--color-background);
+    border-radius: 16px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+    padding: var(--spacing-2xl);
+    margin-bottom: var(--spacing-xl);
+}
+
+.step-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+}
+
+.step-number {
+    width: 48px;
+    height: 48px;
+    background: #F2F2F2;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    flex-shrink: 0;
+}
+
+.step-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin: 0;
+}
+
+.form-group {
+    margin-bottom: var(--spacing-lg);
+}
+
+.form-label {
+    display: block;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.form-input {
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 1px solid #E6E6E6;
+    border-radius: 8px;
+    font-size: var(--font-size-body);
+    background: var(--color-background);
+    transition: border-color var(--animation-duration) var(--animation-easing);
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(40, 121, 255, 0.1);
+}
+
+.form-textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.form-select {
+    position: relative;
+}
+
+.form-select::after {
+    content: '▼';
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: var(--color-text-secondary);
+}
+
+.category-dropdown {
+    position: relative;
+}
+
+.dropdown-arrow {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    pointer-events: none;
+}
+
+.info-text {
+    font-size: var(--font-size-body);
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-md);
+    line-height: 1.5;
+}
+
+.guarantee-info {
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-xs);
+}
+
+.guarantee-details {
+    font-size: var(--font-size-body);
+    color: var(--color-text-primary);
+    line-height: 1.5;
+}
+
+.upload-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.upload-slot {
+    aspect-ratio: 4/3;
+    background: #F2F2F2;
+    border: 1px solid #E6E6E6;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--animation-duration) var(--animation-easing);
+    position: relative;
+    overflow: hidden;
+    min-height: 120px;
+    max-height: 160px;
+}
+
+.upload-slot:hover {
+    background: #E8E8E8;
+    border-color: var(--color-primary);
+}
+
+.upload-icon {
+    width: 36px;
+    height: 36px;
+    stroke: #767676;
+    stroke-width: 2.25px;
+    pointer-events: none;
+}
+
+/* 图片预览样式 */
+.upload-slot .img-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 10px;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+/* 删除按钮样式 */
+.upload-slot .delete-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: #666;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    transition: all 0.2s ease;
+}
+
+.upload-slot .delete-btn:hover {
+    background: rgba(255, 255, 255, 1);
+    color: #ff4444;
+    transform: scale(1.1);
+}
+
+.price-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+}
+
+.price-input-group {
+    position: relative;
+}
+
+.price-input-group .currency {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: var(--font-size-body);
+    color: var(--color-text-primary);
+}
+
+.price-input-group .form-input {
+    padding-left: 25px;
+}
+
+.price-suggestions {
+    background: #F9F9F9;
+    padding: var(--spacing-lg);
+    border-radius: 8px;
+    margin-bottom: var(--spacing-lg);
+}
+
+.price-suggestions h4 {
+    margin-bottom: var(--spacing-sm);
+    color: var(--color-text-primary);
+}
+
+.price-suggestion-item {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--spacing-xs) 0;
+    font-size: var(--font-size-body);
+    color: var(--color-text-primary);
+}
+
+.btn-suggestion {
+    background: var(--color-primary);
+    color: var(--color-background);
+    border: none;
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border-radius: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all var(--animation-duration) var(--animation-easing);
+}
+
+.btn-suggestion:hover {
+    background: #1F5FCC;
+    transform: translateY(-1px);
+}
+
+.btn-location {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    background: var(--color-primary);
+    color: var(--color-background);
+    border: none;
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border-radius: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all var(--animation-duration) var(--animation-easing);
+    text-decoration: none;
+}
+
+.btn-location:hover {
+    background: #1F5FCC;
+    transform: translateY(-1px);
+}
+
+.location-icon {
+    width: 18px;
+    height: 18px;
+}
+
+.value-input-group {
+    position: relative;
+    max-width: 400px;
+}
+
+.value-input-group .currency {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: var(--font-size-body);
+    color: var(--color-text-primary);
+}
+
+.value-input-group .form-input {
+    padding-left: 25px;
+}
+
+.read-more-link {
+    color: #4428D2;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: var(--font-size-body);
+}
+
+.read-more-link:hover {
+    text-decoration: underline;
+}
+
+.publish-btn {
+    background: #FF6B84;
+    color: var(--color-background);
+    border: none;
+    padding: var(--spacing-sm) var(--spacing-xl);
+    border-radius: 16px;
+    font-size: var(--font-size-body);
+    font-weight: 700;
+    cursor: pointer;
+    transition: all var(--animation-duration) var(--animation-easing);
+    display: block;
+    margin: var(--spacing-2xl) auto 0;
+}
+
+.publish-btn:hover {
+    background: #FF5A7A;
+    transform: translateY(-1px);
+}
+
+.sidebar-info {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: var(--spacing-lg);
+    background: var(--color-background);
+    border-radius: 16px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.sidebar-logo {
+    width: 150px;
+    height: 150px;
+    margin: 0 auto var(--spacing-lg);
+    background: var(--color-surface);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+}
+
+.sidebar-text {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    line-height: 1.4;
+    text-align: center;
+}
+
+.main-content {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: var(--spacing-3xl);
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: var(--spacing-2xl) var(--spacing-lg);
+}
+
+/* 地址标签样式 */
+.location-tag-display {
+    margin-top: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.location-tag, .area-tag {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.location-tag {
+    background-color: #e3f2fd;
+    color: #1976d2;
+    border: 1px solid #bbdefb;
+}
+
+.area-tag {
+    background-color: #f3e5f5;
+    color: #7b1fa2;
+    border: 1px solid #e1bee7;
+}
+
+/* 响应式设计 */
+@media (max-width: 1024px) {
+    .main-content {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-xl);
+    }
+    
+    .sidebar-info {
+        order: -1;
+        margin-bottom: var(--spacing-xl);
+    }
+}
+
+@media (max-width: 768px) {
+    .list-item-title {
+        font-size: 2rem;
+    }
+    
+    .upload-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .price-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .main-content {
+        padding: var(--spacing-lg) var(--spacing-md);
+    }
+}
+
+@media (max-width: 576px) {
+    .upload-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .step-header {
+        flex-direction: column;
+        text-align: center;
+        gap: var(--spacing-md);
+    }
+    
+    .step-container {
+        padding: var(--spacing-lg);
+    }
+}

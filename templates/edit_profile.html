@@ -1,0 +1,1186 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ShareTools - Edit your profile and manage your account information">
+    <meta name="keywords" content="edit profile,account management,personal information,ShareTools">
+    <title>Edit Profile - ShareTools</title>
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="{% static 'css/main.css' %}" as="style">
+    <link rel="preload" href="{% static 'css/components.css' %}" as="style">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'css/components.css' %}">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔧</text></svg>">
+    
+    <style>
+        /* Edit Profile Page Specific Styles */
+        .edit-profile-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: var(--spacing-2xl) var(--spacing-lg);
+        }
+        
+        .edit-profile-header {
+            margin-bottom: var(--spacing-3xl);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+        
+        .back-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-default);
+            background: var(--color-surface);
+            border: 1px solid #E0E0E0;
+            cursor: pointer;
+            transition: all var(--animation-duration) var(--animation-easing);
+            text-decoration: none;
+            color: var(--color-text-primary);
+        }
+        
+        .back-button:hover {
+            background: var(--color-primary);
+            color: var(--color-accent);
+            border-color: var(--color-primary);
+        }
+        
+        .back-button svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+        
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--color-text-primary);
+            margin: 0;
+        }
+        
+        .profile-form-container {
+            background: var(--color-background);
+            border: 1px solid #F0F0F0;
+            border-radius: 16px;
+            padding: var(--spacing-3xl);
+            box-shadow: var(--shadow-low);
+        }
+        
+        .form-section {
+            margin-bottom: var(--spacing-3xl);
+        }
+        
+        .form-section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .section-title {
+            font-size: var(--font-size-h3);
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin-bottom: var(--spacing-lg);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+        
+        .section-icon {
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+        
+        .section-icon svg {
+            width: 100%;
+            height: 100%;
+            fill: var(--color-primary);
+        }
+        
+        .form-group {
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: var(--font-size-body);
+            font-weight: 500;
+            color: var(--color-text-primary);
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: var(--spacing-md);
+            font-size: var(--font-size-body);
+            border: 1px solid #E0E0E0;
+            border-radius: var(--radius-default);
+            background: var(--color-background);
+            transition: all var(--animation-duration) var(--animation-easing);
+            outline: none;
+        }
+        
+        .form-input:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(40, 121, 255, 0.1);
+        }
+        
+        .form-input:hover {
+            border-color: #C0C0C0;
+        }
+        
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .input-hint {
+            font-size: var(--font-size-caption);
+            color: var(--color-text-secondary);
+            margin-top: var(--spacing-xs);
+        }
+        
+        .input-error {
+            font-size: var(--font-size-caption);
+            color: var(--color-error);
+            margin-top: var(--spacing-xs);
+            display: none;
+        }
+        
+        .form-input.error {
+            border-color: var(--color-error);
+        }
+        
+        .form-input.error + .input-error {
+            display: block;
+        }
+        
+        .avatar-section {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .avatar-preview {
+            width: 80px;
+            height: 80px;
+            border-radius: var(--radius-round);
+            background: linear-gradient(135deg, var(--color-primary), var(--color-primary-tint));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--color-accent);
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .avatar-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .avatar-upload {
+            flex: 1;
+        }
+        
+        .upload-button {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: var(--color-surface);
+            border: 1px solid #E0E0E0;
+            border-radius: var(--radius-default);
+            cursor: pointer;
+            transition: all var(--animation-duration) var(--animation-easing);
+            font-size: var(--font-size-body);
+            color: var(--color-text-primary);
+        }
+        
+        .upload-button:hover {
+            background: var(--color-primary);
+            color: var(--color-accent);
+            border-color: var(--color-primary);
+        }
+        
+        .upload-button svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-3xl);
+            padding-top: var(--spacing-xl);
+            border-top: 1px solid #F0F0F0;
+        }
+        
+        .btn-save {
+            background: var(--color-primary);
+            color: var(--color-accent);
+            border: none;
+            padding: var(--spacing-md) var(--spacing-xl);
+            border-radius: var(--radius-default);
+            font-size: var(--font-size-body);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--animation-duration) var(--animation-easing);
+            min-width: 120px;
+        }
+        
+        .btn-save:hover {
+            background: #1F5FCC;
+            transform: translateY(-1px);
+        }
+        
+        .btn-save:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-cancel {
+            background: transparent;
+            color: var(--color-text-secondary);
+            border: 1px solid #E0E0E0;
+            padding: var(--spacing-md) var(--spacing-xl);
+            border-radius: var(--radius-default);
+            font-size: var(--font-size-body);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--animation-duration) var(--animation-easing);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 120px;
+        }
+        
+        .btn-cancel:hover {
+            background: var(--color-surface);
+            border-color: #C0C0C0;
+        }
+        
+        .save-indicator {
+            display: none;
+            align-items: center;
+            gap: var(--spacing-sm);
+            color: var(--color-success);
+            font-size: var(--font-size-caption);
+            margin-left: var(--spacing-md);
+        }
+        
+        .save-indicator.show {
+            display: flex;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .edit-profile-container {
+                padding: var(--spacing-lg) var(--spacing-md);
+            }
+            
+            .page-title {
+                font-size: 2rem;
+            }
+            
+            .profile-form-container {
+                padding: var(--spacing-lg);
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .btn-save,
+            .btn-cancel {
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .edit-profile-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: var(--spacing-sm);
+            }
+            
+            .avatar-section {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            
+            .section-title {
+                font-size: var(--font-size-body);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <header class="header" role="banner">
+        <div class="container">
+            <div class="header-content">
+                <!-- Logo Area -->
+                <a href="{% url 'home' %}" class="logo" aria-label="ShareTools Home">
+                    <img src="{% static 'images/ShareTools Web Logo.png' %}" alt="ShareTools Logo" class="logo-image">
+                    <span>ShareTools</span>
+                </a>
+                
+                <!-- Navigation Menu -->
+                <nav class="nav-menu" role="navigation" aria-label="Main Navigation">
+                    <ul>
+                        <li class="nav-item">
+                            <a href="{% url 'browse_things' %}" class="nav-link">The Things</a>
+                        </li>
+                        <li class="nav-item nav-dropdown">
+                            <a href="{% url 'locations' %}" class="nav-link">Locations</a>
+                            <div class="dropdown-menu">
+                                <div class="dropdown-content">
+                                    <div class="dropdown-section">
+                                        <h4 class="dropdown-section-title">NORTH GLASGOW</h4>
+                                        <ul class="dropdown-list">
+                                            <li><a href="{% url 'browse_things' %}?location=maryhill" class="dropdown-link">Maryhill</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=hillhead" class="dropdown-link">Hillhead</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=partick" class="dropdown-link">Partick</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=springburn" class="dropdown-link">Springburn</a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="dropdown-section">
+                                        <h4 class="dropdown-section-title">SOUTH GLASGOW</h4>
+                                        <ul class="dropdown-list">
+                                            <li><a href="{% url 'browse_things' %}?location=gorbals" class="dropdown-link">Gorbals</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=pollokshields" class="dropdown-link">Pollokshields</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=shawlands" class="dropdown-link">Shawlands</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=giffnock" class="dropdown-link">Giffnock</a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="dropdown-section">
+                                        <h4 class="dropdown-section-title">EAST GLASGOW</h4>
+                                        <ul class="dropdown-list">
+                                            <li><a href="{% url 'browse_things' %}?location=dennistoun" class="dropdown-link">Dennistoun</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=bridgeton" class="dropdown-link">Bridgeton</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=calton" class="dropdown-link">Calton</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=parkhead" class="dropdown-link">Parkhead</a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="dropdown-section">
+                                        <h4 class="dropdown-section-title">WEST GLASGOW</h4>
+                                        <ul class="dropdown-list">
+                                            <li><a href="{% url 'browse_things' %}?location=finnieston" class="dropdown-link">Finnieston</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=kelvingrove" class="dropdown-link">Kelvingrove</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=byres-road" class="dropdown-link">Byres Road</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'about' %}" class="nav-link">About</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'list_item' %}" class="nav-link">List an Item</a>
+                        </li>
+                    </ul>
+                </nav>
+                
+                <!-- User Actions -->
+                <div class="nav-actions">
+                    <button class="cart-icon" aria-label="Shopping Cart" title="View Cart">
+                        🛒
+                    </button>
+                    
+                    <!-- Guest state buttons -->
+                    <div id="guest-actions" class="user-state-actions">
+                        <a href="{% url 'login' %}" class="btn btn-secondary">Sign in</a>
+                        <a href="{% url 'login' %}#signup" class="btn btn-primary">Join</a>
+                    </div>
+                    
+                    <!-- Logged in state buttons -->
+                    <div id="logged-in-actions" class="user-state-actions" style="display: none;">
+                        <a href="{% url 'profile' %}" class="btn btn-secondary">Profile</a>
+                        <a href="#" class="btn btn-primary" onclick="signOut()">Sign Out</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main role="main" class="edit-profile-container">
+        <!-- Header -->
+        <div class="edit-profile-header">
+            <a href="{% url 'profile' %}" class="back-button" aria-label="Back to Profile" title="Back to Profile">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M19 12H5M12 19L5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </a>
+            <h1 class="page-title">Edit Profile</h1>
+        </div>
+
+        <!-- Profile Form -->
+        <div class="profile-form-container">
+            <form id="profileForm" class="profile-form">
+                <!-- Avatar Section -->
+                <div class="form-section">
+                    <h2 class="section-title">
+                        <div class="section-icon">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <path d="M20 21V19C20 16.7909 18.2091 15 16 15H8C5.79086 15 4 16.7909 4 19V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        Avatar Settings
+                    </h2>
+                    
+                    <div class="avatar-section">
+                        <div class="avatar-preview" id="avatarPreview">
+                            <span id="avatarInitial">U</span>
+                        </div>
+                        <div class="avatar-upload">
+                            <label for="avatarInput" class="upload-button">
+                                <svg viewBox="0 0 24 24" fill="none">
+                                    <path d="M14.8284 12L16.2426 13.4142L11.4142 18.2426C9.84315 19.8137 7.34315 19.8137 5.77208 18.2426C4.20101 16.6716 4.20101 14.1716 5.77208 12.6005L12.0711 6.30154C13.2132 5.15945 15.0711 5.15945 16.2132 6.30154C17.3553 7.44364 17.3553 9.30154 16.2132 10.4436L10.6213 16.0355C10.2308 16.426 9.59763 16.426 9.20711 16.0355C8.81658 15.6449 8.81658 15.0118 9.20711 14.6213L13.7929 10.0355" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                Choose Avatar
+                            </label>
+                            <input type="file" id="avatarInput" accept="image/*" style="display: none;">
+                            <div class="input-hint">Supports JPG, PNG formats, file size up to 2MB</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Basic Information -->
+                <div class="form-section">
+                    <h2 class="section-title">
+                        <div class="section-icon">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <path d="M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z" stroke="currentColor" stroke-width="2"/>
+                                <path d="M12 14C8.13401 14 5 17.134 5 21H19C19 17.134 15.866 14 12 14Z" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        Basic Information
+                    </h2>
+                    
+                    <div class="form-group">
+                        <label for="username" class="form-label">Username *</label>
+                        <input type="text" id="username" name="username" class="form-input" placeholder="Enter your username" required>
+                        <div class="input-hint">Username will be displayed publicly on the platform, 3-20 characters</div>
+                        <div class="input-error">Please enter a valid username (3-20 characters)</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="displayName" class="form-label">Display Name</label>
+                        <input type="text" id="displayName" name="displayName" class="form-input" placeholder="Enter your display name">
+                        <div class="input-hint">Display name can contain letters, numbers and special characters</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email" class="form-label">Email Address *</label>
+                        <input type="email" id="email" name="email" class="form-input" placeholder="Enter your email address" required>
+                        <div class="input-hint">Email is used for important notifications and will not be displayed publicly</div>
+                        <div class="input-error">Please enter a valid email address</div>
+                    </div>
+                </div>
+
+                <!-- Contact Information -->
+                <div class="form-section">
+                    <h2 class="section-title">
+                        <div class="section-icon">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <path d="M22 12C22 17.5228 17.5228 22 12 22C10.1786 22 8.47087 21.513 7 20.6622C5.97196 20.1035 4.85714 19.8627 3.75 20.0129L2 20.2C1.44772 20.2652 1 19.8174 1 19.2604V17.5C1 16.1193 1.38071 14.8304 2.05025 13.7402C1.38071 12.6500 1 11.3611 1 10V8C1 4.13401 4.13401 1 8 1H12C17.5228 1 22 5.47715 22 11V12Z" stroke="currentColor" stroke-width="2"/>
+                                <path d="M14.5 8.5C14.5 9.60457 13.6046 10.5 12.5 10.5C11.3954 10.5 10.5 9.60457 10.5 8.5C10.5 7.39543 11.3954 6.5 12.5 6.5C13.6046 6.5 14.5 7.39543 14.5 8.5Z" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        Contact Information
+                    </h2>
+                    
+                    <div class="form-group">
+                        <label for="phone" class="form-label">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" class="form-input" placeholder="Enter your phone number">
+                        <div class="input-hint">Phone number is only used for emergency contact and will not be displayed publicly</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location" class="form-label">Location</label>
+                        <input type="text" id="location" name="location" class="form-input" placeholder="Enter your location">
+                        <div class="input-hint">Location information helps match nearby tool sharing opportunities</div>
+                    </div>
+                </div>
+
+                <!-- Bio Section -->
+                <div class="form-section">
+                    <h2 class="section-title">
+                        <div class="section-icon">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <path d="M14 2H6C4.89543 2 4 2.89543 4 4V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V8L14 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <polyline points="14,2 14,8 20,8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <line x1="16" y1="13" x2="8" y2="13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <line x1="16" y1="17" x2="8" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <polyline points="10,9 9,9 8,9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        Bio
+                    </h2>
+                    
+                    <div class="form-group">
+                        <label for="bio" class="form-label">Bio</label>
+                        <textarea id="bio" name="bio" class="form-input form-textarea" placeholder="Tell us about yourself and let other users get to know you better..."></textarea>
+                        <div class="input-hint">Bio will be displayed on your profile page, maximum 500 characters</div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="form-actions">
+                    <button type="submit" class="btn-save">
+                        Save Changes
+                    </button>
+                    <a href="{% url 'profile' %}" class="btn-cancel">
+                        Cancel
+                    </a>
+                    <div class="save-indicator" id="saveIndicator">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Saved successfully
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="section" style="background: var(--color-secondary); color: var(--color-accent); padding: var(--spacing-2xl) 0;" role="contentinfo">
+        <div class="container">
+            <div class="grid grid-4" style="gap: var(--spacing-xl);">
+                <!-- Company Info -->
+                <div>
+                    <div class="logo" style="color: var(--color-accent); margin-bottom: var(--spacing-md);">
+                        <div class="logo-icon">🔧</div>
+                        <span>ShareTools</span>
+                    </div>
+                    <p style="color: var(--color-secondary-tint); font-size: var(--font-size-caption);">
+                        Making tool sharing simple, safe, and sustainable for everyone.
+                    </p>
+                </div>
+                
+                <!-- Quick Links -->
+                <div>
+                    <h3 style="color: var(--color-accent); margin-bottom: var(--spacing-md);">Quick Links</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: var(--spacing-xs);"><a href="#" style="color: var(--color-secondary-tint); text-decoration: none;">How it works</a></li>
+                        <li style="margin-bottom: var(--spacing-xs);"><a href="#" style="color: var(--color-secondary-tint); text-decoration: none;">Safety</a></li>
+                        <li style="margin-bottom: var(--spacing-xs);"><a href="#" style="color: var(--color-secondary-tint); text-decoration: none;">Insurance</a></li>
+                        <li style="margin-bottom: var(--spacing-xs);"><a href="#" style="color: var(--color-secondary-tint); text-decoration: none;">Support</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Community -->
+                <div>
+                    <h3 style="color: var(--color-accent); margin-bottom: var(--spacing-md);">Community</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: var(--spacing-xs);"><a href="#" style="color: var(--color-secondary-tint); text-decoration: none;">Blog</a></li>
+                        <li style="margin-bottom: var(--spacing-xs);"><a href="#" style="color: var(--color-secondary-tint); text-decoration: none;">Forum</a></li>
+                        <li style="margin-bottom: var(--spacing-xs);"><a href="#" style="color: var(--color-secondary-tint); text-decoration: none;">Events</a></li>
+                        <li style="margin-bottom: var(--spacing-xs);"><a href="#" style="color: var(--color-secondary-tint); text-decoration: none;">Newsletter</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Contact -->
+                <div>
+                    <h3 style="color: var(--color-accent); margin-bottom: var(--spacing-md);">Contact</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: var(--spacing-xs); color: var(--color-secondary-tint); font-size: var(--font-size-caption);">📧 hello@sharetools.com</li>
+                        <li style="margin-bottom: var(--spacing-xs); color: var(--color-secondary-tint); font-size: var(--font-size-caption);">📞 +44 1234567-213</li>
+                        <li style="margin-bottom: var(--spacing-xs); color: var(--color-secondary-tint); font-size: var(--font-size-caption);">📍 </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Copyright -->
+            <div style="border-top: 1px solid var(--color-secondary-tint); margin-top: var(--spacing-xl); padding-top: var(--spacing-lg); text-align: center;">
+                <p style="color: var(--color-secondary-tint); font-size: var(--font-size-caption); margin: 0;">
+                    © 2025 ShareTools. All rights reserved. | 
+                    <a href="#" style="color: var(--color-secondary-tint);">Privacy Policy</a> | 
+                    <a href="#" style="color: var(--color-secondary-tint);">Terms of Service</a>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="{% static 'js/api-config.js' %}"></script>
+    <script src="{% static 'js/components.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    
+    <!-- User State Management Styles and Scripts -->
+    <style>
+        /* User state related styles */
+        .user-state-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .user-state-actions .btn {
+            transition: all 0.3s ease;
+        }
+        
+        /* Login state switching animation */
+        .user-state-actions.fade-out {
+            opacity: 0;
+            transform: translateX(10px);
+        }
+        
+        .user-state-actions.fade-in {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    </style>
+    
+    <!-- User State Management Script -->
+    <script>
+        // User login state management
+        class UserAuthManager {
+            constructor() {
+                this.storageKey = 'sharetools_user_logged_in';
+                this.userDataKey = 'sharetools_user_data';
+                this.init();
+            }
+
+            // Initialize
+            init() {
+                this.updateNavigation();
+                this.bindEvents();
+                console.log('User authentication manager initialized successfully');
+            }
+
+            // Check if user is logged in
+            isLoggedIn() {
+                // Check login status in localStorage
+                const loginStatus = localStorage.getItem(this.storageKey);
+                const userData = localStorage.getItem(this.userDataKey);
+                
+                // Check sessionStorage (for session-level login status)
+                const sessionLogin = sessionStorage.getItem(this.storageKey);
+                
+                return (loginStatus === 'true' && userData) || sessionLogin === 'true';
+            }
+
+            // Set login status
+            setLoginStatus(isLoggedIn, userData = null, rememberMe = false) {
+                if (isLoggedIn) {
+                    // Set login status
+                    if (rememberMe) {
+                        localStorage.setItem(this.storageKey, 'true');
+                        if (userData) {
+                            localStorage.setItem(this.userDataKey, JSON.stringify(userData));
+                        }
+                    } else {
+                        // Keep logged in only during session
+                        sessionStorage.setItem(this.storageKey, 'true');
+                        if (userData) {
+                            sessionStorage.setItem(this.userDataKey, JSON.stringify(userData));
+                        }
+                    }
+                    console.log('User login status set');
+                } else {
+                    // Clear login status
+                    localStorage.removeItem(this.storageKey);
+                    localStorage.removeItem(this.userDataKey);
+                    sessionStorage.removeItem(this.storageKey);
+                    sessionStorage.removeItem(this.userDataKey);
+                    console.log('User login status cleared');
+                }
+                
+                this.updateNavigation();
+            }
+
+            // Get user data
+            getUserData() {
+                const localData = localStorage.getItem(this.userDataKey);
+                const sessionData = sessionStorage.getItem(this.userDataKey);
+                
+                if (localData) {
+                    try {
+                        return JSON.parse(localData);
+                    } catch (e) {
+                        console.error('Failed to parse user data:', e);
+                    }
+                }
+                
+                if (sessionData) {
+                    try {
+                        return JSON.parse(sessionData);
+                    } catch (e) {
+                        console.error('Failed to parse session user data:', e);
+                    }
+                }
+                
+                return null;
+            }
+
+            // Update navigation display
+            updateNavigation() {
+                const guestActions = document.getElementById('guest-actions');
+                const loggedInActions = document.getElementById('logged-in-actions');
+                
+                if (!guestActions || !loggedInActions) {
+                    console.warn('Navigation elements not found');
+                    return;
+                }
+
+                const isLoggedIn = this.isLoggedIn();
+                
+                if (isLoggedIn) {
+                    // Show logged in navigation
+                    this.showElement(loggedInActions);
+                    this.hideElement(guestActions);
+                    console.log('Showing logged in navigation state');
+                } else {
+                    // Show guest navigation
+                    this.showElement(guestActions);
+                    this.hideElement(loggedInActions);
+                    console.log('Showing guest navigation state');
+                }
+            }
+
+            // Show element (with animation)
+            showElement(element) {
+                element.style.display = 'flex';
+                element.classList.remove('fade-out');
+                element.classList.add('fade-in');
+            }
+
+            // Hide element (with animation)
+            hideElement(element) {
+                element.classList.remove('fade-in');
+                element.classList.add('fade-out');
+                setTimeout(() => {
+                    element.style.display = 'none';
+                }, 300);
+            }
+
+            // Bind events
+            bindEvents() {
+                // Listen for storage changes (cross-tab synchronization)
+                window.addEventListener('storage', (e) => {
+                    if (e.key === this.storageKey || e.key === this.userDataKey) {
+                        console.log('Detected cross-tab login status change');
+                        this.updateNavigation();
+                    }
+                });
+
+                // Listen for custom login events
+                window.addEventListener('userLogin', (e) => {
+                    console.log('Received user login event:', e.detail);
+                    this.setLoginStatus(true, e.detail.userData, e.detail.rememberMe);
+                });
+
+                // Listen for custom logout events
+                window.addEventListener('userLogout', () => {
+                    console.log('Received user logout event');
+                    this.setLoginStatus(false);
+                });
+            }
+        }
+
+        // Initialize user authentication manager
+        let userAuthManager;
+        document.addEventListener('DOMContentLoaded', () => {
+            userAuthManager = new UserAuthManager();
+            window.userAuthManager = userAuthManager;
+        });
+    </script>
+    
+    <!-- Edit Profile Page Specific Script -->
+    <script>
+        // Edit Profile functionality management
+        class EditProfileManager {
+            constructor() {
+                this.form = document.getElementById('profileForm');
+                this.avatarInput = document.getElementById('avatarInput');
+                this.avatarPreview = document.getElementById('avatarPreview');
+                this.avatarInitial = document.getElementById('avatarInitial');
+                this.saveIndicator = document.getElementById('saveIndicator');
+                this.init();
+            }
+
+            // Initialize
+            init() {
+                this.loadUserData();
+                this.bindEvents();
+                this.setupValidation();
+                console.log('Edit profile manager initialized successfully');
+            }
+
+            // Load user data
+            loadUserData() {
+                try {
+                    // Get user data from localStorage or sessionStorage
+                    const userData = localStorage.getItem('sharetools_user_data') || 
+                                   sessionStorage.getItem('sharetools_user_data');
+                    
+                    if (userData) {
+                        const user = JSON.parse(userData);
+                        this.populateForm(user);
+                        console.log('User data loaded successfully');
+                    } else {
+                        // Use default data
+                        this.populateForm({
+                            username: 'sharetools_user',
+                            displayName: 'ShareTools User',
+                            email: 'user@sharetools.com',
+                            phone: '',
+                            location: 'Glasgow, UK',
+                            bio: ''
+                        });
+                        console.log('Using default user data');
+                    }
+                } catch (error) {
+                    console.error('Failed to load user data:', error);
+                }
+            }
+
+            // Populate form data
+            populateForm(userData) {
+                const fields = ['username', 'displayName', 'email', 'phone', 'location', 'bio'];
+                
+                fields.forEach(field => {
+                    const input = document.getElementById(field);
+                    if (input && userData[field]) {
+                        input.value = userData[field];
+                    }
+                });
+
+                // Update avatar initial letter
+                const username = userData.username || userData.displayName || 'U';
+                this.avatarInitial.textContent = username.charAt(0).toUpperCase();
+            }
+
+            // Bind events
+            bindEvents() {
+                // Form submit event
+                this.form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.handleSubmit();
+                });
+
+                // Avatar upload event
+                this.avatarInput.addEventListener('change', (e) => {
+                    this.handleAvatarUpload(e);
+                });
+
+                // Real-time validation
+                const inputs = this.form.querySelectorAll('.form-input');
+                inputs.forEach(input => {
+                    input.addEventListener('blur', () => {
+                        this.validateField(input);
+                    });
+                    
+                    input.addEventListener('input', () => {
+                        // Remove error state
+                        input.classList.remove('error');
+                    });
+                });
+
+                // Keyboard shortcuts
+                document.addEventListener('keydown', (e) => {
+                    if (e.ctrlKey && e.key === 's') {
+                        e.preventDefault();
+                        this.handleSubmit();
+                    }
+                });
+            }
+
+            // Setup form validation
+            setupValidation() {
+                // Username validation
+                const usernameInput = document.getElementById('username');
+                usernameInput.addEventListener('input', () => {
+                    const value = usernameInput.value.trim();
+                    if (value.length > 0 && (value.length < 3 || value.length > 20)) {
+                        usernameInput.classList.add('error');
+                    } else {
+                        usernameInput.classList.remove('error');
+                    }
+                });
+
+                // Email validation
+                const emailInput = document.getElementById('email');
+                emailInput.addEventListener('input', () => {
+                    const value = emailInput.value.trim();
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (value.length > 0 && !emailRegex.test(value)) {
+                        emailInput.classList.add('error');
+                    } else {
+                        emailInput.classList.remove('error');
+                    }
+                });
+            }
+
+            // Validate individual field
+            validateField(input) {
+                const value = input.value.trim();
+                let isValid = true;
+
+                switch (input.id) {
+                    case 'username':
+                        isValid = value.length >= 3 && value.length <= 20;
+                        break;
+                    case 'email':
+                        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                        isValid = emailRegex.test(value);
+                        break;
+                    default:
+                        isValid = true;
+                }
+
+                if (!isValid) {
+                    input.classList.add('error');
+                } else {
+                    input.classList.remove('error');
+                }
+
+                return isValid;
+            }
+
+            // Validate entire form
+            validateForm() {
+                const requiredFields = ['username', 'email'];
+                let isValid = true;
+
+                requiredFields.forEach(fieldId => {
+                    const input = document.getElementById(fieldId);
+                    if (!this.validateField(input)) {
+                        isValid = false;
+                    }
+                });
+
+                return isValid;
+            }
+
+            // Handle avatar upload
+            handleAvatarUpload(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                // Validate file type
+                                    if (!file.type.startsWith('image/')) {
+                        alert('Please select an image file');
+                        return;
+                    }
+
+                    // Validate file size (2MB)
+                    if (file.size > 2 * 1024 * 1024) {
+                        alert('Image file size cannot exceed 2MB');
+                        return;
+                    }
+
+                // Preview avatar
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    this.avatarPreview.innerHTML = `<img src="${e.target.result}" alt="Avatar Preview">`;
+                };
+                reader.readAsDataURL(file);
+
+                console.log('Avatar file selected:', file.name);
+            }
+
+            // Handle form submission
+            async handleSubmit() {
+                console.log('Starting to save profile');
+
+                // Validate form
+                if (!this.validateForm()) {
+                    alert('Please check and correct the errors in the form');
+                    return;
+                }
+
+                // Collect form data
+                const formData = this.collectFormData();
+                
+                // Show save status
+                const saveButton = this.form.querySelector('.btn-save');
+                const originalText = saveButton.textContent;
+                saveButton.textContent = 'Saving...';
+                saveButton.disabled = true;
+
+                try {
+                    // Simulate save process
+                    await this.saveUserProfile(formData);
+                    
+                    // Show success prompt
+                    this.showSaveSuccess();
+                    
+                    console.log('Profile saved successfully');
+                } catch (error) {
+                    console.error('Failed to save profile:', error);
+                    alert('Save failed, please try again');
+                } finally {
+                    // Restore button state
+                    saveButton.textContent = originalText;
+                    saveButton.disabled = false;
+                }
+            }
+
+            // Collect form data
+            collectFormData() {
+                const formData = new FormData();
+                const inputs = this.form.querySelectorAll('.form-input');
+                
+                inputs.forEach(input => {
+                    if (input.type === 'file') {
+                        if (input.files[0]) {
+                            formData.append(input.name, input.files[0]);
+                        }
+                    } else {
+                        formData.append(input.name, input.value.trim());
+                    }
+                });
+
+                return formData;
+            }
+
+            // Save user profile
+            async saveUserProfile(formData) {
+                // Simulate API call
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        // Update local storage
+                        const userData = {
+                            username: formData.get('username'),
+                            displayName: formData.get('displayName'),
+                            email: formData.get('email'),
+                            phone: formData.get('phone'),
+                            location: formData.get('location'),
+                            bio: formData.get('bio'),
+                            updatedAt: new Date().toISOString()
+                        };
+
+                        // Save to localStorage (if previously persistent login)
+                        const existingData = localStorage.getItem('sharetools_user_data');
+                        if (existingData) {
+                            localStorage.setItem('sharetools_user_data', JSON.stringify(userData));
+                        }
+
+                        // Save to sessionStorage (if previously session login)
+                        const sessionData = sessionStorage.getItem('sharetools_user_data');
+                        if (sessionData) {
+                            sessionStorage.setItem('sharetools_user_data', JSON.stringify(userData));
+                        }
+
+                        resolve(userData);
+                    }, 1500); // Simulate network delay
+                });
+            }
+
+            // Show save success prompt
+            showSaveSuccess() {
+                this.saveIndicator.classList.add('show');
+                
+                setTimeout(() => {
+                    this.saveIndicator.classList.remove('show');
+                }, 3000);
+            }
+        }
+
+        // User authentication check
+        function checkUserAuth() {
+            const isLoggedIn = localStorage.getItem('sharetools_user_logged_in') === 'true' || 
+                              sessionStorage.getItem('sharetools_user_logged_in') === 'true';
+            
+            if (!isLoggedIn) {
+                alert('Please log in first to edit your profile');
+                window.location.href = '{% url "login" %}';
+                return false;
+            }
+            
+            return true;
+        }
+
+        // Sign out functionality
+        async function signOut() {
+            if (confirm('Are you sure you want to sign out? Unsaved changes will be lost.')) {
+                console.log('User signing out');
+                
+                // Clear all login-related local storage
+                localStorage.removeItem('sharetools_user_logged_in');
+                localStorage.removeItem('sharetools_user_data');
+                localStorage.removeItem('sharetools_auth_token');
+                sessionStorage.removeItem('sharetools_user_logged_in');
+                sessionStorage.removeItem('sharetools_user_data');
+                sessionStorage.removeItem('sharetools_auth_token');
+                
+                // Trigger custom logout event
+                window.dispatchEvent(new CustomEvent('userLogout'));
+                
+                alert('Successfully signed out, redirecting to login page...');
+                
+                // Redirect to login page
+                setTimeout(() => {
+                    window.location.href = '{% url "login" %}';
+                }, 1000);
+            }
+        }
+
+        // Page load initialization
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Edit profile page loaded successfully');
+            
+            // Check user login status
+            if (!checkUserAuth()) {
+                return;
+            }
+            
+            // Initialize edit profile manager
+            window.editProfileManager = new EditProfileManager();
+            
+            // Initialize user state management (if needed)
+            if (typeof UserAuthManager !== 'undefined') {
+                window.userAuthManager = new UserAuthManager();
+            }
+        });
+
+        // Confirm before leaving page
+        window.addEventListener('beforeunload', function(e) {
+            // Check if form has unsaved changes
+            const form = document.getElementById('profileForm');
+            if (form) {
+                const inputs = form.querySelectorAll('.form-input');
+                let hasChanges = false;
+                
+                // More complex change detection logic can be added here
+                // Currently simplified processing
+                
+                if (hasChanges) {
+                    e.preventDefault();
+                    e.returnValue = 'You have unsaved changes, are you sure you want to leave this page?';
+                    return e.returnValue;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

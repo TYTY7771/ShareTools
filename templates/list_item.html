@@ -1,0 +1,1975 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ShareTools - Publish your items, share idle tools with the community">
+    <meta name="keywords" content="publish items,tool sharing,item rental,ShareTools">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>Publish Item - ShareTools</title>
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="{% static 'css/main.css' %}" as="style">
+    <link rel="preload" href="{% static 'css/components.css' %}" as="style">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'css/components.css' %}">
+    <link rel="stylesheet" href="{% static 'css/list_item.css' %}">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔧</text></svg>">
+    
+    <!-- API Configuration - load first -->
+    <script src="{% static 'js/api-config.js' %}"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <header class="header" role="banner">
+        <div class="container">
+            <div class="header-content">
+                <!-- Logo Area -->
+                <a href="{% url 'home' %}" class="logo" aria-label="ShareTools Home">
+                    <img src="{% static 'images/ShareTools Web Logo.png' %}" alt="ShareTools Logo" class="logo-image">
+                    <span>ShareTools</span>
+                </a>
+                
+                <!-- Navigation Menu -->
+                <nav class="nav-menu" role="navigation" aria-label="Main Navigation">
+                    <ul>
+                        <li class="nav-item">
+                            <a href="{% url 'browse_things' %}" class="nav-link">The Things</a>
+                        </li>
+                        <li class="nav-item nav-dropdown">
+                            <a href="{% url 'locations' %}" class="nav-link">Locations</a>
+                            <div class="dropdown-menu">
+                                <div class="dropdown-content">
+                                    <div class="dropdown-section">
+                                        <h4 class="dropdown-section-title">NORTH GLASGOW</h4>
+                                        <ul class="dropdown-list">
+                                            <li><a href="{% url 'browse_things' %}?location=maryhill" class="dropdown-link">Maryhill</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=hillhead" class="dropdown-link">Hillhead</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=partick" class="dropdown-link">Partick</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=springburn" class="dropdown-link">Springburn</a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="dropdown-section">
+                                        <h4 class="dropdown-section-title">SOUTH GLASGOW</h4>
+                                        <ul class="dropdown-list">
+                                            <li><a href="{% url 'browse_things' %}?location=gorbals" class="dropdown-link">Gorbals</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=pollokshields" class="dropdown-link">Pollokshields</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=shawlands" class="dropdown-link">Shawlands</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=giffnock" class="dropdown-link">Giffnock</a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="dropdown-section">
+                                        <h4 class="dropdown-section-title">EAST GLASGOW</h4>
+                                        <ul class="dropdown-list">
+                                            <li><a href="{% url 'browse_things' %}?location=dennistoun" class="dropdown-link">Dennistoun</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=bridgeton" class="dropdown-link">Bridgeton</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=calton" class="dropdown-link">Calton</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=parkhead" class="dropdown-link">Parkhead</a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="dropdown-section">
+                                        <h4 class="dropdown-section-title">WEST GLASGOW</h4>
+                                        <ul class="dropdown-list">
+                                            <li><a href="{% url 'browse_things' %}?location=finnieston" class="dropdown-link">Finnieston</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=kelvingrove" class="dropdown-link">Kelvingrove</a></li>
+                                            <li><a href="{% url 'browse_things' %}?location=byres-road" class="dropdown-link">Byres Road</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'about' %}" class="nav-link">About</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'list_item' %}" class="nav-link">List an Item</a>
+                        </li>
+                    </ul>
+                </nav>
+                
+                <!-- User Actions -->
+                <div class="nav-actions">
+                    <button class="cart-icon" aria-label="Shopping Cart" title="View Cart">
+                        🛒
+                    </button>
+                    
+                    <!-- Buttons for guest state -->
+                    <div id="guest-actions" class="user-state-actions">
+                        <a href="{% url 'login' %}" class="btn btn-secondary">Sign in</a>
+                        <a href="{% url 'login' %}#signup" class="btn btn-primary">Join</a>
+                    </div>
+                    
+                    <!-- Buttons for logged-in state -->
+                    <div id="logged-in-actions" class="user-state-actions" style="display: none;">
+                        <a href="{% url 'profile' %}" class="btn btn-secondary">Profile</a>
+                        <a href="{% url 'list_item' %}" class="btn btn-primary">List an Item</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main role="main" class="main-content">
+        <!-- Form Section -->
+        <div class="form-section">
+            <!-- Header -->
+            <div class="list-item-header">
+                <h1 class="list-item-title">List your item</h1>
+            </div>
+            
+            <!-- Form start -->
+            <form id="list-item-form" enctype="multipart/form-data">
+
+            <!-- Step 1: Select Category -->
+            <div class="step-container">
+                <div class="step-header">
+                    <div class="step-number">1</div>
+                    <h2 class="step-title">Select category</h2>
+                </div>
+                
+                <div class="form-group">
+                    <div class="category-dropdown">
+                        <select class="form-input" id="category" name="category">
+                            <option value="">Choose a category...</option>
+                            <option value="tools">Tools</option>
+                            <option value="electronics">Electronics</option>
+                            <option value="garden">Garden Equipment</option>
+                            <option value="sports">Sports Equipment</option>
+                            <option value="automotive">Automotive</option>
+                            <option value="home">Home & DIY</option>
+                        </select>
+                        <div class="dropdown-arrow">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="guarantee-info">Guarantee information for <span id="selected-category">selected category</span>:</div>
+                <div class="guarantee-details">Claims are covered up to £1000 without any excess.</div>
+            </div>
+
+            <!-- Step 2: Describe Your Item -->
+            <div class="step-container">
+                <div class="step-header">
+                    <div class="step-number">2</div>
+                    <h2 class="step-title">Describe your item</h2>
+                </div>
+                
+                <div class="form-group">
+                    <label for="title" class="form-label">Title</label>
+                    <input type="text" id="title" name="title" class="form-input" placeholder="Enter item title">
+                </div>
+                
+                <div class="form-group">
+                    <label for="description" class="form-label">Describe the item in as much detail as possible</label>
+                    <textarea id="description" name="description" class="form-input form-textarea" placeholder="Provide detailed description of your item..."></textarea>
+                </div>
+            </div>
+
+            <!-- Step 3: Pictures -->
+            <div class="step-container">
+                <div class="step-header">
+                    <div class="step-number">3</div>
+                    <h2 class="step-title">Pictures</h2>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Upload pictures in landscape format (4:3)</label>
+                    <p class="info-text">In order for the pictures to look good, they should be landscaped. Portrait picture will not be fully displayed.</p>
+                    
+                    <div class="upload-grid">
+                        <div class="upload-slot" onclick="document.getElementById('file-input-1').click()">
+                            <svg class="upload-icon" viewBox="0 0 24 24" fill="none">
+                                <path d="M21 15V19C21 20.1 20.1 21 19 21H5C3.9 21 3 20.1 3 19V15" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M7 10L12 15L17 10" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M12 15V3" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <input type="file" id="file-input-1" accept="image/*" style="display: none;">
+                        </div>
+                        <div class="upload-slot" onclick="document.getElementById('file-input-2').click()">
+                            <svg class="upload-icon" viewBox="0 0 24 24" fill="none">
+                                <path d="M21 15V19C21 20.1 20.1 21 19 21H5C3.9 21 3 20.1 3 19V15" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M7 10L12 15L17 10" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M12 15V3" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <input type="file" id="file-input-2" accept="image/*" style="display: none;">
+                        </div>
+                        <div class="upload-slot" onclick="document.getElementById('file-input-3').click()">
+                            <svg class="upload-icon" viewBox="0 0 24 24" fill="none">
+                                <path d="M21 15V19C21 20.1 20.1 21 19 21H5C3.9 21 3 20.1 3 19V15" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M7 10L12 15L17 10" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M12 15V3" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <input type="file" id="file-input-3" accept="image/*" style="display: none;">
+                        </div>
+                        <div class="upload-slot" onclick="document.getElementById('file-input-4').click()">
+                            <svg class="upload-icon" viewBox="0 0 24 24" fill="none">
+                                <path d="M21 15V19C21 20.1 20.1 21 19 21H5C3.9 21 3 20.1 3 19V15" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M7 10L12 15L17 10" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M12 15V3" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <input type="file" id="file-input-4" accept="image/*" style="display: none;">
+                        </div>
+                        <div class="upload-slot" onclick="document.getElementById('file-input-5').click()">
+                            <svg class="upload-icon" viewBox="0 0 24 24" fill="none">
+                                <path d="M21 15V19C21 20.1 20.1 21 19 21H5C3.9 21 3 20.1 3 19V15" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M7 10L12 15L17 10" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M12 15V3" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <input type="file" id="file-input-5" accept="image/*" style="display: none;">
+                        </div>
+                        <div class="upload-slot" onclick="document.getElementById('file-input-6').click()">
+                            <svg class="upload-icon" viewBox="0 0 24 24" fill="none">
+                                <path d="M21 15V19C21 20.1 20.1 21 19 21H5C3.9 21 3 20.1 3 19V15" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M7 10L12 15L17 10" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M12 15V3" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <input type="file" id="file-input-6" accept="image/*" style="display: none;">
+                        </div>
+                        <div class="upload-slot" onclick="document.getElementById('file-input-7').click()">
+                            <svg class="upload-icon" viewBox="0 0 24 24" fill="none">
+                                <path d="M21 15V19C21 20.1 20.1 21 19 21H5C3.9 21 3 20.1 3 19V15" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M7 10L12 15L17 10" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M12 15V3" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <input type="file" id="file-input-7" accept="image/*" style="display: none;">
+                        </div>
+                        <div class="upload-slot" onclick="document.getElementById('file-input-8').click()">
+                            <svg class="upload-icon" viewBox="0 0 24 24" fill="none">
+                                <path d="M21 15V19C21 20.1 20.1 21 19 21H5C3.9 21 3 20.1 3 19V15" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M7 10L12 15L17 10" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M12 15V3" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <input type="file" id="file-input-8" accept="image/*" style="display: none;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4: Price -->
+            <div class="step-container">
+                <div class="step-header">
+                    <div class="step-number">4</div>
+                    <h2 class="step-title">Price</h2>
+                </div>
+                
+                <p class="info-text">You can offer lower prices for longer bookings. The rental price is calculated according to the lowest possible price level.</p>
+                
+                <div class="price-grid">
+                    <div class="form-group">
+                        <label for="price-1day" class="form-label">Price for 1 day (required)</label>
+                        <div class="price-input-group">
+                            <span class="currency">£</span>
+                            <input type="number" id="price-1day" name="price-1day" class="form-input" placeholder="0.00" step="0.01" min="0.5" max="1000">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="price-3days" class="form-label">Price for 3 days</label>
+                        <div class="price-input-group">
+                            <span class="currency">£</span>
+                            <input type="number" id="price-3days" name="price-3days" class="form-input" placeholder="0.00" step="0.01" min="1" max="3000">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="price-7days" class="form-label">Price for 7 days</label>
+                        <div class="price-input-group">
+                            <span class="currency">£</span>
+                            <input type="number" id="price-7days" name="price-7days" class="form-input" placeholder="0.00" step="0.01" min="2" max="7000">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="price-suggestions">
+                    <h4>Price suggestions for <span id="category-name">xxx</span></h4>
+                    <div class="price-suggestion-item">
+                        <span>Price per day:</span>
+                        <span>£<span id="suggest-1day">0.00</span></span>
+                    </div>
+                    <div class="price-suggestion-item">
+                        <span>Price for 3 days:</span>
+                        <span>£<span id="suggest-3days">0.00</span></span>
+                    </div>
+                    <div class="price-suggestion-item">
+                        <span>Price for 7 days:</span>
+                        <span>£<span id="suggest-7days">0.00</span></span>
+                    </div>
+                </div>
+                
+                <button type="button" class="btn-suggestion" onclick="usePriceSuggestions()">Use price suggestions</button>
+            </div>
+
+            <!-- Step 5: Location -->
+            <div class="step-container">
+                <div class="step-header">
+                    <div class="step-number">5</div>
+                    <h2 class="step-title">Where can the item be handed over?</h2>
+                </div>
+                
+                <p class="info-text">Your exact address will not be shown before the rentals is paid and verified.</p>
+                
+                <div class="form-group">
+                    <label for="location" class="form-label">Select location area</label>
+                    <div class="category-dropdown">
+                        <select class="form-input" id="location" name="location">
+                            <option value="">Choose a location...</option>
+                            <optgroup label="NORTH GLASGOW">
+                                <option value="maryhill">Maryhill</option>
+                                <option value="hillhead">Hillhead</option>
+                                <option value="partick">Partick</option>
+                                <option value="springburn">Springburn</option>
+                            </optgroup>
+                            <optgroup label="SOUTH GLASGOW">
+                                <option value="gorbals">Gorbals</option>
+                                <option value="pollokshields">Pollokshields</option>
+                                <option value="shawlands">Shawlands</option>
+                                <option value="giffnock">Giffnock</option>
+                            </optgroup>
+                            <optgroup label="EAST GLASGOW">
+                                <option value="dennistoun">Dennistoun</option>
+                                <option value="bridgeton">Bridgeton</option>
+                                <option value="calton">Calton</option>
+                                <option value="parkhead">Parkhead</option>
+                            </optgroup>
+                            <optgroup label="WEST GLASGOW">
+                                <option value="finnieston">Finnieston</option>
+                                <option value="kelvingrove">Kelvingrove</option>
+                                <option value="byres-road">Byres Road</option>
+                            </optgroup>
+                        </select>
+                        <div class="dropdown-arrow">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="address" class="form-label">Detailed address</label>
+                    <input type="text" id="address" name="address" class="form-input" placeholder="Enter your detailed address">
+                </div>
+            </div>
+
+            <!-- Step 6: Value -->
+            <div class="step-container">
+                <div class="step-header">
+                    <div class="step-number">6</div>
+                    <h2 class="step-title">Value of item</h2>
+                </div>
+                
+                <div class="form-group">
+                    <div class="value-input-group">
+                        <span class="currency">£</span>
+                        <input type="number" id="item-value" name="item-value" class="form-input" placeholder="0.00" step="0.01">
+                    </div>
+                </div>
+                
+                <p class="info-text">If you would sell it today on e.g. Facebook Marketplace - what would it be worth?</p>
+                
+                <a href="#" class="read-more-link">Read more about item valuation</a>
+            </div>
+
+            <!-- Publish Button -->
+            <button type="submit" class="publish-btn">Publish listing!</button>
+            </form>
+            <!-- Form end -->
+        </div>
+
+        <!-- Sidebar -->
+        <div class="sidebar-info">
+            <div class="sidebar-logo">
+                🔧
+            </div>
+            <p class="sidebar-text">
+                Join the sharing action<br><br>
+                💜 Rent, share, and exchange various idle items with local partners<br><br>
+                📌Learn maintenance, DIY and other skills to avoid waste by renting equipment
+            </p>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="section" style="background: var(--color-secondary); color: var(--color-accent); padding: var(--spacing-2xl) 0;" role="contentinfo">
+        <div class="container">
+            <div class="grid grid-4" style="gap: var(--spacing-xl);">
+                <!-- Company Info -->
+                <div>
+                    <div class="logo" style="color: var(--color-accent); margin-bottom: var(--spacing-md);">
+                        <div class="logo-icon">🔧</div>
+                        <span>ShareTools</span>
+                    </div>
+                    <p style="color: var(--color-secondary-tint); font-size: var(--font-size-caption);">
+                        Making tool sharing simple, safe, and sustainable for everyone.
+                    </p>
+                </div>
+                
+                <!-- Quick Links -->
+                <div>
+                    <h3 style="color: var(--color-accent); margin-bottom: var(--spacing-md);">Quick Links</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: var(--spacing-xs);"><a href="#" style="color: var(--color-secondary-tint); text-decoration: none;">How it works</a></li>
+                        <li style="margin-bottom: var(--spacing-xs);"><a href="#" style="color: var(--color-secondary-tint); text-decoration: none;">Safety</a></li>
+                        <li style="margin-bottom: var(--spacing-xs);"><a href="#" style="color: var(--color-secondary-tint); text-decoration: none;">Insurance</a></li>
+                        <li style="margin-bottom: var(--spacing-xs);"><a href="#" style="color: var(--color-secondary-tint); text-decoration: none;">Support</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Community -->
+                <div>
+                    <h3 style="color: var(--color-accent); margin-bottom: var(--spacing-md);">Community</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: var(--spacing-xs);"><a href="#" style="color: var(--color-secondary-tint); text-decoration: none;">Blog</a></li>
+                        <li style="margin-bottom: var(--spacing-xs);"><a href="#" style="color: var(--color-secondary-tint); text-decoration: none;">Forum</a></li>
+                        <li style="margin-bottom: var(--spacing-xs);"><a href="#" style="color: var(--color-secondary-tint); text-decoration: none;">Events</a></li>
+                        <li style="margin-bottom: var(--spacing-xs);"><a href="#" style="color: var(--color-secondary-tint); text-decoration: none;">Newsletter</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Contact -->
+                <div>
+                    <h3 style="color: var(--color-accent); margin-bottom: var(--spacing-md);">Contact</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: var(--spacing-xs); color: var(--color-secondary-tint); font-size: var(--font-size-caption);">📧 hello@sharetools.com</li>
+                        <li style="margin-bottom: var(--spacing-xs); color: var(--color-secondary-tint); font-size: var(--font-size-caption);">📞 +44 1234567-213</li>
+                        <li style="margin-bottom: var(--spacing-xs); color: var(--color-secondary-tint); font-size: var(--font-size-caption);">📍 </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Copyright -->
+            <div style="border-top: 1px solid var(--color-secondary-tint); margin-top: var(--spacing-xl); padding-top: var(--spacing-lg); text-align: center;">
+                <p style="color: var(--color-secondary-tint); font-size: var(--font-size-caption); margin: 0;">
+                    © 2025 ShareTools. All rights reserved. | 
+                    <a href="#" style="color: var(--color-secondary-tint);">Privacy Policy</a> | 
+                    <a href="#" style="color: var(--color-secondary-tint);">Terms of Service</a>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="{% static 'js/components.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/list_item.js' %}"></script>
+    
+    <!-- User state management styles and scripts -->
+    <style>
+        /* User state related styles */
+        .user-state-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .user-state-actions .btn {
+            transition: all 0.3s ease;
+        }
+        
+        /* Login state transition animation */
+        .user-state-actions.fade-out {
+            opacity: 0;
+            transform: translateX(10px);
+        }
+        
+        .user-state-actions.fade-in {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    </style>
+    
+    <!-- User state management script -->
+    <script>
+        // User login state management
+        class UserAuthManager {
+            constructor() {
+                this.storageKey = 'sharetools_user_logged_in';
+                this.userDataKey = 'sharetools_user_data';
+                this.init();
+            }
+
+            // Initialize
+            init() {
+                this.updateNavigation();
+                this.bindEvents();
+                console.log('User authentication manager initialized');
+            }
+
+            // Check if user is logged in
+            isLoggedIn() {
+                // Check login status in localStorage
+                const loginStatus = localStorage.getItem(this.storageKey);
+                const userData = localStorage.getItem(this.userDataKey);
+                
+                // Check sessionStorage (for session-level login status)
+                const sessionLogin = sessionStorage.getItem(this.storageKey);
+                
+                return (loginStatus === 'true' && userData) || sessionLogin === 'true';
+            }
+
+            // Set login status
+            setLoginStatus(isLoggedIn, userData = null, rememberMe = false) {
+                if (isLoggedIn) {
+                    // Set login status
+                    if (rememberMe) {
+                        localStorage.setItem(this.storageKey, 'true');
+                        if (userData) {
+                            localStorage.setItem(this.userDataKey, JSON.stringify(userData));
+                        }
+                    } else {
+                        // Keep login only during session
+                        sessionStorage.setItem(this.storageKey, 'true');
+                        if (userData) {
+                            sessionStorage.setItem(this.userDataKey, JSON.stringify(userData));
+                        }
+                    }
+                    console.log('User login status has been set');
+                } else {
+                    // Clear login status
+                    localStorage.removeItem(this.storageKey);
+                    localStorage.removeItem(this.userDataKey);
+                    sessionStorage.removeItem(this.storageKey);
+                    sessionStorage.removeItem(this.userDataKey);
+                    console.log('User login status has been cleared');
+                }
+                
+                this.updateNavigation();
+            }
+
+            // Get user data
+            getUserData() {
+                const localData = localStorage.getItem(this.userDataKey);
+                const sessionData = sessionStorage.getItem(this.userDataKey);
+                
+                if (localData) {
+                    try {
+                        return JSON.parse(localData);
+                    } catch (e) {
+                        console.error('Failed to parse user data:', e);
+                    }
+                }
+                
+                if (sessionData) {
+                    try {
+                        return JSON.parse(sessionData);
+                    } catch (e) {
+                        console.error('Failed to parse session user data:', e);
+                    }
+                }
+                
+                return null;
+            }
+
+            // Update navigation display
+            updateNavigation() {
+                const guestActions = document.getElementById('guest-actions');
+                const loggedInActions = document.getElementById('logged-in-actions');
+                
+                if (!guestActions || !loggedInActions) {
+                    console.warn('Navigation elements not found');
+                    return;
+                }
+
+                const isLoggedIn = this.isLoggedIn();
+                
+                if (isLoggedIn) {
+                    // Show logged-in navigation state
+                    this.showElement(loggedInActions);
+                    this.hideElement(guestActions);
+                    console.log('Showing logged-in navigation state');
+                } else {
+                    // Show logged-out navigation state
+                    this.showElement(guestActions);
+                    this.hideElement(loggedInActions);
+                    console.log('Showing logged-out navigation state');
+                }
+            }
+
+            // Show element (with animation)
+            showElement(element) {
+                element.style.display = 'flex';
+                element.classList.remove('fade-out');
+                element.classList.add('fade-in');
+            }
+
+            // Hide element (with animation)
+            hideElement(element) {
+                element.classList.remove('fade-in');
+                element.classList.add('fade-out');
+                setTimeout(() => {
+                    element.style.display = 'none';
+                }, 300);
+            }
+
+            // Bind events
+            bindEvents() {
+                // Listen for storage changes (cross-tab sync)
+                window.addEventListener('storage', (e) => {
+                    if (e.key === this.storageKey || e.key === this.userDataKey) {
+                        console.log('Detected cross-tab login status change');
+                        this.updateNavigation();
+                    }
+                });
+
+                // Listen for custom login events
+                window.addEventListener('userLogin', (e) => {
+                    console.log('Received user login event:', e.detail);
+                    this.setLoginStatus(true, e.detail.userData, e.detail.rememberMe);
+                });
+
+                // Listen for custom logout events
+                window.addEventListener('userLogout', () => {
+                    console.log('Received user logout event');
+                    this.setLoginStatus(false);
+                });
+            }
+        }
+
+        // Initialize user authentication manager
+        let userAuthManager;
+        document.addEventListener('DOMContentLoaded', () => {
+            userAuthManager = new UserAuthManager();
+            window.userAuthManager = userAuthManager;
+            
+            // Wait for API configuration to load, then initialize
+            initializeApp();
+        });
+        
+        // Application initialization function
+        async function initializeApp() {
+            let attempts = 0;
+            const maxAttempts = 10;
+            
+            const tryInitialize = () => {
+                attempts++;
+                
+                if (checkAPIAvailability()) {
+                    console.log('API configuration loaded, starting form initialization...');
+                    initListItemForm();
+                    return;
+                }
+                
+                if (attempts < maxAttempts) {
+                    console.log(`API configuration not ready, waiting... (${attempts}/${maxAttempts})`);
+                    setTimeout(tryInitialize, 200);
+                } else {
+                    console.warn('API configuration load timeout, will use fallback method');
+                    initListItemForm();
+                }
+            };
+            
+            tryInitialize();
+        }
+        
+        // Initialize form handling
+        function initListItemForm() {
+            console.log('Starting form initialization...');
+            
+            const form = document.getElementById('list-item-form');
+            if (!form) {
+                console.error('Form element not found');
+                return;
+            }
+            
+            // Bind form submit event
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await handleItemSubmit(form);
+            });
+            
+            // 绑定发布按钮事件
+            const publishBtn = form.querySelector('.publish-btn');
+            if (publishBtn) {
+                publishBtn.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    await handleItemSubmit(form);
+                });
+            }
+
+            // 初始化文件上传监听器
+            initFileUploadListeners();
+            
+            // 将函数注册到全局作用域，以便在模态框中调用
+            window.goToItemPage = goToItemPage;
+            window.closeSuccessModal = closeSuccessModal;
+            
+            // 初始化分类变化监听器
+            const categorySelect = form.querySelector('#category');
+            if (categorySelect) {
+                categorySelect.addEventListener('change', updatePriceSuggestions);
+            }
+            
+            console.log('表单初始化完成');
+        }
+        
+        // 收集表单数据
+        async function collectFormData(form) {
+            const categoryValue = form.querySelector('#category')?.value || '';
+            
+            // 获取分类ID
+            let categoryId = null;
+            if (categoryValue) {
+                try {
+                    if (typeof window.CategoriesAPI !== 'undefined') {
+                        const categories = await window.CategoriesAPI.getCategories();
+                        const category = categories.results?.find(cat => cat.name === categoryValue);
+                        categoryId = category ? category.id : null;
+                    } else {
+                        console.warn('CategoriesAPI未定义，使用分类名称作为ID');
+                        // 如果API不可用，尝试使用预定义的分类映射
+                        const categoryMap = {
+                            'tools': 1,
+                            'electronics': 2,
+                            'garden': 3,
+                            'sports': 4,
+                            'automotive': 5,
+                            'home': 6
+                        };
+                        categoryId = categoryMap[categoryValue] || 1;
+                    }
+                } catch (error) {
+                    console.error('获取分类失败:', error);
+                    // 使用默认分类ID
+                    categoryId = 1;
+                }
+            }
+            
+            // 获取默认位置ID（临时解决方案）
+            let locationId = 1; // 默认位置ID
+            try {
+                if (typeof window.LocationsAPI !== 'undefined') {
+                    const locations = await window.LocationsAPI.getLocations();
+                    if (locations.results && locations.results.length > 0) {
+                        locationId = locations.results[0].id;
+                    }
+                } else {
+                    console.warn('LocationsAPI未定义，使用默认位置ID');
+                    locationId = 1;
+                }
+            } catch (error) {
+                console.error('获取位置失败:', error);
+                locationId = 1; // 确保有默认值
+            }
+            
+            // 构建表单数据 - 修复字段名匹配问题
+            const formData = {
+                title: form.querySelector('#title')?.value?.trim() || '',
+                description: form.querySelector('#description')?.value?.trim() || '',
+                category_id: categoryId,
+                location_id: locationId,
+                item_value: form.querySelector('#item-value')?.value?.trim() || '',
+                status: 'active',
+                // 修复价格字段名匹配
+                price_1_day: form.querySelector('#price-1day')?.value?.trim() || '',
+                price_3_days: form.querySelector('#price-3days')?.value?.trim() || '',
+                price_7_days: form.querySelector('#price-7days')?.value?.trim() || ''
+            };
+            
+            console.log('收集到的表单数据:', formData);
+            return formData;
+        }
+
+        // 检查API可用性
+        function checkAPIAvailability() {
+            const apis = ['ItemsAPI', 'ItemImagesAPI', 'ItemPricesAPI', 'CategoriesAPI', 'LocationsAPI'];
+            const missing = apis.filter(api => typeof window[api] === 'undefined');
+            
+            if (missing.length > 0) {
+                console.warn('以下API未正确加载:', missing);
+                console.log('将使用备用方法处理请求');
+                return false;
+            } else {
+                console.log('所有API已正确加载');
+                return true;
+            }
+        }
+        
+        // 物品发布表单处理
+        function initListItemForm() {
+            const form = document.getElementById('list-item-form');
+            if (!form) {
+                console.error('表单元素未找到');
+                return;
+            }
+            
+            // 表单提交处理
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await handleItemSubmit(form);
+            });
+            
+            // 价格建议功能
+            const categorySelect = document.getElementById('category');
+            if (categorySelect) {
+                categorySelect.addEventListener('change', updatePriceSuggestions);
+            }
+        }
+        
+        // 处理物品提交
+        async function handleItemSubmit(form) {
+            const submitBtn = form.querySelector('.publish-btn');
+            const originalText = submitBtn.textContent;
+            
+            let itemId = null;
+            let response = null;
+            let uploadedImages = [];
+            let createdPrices = [];
+            let hasErrors = false;
+            let errorMessages = [];
+            
+            try {
+                // 显示加载状态
+                submitBtn.disabled = true;
+                submitBtn.textContent = '发布中...';
+                
+                // 收集表单数据
+                const formData = await collectFormData(form);
+                console.log('📋 表单数据收集完成:', formData);
+                
+                // 验证表单数据（异步）
+                const isValid = await validateFormData(formData);
+                if (!isValid) {
+                    console.log('❌ 表单验证失败');
+                    // 恢复按钮状态
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
+                    return;
+                }
+                console.log('✅ 表单验证通过');
+                
+                // 第一步：创建物品
+                submitBtn.textContent = '创建商品...';
+                console.log('🛠️ 开始创建物品...');
+                
+                response = await window.ItemsAPI.createItem(formData);
+                
+                if (!response || !response.id) {
+                    throw new Error('创建物品失败：API返回无效响应');
+                }
+                
+                itemId = response.id;
+                console.log('✅ 商品创建成功，ID:', itemId);
+                
+                // 第二步：上传图片
+                submitBtn.textContent = '上传图片...';
+                console.log('📸 开始上传图片...');
+                
+                try {
+                    uploadedImages = await uploadItemImages(itemId, form);
+                    console.log('✅ 图片上传完成，上传数量:', uploadedImages.length);
+                } catch (imageError) {
+                    console.error('⚠️ 图片上传过程中发生错误:', imageError);
+                    errorMessages.push('部分图片上传失败');
+                    hasErrors = true;
+                }
+                
+                // 第三步：创建价格记录
+                submitBtn.textContent = '设置价格...';
+                console.log('💰 开始创建价格...');
+                
+                try {
+                    createdPrices = await createItemPrices(itemId, formData);
+                    console.log('✅ 价格创建完成，价格数量:', createdPrices.length);
+                } catch (priceError) {
+                    console.error('⚠️ 价格创建过程中发生错误:', priceError);
+                    errorMessages.push('价格设置失败：' + priceError.message);
+                    hasErrors = true;
+                }
+                
+                // 发布成功（即使有部分错误）
+                submitBtn.textContent = '发布完成！';
+                console.log('🎉 物品发布流程完成！');
+                console.log(`- 物品ID: ${itemId}`);
+                console.log(`- 标题: ${formData.title}`);
+                console.log(`- 图片数量: ${uploadedImages.length}`);
+                console.log(`- 价格档次: ${createdPrices.length}`);
+                console.log(`- 是否有错误: ${hasErrors}`);
+                
+                // 构建成功消息
+                const successMessage = buildSuccessMessage(response, uploadedImages, createdPrices, hasErrors, errorMessages);
+                showEnhancedSuccessMessage(successMessage, itemId);
+                
+                // 重置表单
+                form.reset();
+                resetImageSlots();
+                
+                // 不需要恢复按钮状态，因为会跳转页面
+                return;
+                
+            } catch (error) {
+                console.error('❌ Item publishing failed:', error);
+                
+                // 如果物品已创建但后续步骤失败，提供更详细的错误信息
+                if (itemId) {
+                    const detailedError = `Item created successfully but there was a problem during publishing: ${error.message}. Item ID: ${itemId}, you can manually edit and complete it later.`;
+                    showErrorMessage(detailedError);
+                    
+                    // 恢复按钮状态
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
+                    
+                    // 提供跳转选项
+                    setTimeout(() => {
+                        if (confirm('Item has been created but may be incomplete. Would you like to view the item details page?')) {
+                            window.location.href = `/product/${itemId}/`;
+                        }
+                    }, 3000);
+                } else {
+                    showErrorMessage('Publishing failed: ' + (error.message || 'Unknown error'));
+                    // 恢复按钮状态
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
+                }
+            }
+        }
+        
+
+        
+        // 上传物品图片 - 使用批量上传API
+        async function uploadItemImages(itemId, form) {
+            const uploadedImages = [];
+            const selectedImages = getSelectedImages();
+            
+            if (selectedImages.length === 0) {
+                console.log('No images selected, skipping upload');
+                return uploadedImages;
+            }
+            
+            console.log(`Starting batch upload of ${selectedImages.length} image(s)`);
+            
+            try {
+                // 构建批量上传的FormData
+                const formData = new FormData();
+                formData.append('item_id', itemId);
+                
+                selectedImages.forEach((imageInfo, index) => {
+                    formData.append(`image_${index + 1}`, imageInfo.file);
+                    
+                    // 显示上传中状态
+                    updateImageUploadStatus(imageInfo.index, 'uploading');
+                });
+                
+                // 发送批量上传请求
+                const response = await fetch('/api/item-images/bulk_upload/', {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRFToken': getCSRFToken()
+                    },
+                    credentials: 'include',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('✅ Batch upload successful:', result);
+                    
+                    if (result.success && result.uploaded_images) {
+                        // 更新所有上传成功的图片状态
+                        selectedImages.forEach((imageInfo, index) => {
+                            if (index < result.uploaded_images.length) {
+                                updateImageUploadStatus(imageInfo.index, 'success');
+                            }
+                        });
+                        
+                        uploadedImages.push(...result.uploaded_images);
+                    }
+                    
+                    // 记录任何错误
+                    if (result.errors && result.errors.length > 0) {
+                        console.warn('Some images had errors:', result.errors);
+                    }
+                } else {
+                    // 批量上传失败，尝试逐个上传
+                    console.warn('Batch upload failed, falling back to individual uploads');
+                    return await uploadImagesIndividually(itemId, form, selectedImages);
+                }
+                
+            } catch (error) {
+                console.error('Batch upload error:', error);
+                // 批量上传失败，尝试逐个上传
+                return await uploadImagesIndividually(itemId, form, selectedImages);
+            }
+            
+            console.log(`Image upload complete, successfully uploaded ${uploadedImages.length}/${selectedImages.length} image(s)`);
+            return uploadedImages;
+        }
+        
+        // 备用的逐个上传函数
+        async function uploadImagesIndividually(itemId, form, selectedImages) {
+            const uploadedImages = [];
+            
+            console.log('Using individual upload method...');
+            
+            for (const imageInfo of selectedImages) {
+                try {
+                    console.log(`Uploading image ${imageInfo.index}: ${imageInfo.file.name}`);
+                    
+                    // 显示上传中状态
+                    updateImageUploadStatus(imageInfo.index, 'uploading');
+                    
+                    const formData = new FormData();
+                    formData.append('item', itemId);
+                    formData.append('image', imageInfo.file);
+                    formData.append('is_primary', imageInfo.index === 1); // 第一张图片为主图
+                    formData.append('alt_text', form.querySelector('#title')?.value?.trim() || 'Product image');
+                    formData.append('order', imageInfo.index);
+                    
+                    const response = await fetch('/api/item-images/', {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRFToken': getCSRFToken()
+                        },
+                        credentials: 'include',
+                        body: formData
+                    });
+                    
+                    if (response.ok) {
+                        const result = await response.json();
+                        uploadedImages.push(result);
+                        console.log(`✅ Image ${imageInfo.index} uploaded successfully:`, result);
+                        
+                        // 更新UI显示上传成功
+                        updateImageUploadStatus(imageInfo.index, 'success');
+                    } else {
+                        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+                        console.error(`❌ Image ${imageInfo.index} upload failed:`, response.status, errorData);
+                        
+                        // 更新UI显示上传失败
+                        updateImageUploadStatus(imageInfo.index, 'error');
+                        
+                        // 如果是主图上传失败，抛出错误
+                        if (imageInfo.index === 1) {
+                            throw new Error(`Primary image upload failed: ${errorData.error || 'Unknown error'}`);
+                        }
+                    }
+                } catch (error) {
+                    console.error(`Image ${imageInfo.index} upload exception:`, error);
+                    updateImageUploadStatus(imageInfo.index, 'error');
+                    
+                    // 如果是主图上传失败，抛出错误
+                    if (imageInfo.index === 1) {
+                        throw error;
+                    }
+                }
+            }
+            
+            return uploadedImages;
+        }
+        
+        // 更新图片上传状态显示
+        function updateImageUploadStatus(imageIndex, status) {
+            const fileInput = document.getElementById(`file-input-${imageIndex}`);
+            const slot = fileInput?.parentNode;
+            
+            if (slot) {
+                const statusIcon = slot.querySelector('.upload-status') || document.createElement('div');
+                statusIcon.className = 'upload-status';
+                statusIcon.style.cssText = `
+                    position: absolute;
+                    bottom: 5px;
+                    left: 5px;
+                    padding: 2px 6px;
+                    border-radius: 4px;
+                    font-size: 12px;
+                    font-weight: bold;
+                    z-index: 11;
+                `;
+                
+                if (status === 'success') {
+                    statusIcon.innerHTML = '✓ Uploaded';
+                    statusIcon.style.background = 'rgba(0, 128, 0, 0.9)';
+                    statusIcon.style.color = 'white';
+                } else if (status === 'error') {
+                    statusIcon.innerHTML = '✗ Failed';
+                    statusIcon.style.background = 'rgba(255, 0, 0, 0.9)';
+                    statusIcon.style.color = 'white';
+                } else if (status === 'uploading') {
+                    statusIcon.innerHTML = '⏳ Uploading';
+                    statusIcon.style.background = 'rgba(0, 123, 255, 0.9)';
+                    statusIcon.style.color = 'white';
+                }
+                
+                const previewContainer = slot.querySelector('div');
+                if (previewContainer && !previewContainer.contains(statusIcon)) {
+                    previewContainer.appendChild(statusIcon);
+                }
+            }
+        }
+        
+        // 手动上传图片的备用方法
+        async function uploadImagesManually(itemId, form) {
+            const uploadedImages = [];
+            const API_BASE = 'http://127.0.0.1:8000/api';
+            
+            // 获取所有文件输入
+            for (let i = 1; i <= 8; i++) {
+                const fileInput = form.querySelector(`#file-input-${i}`);
+                if (fileInput && fileInput.files && fileInput.files[0]) {
+                    const file = fileInput.files[0];
+                    const isPrimary = i === 1; // 第一张图片作为主图
+                    const altText = form.querySelector('#title')?.value?.trim() || '商品图片';
+                    const order = i - 1;
+                    
+                    try {
+                        console.log(`手动上传第${i}张图片:`, file.name);
+                        
+                        const formData = new FormData();
+                        formData.append('item', itemId);
+                        formData.append('image', file);
+                        formData.append('is_primary', isPrimary);
+                        formData.append('alt_text', altText);
+                        formData.append('order', order);
+                        
+                        const response = await fetch(`${API_BASE}/item-images/`, {
+                            method: 'POST',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'X-CSRFToken': getCSRFToken()
+                            },
+                            credentials: 'include',
+                            body: formData
+                        });
+                        
+                        if (response.ok) {
+                            const result = await response.json();
+                            uploadedImages.push(result);
+                            console.log(`手动上传第${i}张图片成功:`, result);
+                        } else {
+                            const errorText = await response.text();
+                            console.error(`图片${i}上传失败:`, response.status, errorText);
+                        }
+                    } catch (error) {
+                        console.error(`图片${i}上传错误:`, error);
+                    }
+                }
+            }
+            
+            return uploadedImages;
+        }
+        
+        // 创建物品价格
+        async function createItemPrices(itemId, formData) {
+            const createdPrices = [];
+            
+            // 检查API是否可用，如果不可用则使用手动方法
+            if (typeof window.ItemPricesAPI === 'undefined') {
+                console.warn('ItemPricesAPI 未定义，使用手动创建价格方法');
+                return await createPricesManually(itemId, formData);
+            }
+            
+            // 创建1天价格（必须）
+            if (formData.price_1_day && parseFloat(formData.price_1_day) > 0) {
+                try {
+                    const price1Day = await window.ItemPricesAPI.createPrice(itemId, 1, formData.price_1_day);
+                    createdPrices.push(price1Day);
+                    console.log('✅ 1天价格创建成功:', price1Day);
+                } catch (error) {
+                    console.error('❌ 1天价格创建失败:', error);
+                    // 1天价格创建失败，记录错误但不阻止流程
+                    const errorMsg = '创建1天价格失败：' + (error.message || '未知错误');
+                    console.warn('⚠️ ' + errorMsg);
+                    // 不抛出异常，让调用者处理
+                }
+            }
+            
+            // 创建3天价格（可选）
+            if (formData.price_3_days && parseFloat(formData.price_3_days) > 0) {
+                try {
+                    const price3Days = await window.ItemPricesAPI.createPrice(itemId, 3, formData.price_3_days);
+                    createdPrices.push(price3Days);
+                    console.log('3天价格创建成功:', price3Days);
+                } catch (error) {
+                    console.error('3天价格创建失败:', error);
+                    // 3天价格创建失败不阻止流程
+                }
+            }
+            
+            // 创建7天价格（可选）
+            if (formData.price_7_days && parseFloat(formData.price_7_days) > 0) {
+                try {
+                    const price7Days = await window.ItemPricesAPI.createPrice(itemId, 7, formData.price_7_days);
+                    createdPrices.push(price7Days);
+                    console.log('7天价格创建成功:', price7Days);
+                } catch (error) {
+                    console.error('7天价格创建失败:', error);
+                    // 7天价格创建失败不阻止流程
+                }
+            }
+            
+            return createdPrices;
+        }
+        
+        // 手动创建价格的备用方法
+        async function createPricesManually(itemId, formData) {
+            const createdPrices = [];
+            const API_BASE = 'http://127.0.0.1:8000/api';
+            
+            const pricesData = [
+                { duration: 1, price: formData.price_1_day },
+                { duration: 3, price: formData.price_3_days },
+                { duration: 7, price: formData.price_7_days }
+            ];
+            
+            for (const priceInfo of pricesData) {
+                if (priceInfo.price && parseFloat(priceInfo.price) > 0) {
+                    try {
+                        const response = await fetch(`${API_BASE}/item-prices/`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            credentials: 'include',
+                            body: JSON.stringify({
+                                item: itemId,
+                                duration_days: priceInfo.duration,
+                                price: priceInfo.price,
+                                is_active: true
+                            })
+                        });
+                        
+                        if (response.ok) {
+                            const result = await response.json();
+                            createdPrices.push(result);
+                            console.log(`${priceInfo.duration}天价格创建成功:`, result);
+                        } else {
+                            const errorText = await response.text();
+                            console.error(`❌ ${priceInfo.duration}天价格创建失败:`, response.status, errorText);
+                            if (priceInfo.duration === 1) {
+                                console.warn('⚠️ 1天价格创建失败，但不阻止发布流程');
+                            }
+                        }
+                    } catch (error) {
+                        console.error(`❌ ${priceInfo.duration}天价格创建错误:`, error);
+                        if (priceInfo.duration === 1) {
+                            console.warn('⚠️ 1天价格创建失败，但不阻止发布流程');
+                        }
+                    }
+                }
+            }
+            
+            return createdPrices;
+        }
+        
+        // 重置图片上传区域
+        function resetImageSlots() {
+            for (let i = 1; i <= 8; i++) {
+                const fileInput = document.getElementById(`file-input-${i}`);
+                const slot = fileInput?.parentNode;
+                
+                if (fileInput) {
+                    fileInput.value = '';
+                }
+                
+                if (slot) {
+                    slot.style.backgroundImage = '';
+                    slot.innerHTML = `
+                        <svg class="upload-icon" viewBox="0 0 24 24" fill="none">
+                            <path d="M21 15V19C21 20.1 20.1 21 19 21H5C3.9 21 3 20.1 3 19V15" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M7 10L12 15L17 10" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 15V3" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <input type="file" id="file-input-${i}" accept="image/*" style="display: none;">
+                    `;
+                }
+            }
+            
+            // 重新绑定事件监听器
+            initFileUploadListeners();
+        }
+        
+        // 表单验证函数 - 使用客户端验证（避免不必要的API调用）
+        function validateFormData(data) {
+            console.log('开始验证表单数据...', data);
+            return validateFormDataLocally(data);
+        }
+        
+        // 客户端验证函数
+        function validateFormDataLocally(data) {
+            const errors = [];
+            
+            // 基本信息验证
+            if (!data.title || data.title.length < 2) {
+                errors.push('Please enter a title with at least 2 characters');
+            }
+            
+            if (!data.description || data.description.length < 10) {
+                errors.push('Please enter a description with at least 10 characters');
+            }
+            
+            // 类别验证 - 检查原始选择值而不是API映射
+            const categorySelect = document.getElementById('category');
+            if (!categorySelect || !categorySelect.value) {
+                errors.push('Please select a category');
+            }
+            
+            // 图片验证 - 使用getSelectedImages函数进行可靠检测
+            let hasImages = false;
+            let imageCount = 0;
+            
+            try {
+                // 使用现有的getSelectedImages函数
+                const selectedImages = getSelectedImages();
+                hasImages = selectedImages.length > 0;
+                imageCount = selectedImages.length;
+                
+                console.log(`🔍 Image validation using getSelectedImages: hasImages=${hasImages}, imageCount=${imageCount}`);
+                
+                if (hasImages) {
+                    selectedImages.forEach((img, index) => {
+                        console.log(`✅ Found image ${index + 1}: ${img.file.name}, size: ${(img.file.size / 1024 / 1024).toFixed(2)}MB, slot: ${img.index}`);
+                    });
+                } else {
+                    // 如果没有找到图片，检查每个输入元素的状态
+                    console.log('🔍 No images found, checking individual file inputs:');
+                    for (let i = 1; i <= 8; i++) {
+                        const fileInput = document.getElementById(`file-input-${i}`);
+                        console.log(`- Input ${i}: exists=${!!fileInput}, files=${fileInput?.files?.length || 0}, value="${fileInput?.value || 'empty'}"`);
+                    }
+                }
+            } catch (error) {
+                console.error('❌ Error in image validation using getSelectedImages:', error);
+                
+                // 备用验证方法：检查DOM元素
+                for (let i = 1; i <= 8; i++) {
+                    const fileInput = document.getElementById(`file-input-${i}`);
+                    if (fileInput && fileInput.files && fileInput.files.length > 0) {
+                        hasImages = true;
+                        imageCount++;
+                        console.log(`Backup method: Found image in slot ${i}:`, fileInput.files[0].name);
+                    }
+                }
+                
+                // 第二备用方法：检查预览图片
+                if (!hasImages) {
+                    const uploadSlots = document.querySelectorAll('.upload-slot');
+                    uploadSlots.forEach((slot, index) => {
+                        const preview = slot.querySelector('.img-preview');
+                        if (preview && preview.src && !preview.src.includes('data:') && preview.style.display !== 'none') {
+                            hasImages = true;
+                            imageCount++;
+                            console.log(`Backup method: Found preview image in slot ${index + 1}`);
+                        }
+                    });
+                }
+            }
+            
+            if (!hasImages) {
+                errors.push('Please upload at least one image');
+            }
+            
+            // 价格验证
+            const price1Day = parseFloat(data.price_1_day);
+            if (!data.price_1_day || isNaN(price1Day) || price1Day <= 0) {
+                errors.push('Please enter a valid 1-day rental price');
+            }
+            
+            const itemValue = parseFloat(data.item_value);
+            if (!data.item_value || isNaN(itemValue) || itemValue <= 0) {
+                errors.push('Please enter a valid item value');
+            }
+            
+            // 位置验证
+            const locationSelect = document.getElementById('location');
+            if (!locationSelect || !locationSelect.value) {
+                errors.push('Please select a location');
+            }
+            
+            if (errors.length > 0) {
+                showErrorMessage('Please complete the following information:\n' + errors.join('\n'));
+                return false;
+            }
+            
+            console.log('✅ Client-side validation passed');
+            return true;
+        }
+        
+        // 更新价格建议 - 使用服务器端API
+        async function updatePriceSuggestions() {
+            const category = document.getElementById('category')?.value;
+            const categoryNameSpan = document.getElementById('category-name');
+            const selectedCategorySpan = document.getElementById('selected-category');
+            
+            if (categoryNameSpan) {
+                categoryNameSpan.textContent = category || 'selected category';
+            }
+            
+            if (selectedCategorySpan) {
+                selectedCategorySpan.textContent = category || 'selected category';
+            }
+            
+            try {
+                // 从服务器获取价格建议
+                const response = await fetch(`/api/suggestions/prices/?category=${category || ''}`, {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    const suggestions = result.suggestions;
+                    
+                    // 更新页面显示
+                    document.getElementById('suggest-1day').textContent = suggestions['1'];
+                    document.getElementById('suggest-3days').textContent = suggestions['3'];
+                    document.getElementById('suggest-7days').textContent = suggestions['7'];
+                    
+                    console.log('Price suggestions updated successfully:', suggestions);
+                } else {
+                    console.warn('Failed to get price suggestions, using default values');
+                    useDefaultSuggestions(category);
+                }
+            } catch (error) {
+                console.error('Error getting price suggestions:', error);
+                useDefaultSuggestions(category);
+            }
+        }
+        
+        // 备用的本地价格建议
+        function useDefaultSuggestions(category) {
+            const suggestions = {
+                'tools': { day1: '15.00', day3: '40.00', day7: '80.00' },
+                'electronics': { day1: '25.00', day3: '65.00', day7: '140.00' },
+                'garden': { day1: '20.00', day3: '50.00', day7: '100.00' },
+                'sports': { day1: '18.00', day3: '45.00', day7: '90.00' },
+                'automotive': { day1: '30.00', day3: '80.00', day7: '180.00' },
+                'home': { day1: '12.00', day3: '30.00', day7: '65.00' }
+            };
+            
+            const categoryData = suggestions[category] || { day1: '15.00', day3: '40.00', day7: '80.00' };
+            
+            document.getElementById('suggest-1day').textContent = categoryData.day1;
+            document.getElementById('suggest-3days').textContent = categoryData.day3;
+            document.getElementById('suggest-7days').textContent = categoryData.day7;
+        }
+        
+        // 使用价格建议 - 从页面上已显示的建议中获取
+        function usePriceSuggestions() {
+            const suggest1Day = document.getElementById('suggest-1day').textContent;
+            const suggest3Days = document.getElementById('suggest-3days').textContent;
+            const suggest7Days = document.getElementById('suggest-7days').textContent;
+            
+            document.getElementById('price-1day').value = suggest1Day;
+            document.getElementById('price-3days').value = suggest3Days;
+            document.getElementById('price-7days').value = suggest7Days;
+            
+            console.log('Price suggestions applied:', { suggest1Day, suggest3Days, suggest7Days });
+        }
+        
+        // 构建成功消息
+        function buildSuccessMessage(itemResponse, uploadedImages, createdPrices, hasErrors = false, errorMessages = []) {
+            const itemTitle = itemResponse.title || 'Your item';
+            const imageCount = uploadedImages.length;
+            const priceCount = createdPrices.length;
+            
+            let message = `🎉 "${itemTitle}" published successfully!\n\n`;
+            
+            // 添加详细信息
+            if (imageCount > 0) {
+                message += `📸 Successfully uploaded ${imageCount} image(s)\n`;
+            } else {
+                message += `📸 No images uploaded (you can add them later)\n`;
+            }
+            
+            if (priceCount > 0) {
+                message += `💰 Set ${priceCount} price level(s)\n`;
+            } else {
+                message += `💰 No prices set (please complete later)\n`;
+            }
+            
+            // 如果有错误，添加警告信息
+            if (hasErrors && errorMessages.length > 0) {
+                message += `\n⚠️ Notes:\n`;
+                errorMessages.forEach(error => {
+                    message += `• ${error}\n`;
+                });
+                message += `\nYou can complete this information later on the item details page.`;
+            }
+            
+            message += `\n✨ Your item is now visible to other users!`;
+            
+            return message;
+        }
+        
+        // 显示增强的成功消息
+        function showEnhancedSuccessMessage(message, itemId) {
+            // 创建模态框背景
+            const overlay = document.createElement('div');
+            overlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 9999;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            `;
+            
+            // 创建成功对话框
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                background: white;
+                border-radius: 12px;
+                padding: 30px;
+                max-width: 500px;
+                width: 90%;
+                text-align: center;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+                animation: slideInUp 0.3s ease-out;
+            `;
+            
+            // 添加CSS动画
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideInUp {
+                    from {
+                        opacity: 0;
+                        transform: translateY(30px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+                
+                .success-btn {
+                    background: #28a745;
+                    color: white;
+                    border: none;
+                    padding: 12px 24px;
+                    border-radius: 6px;
+                    font-size: 16px;
+                    font-weight: 500;
+                    cursor: pointer;
+                    margin: 0 8px;
+                    transition: background 0.2s;
+                }
+                
+                .success-btn:hover {
+                    background: #218838;
+                }
+                
+                .secondary-btn {
+                    background: #6c757d;
+                    color: white;
+                    border: none;
+                    padding: 12px 24px;
+                    border-radius: 6px;
+                    font-size: 16px;
+                    font-weight: 500;
+                    cursor: pointer;
+                    margin: 0 8px;
+                    transition: background 0.2s;
+                }
+                
+                .secondary-btn:hover {
+                    background: #5a6268;
+                }
+            `;
+            document.head.appendChild(style);
+            
+            modal.innerHTML = `
+                <div style="font-size: 48px; margin-bottom: 20px;">🎉</div>
+                <h2 style="color: #28a745; margin-bottom: 20px; font-size: 24px;">Published Successfully!</h2>
+                <p style="color: #666; line-height: 1.6; white-space: pre-line; margin-bottom: 30px;">${message}</p>
+                <div style="margin-bottom: 20px;">
+                    <button class="success-btn" onclick="goToItemPage('${itemId}')">View My Item</button>
+                    <button class="secondary-btn" onclick="closeSuccessModal()">Continue Publishing</button>
+                </div>
+                <div id="countdown" style="color: #999; font-size: 14px;">Redirecting to item page in 3 seconds...</div>
+            `;
+            
+            overlay.appendChild(modal);
+            document.body.appendChild(overlay);
+            
+            // 存储引用以便后续操作
+            window.successModal = overlay;
+            
+            // 开始倒计时
+            startCountdown(itemId);
+        }
+        
+        // 开始倒计时
+        function startCountdown(itemId) {
+            let countdown = 3;
+            const countdownElement = document.getElementById('countdown');
+            
+            const timer = setInterval(() => {
+                countdown--;
+                if (countdownElement) {
+                    if (countdown > 0) {
+                        countdownElement.textContent = `Redirecting to item page in ${countdown} seconds...`;
+                    } else {
+                        countdownElement.textContent = 'Redirecting...';
+                    }
+                }
+                
+                if (countdown <= 0) {
+                    clearInterval(timer);
+                    goToItemPage(itemId);
+                }
+            }, 1000);
+            
+            // 存储定时器引用
+            window.countdownTimer = timer;
+        }
+        
+        // 跳转到物品页面
+        function goToItemPage(itemId) {
+            if (window.countdownTimer) {
+                clearInterval(window.countdownTimer);
+            }
+            closeSuccessModal();
+            
+            // 显示跳转提示
+            showLoadingMessage('Redirecting to item page...');
+            
+            setTimeout(() => {
+                window.location.href = '/browse-things/';
+            }, 500);
+        }
+        
+        // 关闭成功模态框
+        function closeSuccessModal() {
+            if (window.countdownTimer) {
+                clearInterval(window.countdownTimer);
+            }
+            
+            if (window.successModal) {
+                window.successModal.remove();
+                window.successModal = null;
+            }
+        }
+        
+        // 显示加载消息
+        function showLoadingMessage(message) {
+            const loadingDiv = document.createElement('div');
+            loadingDiv.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(0, 0, 0, 0.8);
+                color: white;
+                padding: 20px 30px;
+                border-radius: 8px;
+                z-index: 10001;
+                font-size: 16px;
+                text-align: center;
+            `;
+            loadingDiv.textContent = message;
+            document.body.appendChild(loadingDiv);
+            
+            // 2秒后移除
+            setTimeout(() => {
+                loadingDiv.remove();
+            }, 2000);
+        }
+        
+        // 显示成功消息（简单版本，保持向后兼容）
+        function showSuccessMessage(message) {
+            // 创建消息元素
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'success-message';
+            messageDiv.textContent = message;
+            messageDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: var(--color-success, #28a745);
+                color: white;
+                padding: 15px 20px;
+                border-radius: 5px;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                z-index: 10000;
+                font-weight: 500;
+            `;
+            
+            document.body.appendChild(messageDiv);
+            
+            // 3秒后自动移除
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 3000);
+        }
+        
+        // 显示错误消息
+        function showErrorMessage(message) {
+            // 创建消息元素
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'error-message';
+            messageDiv.textContent = message;
+            messageDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: var(--color-danger, #dc3545);
+                color: white;
+                padding: 15px 20px;
+                border-radius: 5px;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                z-index: 10000;
+                font-weight: 500;
+                white-space: pre-line;
+            `;
+            
+            document.body.appendChild(messageDiv);
+            
+            // 5秒后自动移除
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 5000);
+        }
+    </script>
+    
+    <script>
+        // 类别选择功能
+        document.getElementById('category').addEventListener('change', function() {
+            const selectedCategory = this.options[this.selectedIndex].text;
+            document.getElementById('selected-category').textContent = selectedCategory;
+            document.getElementById('category-name').textContent = selectedCategory;
+            
+            // 使用默认价格建议函数
+            useDefaultSuggestions(this.value);
+        });
+
+        // 文件上传预览功能
+        // 图片上传处理函数
+        function handleFileUpload(input, slot) {
+            const file = input.files[0];
+            if (!file) {
+                console.log('❌ No file selected');
+                return;
+            }
+
+            console.log(`📁 Processing file: ${file.name}, size: ${(file.size / 1024 / 1024).toFixed(2)}MB, type: ${file.type}`);
+
+            // 验证文件类型
+            if (!file.type.startsWith('image/')) {
+                console.log('❌ Invalid file type:', file.type);
+                showErrorMessage('请选择有效的图片文件');
+                input.value = '';
+                return;
+            }
+
+            // 验证文件大小（限制为5MB）
+            const maxSize = 5 * 1024 * 1024; // 5MB
+            if (file.size > maxSize) {
+                console.log('❌ File too large:', file.size);
+                showErrorMessage('图片文件大小不能超过5MB');
+                input.value = '';
+                return;
+            }
+
+            console.log('✅ File validation passed');
+
+            // 显示预览
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                // 保存当前的input元素（就是传入的input参数）
+                const inputClone = input.cloneNode(true);
+                inputClone.style.display = 'none'; // 隐藏但保留文件
+                
+                // 清除原有内容
+                slot.innerHTML = '';
+                
+                // 重新添加input元素（保持文件选择状态）
+                slot.appendChild(inputClone);
+                
+                // 创建预览容器
+                const previewContainer = document.createElement('div');
+                previewContainer.style.cssText = `
+                    position: relative;
+                    width: 100%;
+                    height: 100%;
+                    background-image: url(${e.target.result});
+                    background-size: cover;
+                    background-position: center;
+                    border-radius: 8px;
+                    overflow: hidden;
+                `;
+                
+                // 创建删除按钮
+                const deleteBtn = document.createElement('button');
+                deleteBtn.innerHTML = '×';
+                deleteBtn.style.cssText = `
+                    position: absolute;
+                    top: 5px;
+                    right: 5px;
+                    width: 24px;
+                    height: 24px;
+                    border: none;
+                    border-radius: 50%;
+                    background: rgba(255, 0, 0, 0.8);
+                    color: white;
+                    font-size: 16px;
+                    font-weight: bold;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 10;
+                `;
+                
+                deleteBtn.onclick = function(e) {
+                    e.stopPropagation();
+                    clearImageSlot(input, slot);
+                };
+                
+                // 创建成功标识
+                const successIcon = document.createElement('div');
+                successIcon.innerHTML = '✓';
+                successIcon.style.cssText = `
+                    position: absolute;
+                    bottom: 5px;
+                    right: 5px;
+                    background: rgba(0, 128, 0, 0.8);
+                    color: white;
+                    padding: 2px 6px;
+                    border-radius: 4px;
+                    font-size: 12px;
+                    font-weight: bold;
+                `;
+                
+                // 添加元素到容器
+                previewContainer.appendChild(deleteBtn);
+                previewContainer.appendChild(successIcon);
+                slot.appendChild(previewContainer);
+                
+                // 更新slot样式
+                slot.style.border = '2px solid #28a745';
+                slot.style.cursor = 'default';
+                
+                console.log(`🖼️ 图片预览加载成功: ${file.name}, 大小: ${(file.size / 1024 / 1024).toFixed(2)}MB`);
+                console.log(`📂 Input element preserved: ID=${inputClone?.id}, files count=${inputClone?.files?.length || 0}`);
+            };
+            
+            reader.onerror = function() {
+                showErrorMessage('图片读取失败，请重试');
+                input.value = '';
+            };
+            
+            reader.readAsDataURL(file);
+        }
+
+        // 清除图片槽
+        function clearImageSlot(input, slot) {
+            // 查找并清除input元素
+            const fileInput = slot.querySelector('input[type="file"]') || input;
+            if (fileInput) {
+                fileInput.value = '';
+            }
+            
+            // 重置slot内容为原始状态
+            const slotId = slot.id || slot.className;
+            const inputId = fileInput?.id || `file-input-${slotId.match(/\d+/)?.[0] || '1'}`;
+            
+            slot.innerHTML = `
+                <svg class="upload-icon" viewBox="0 0 24 24" fill="none">
+                    <path d="M21 15V19C21 20.1 20.1 21 19 21H5C3.9 21 3 20.1 3 19V15" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M7 10L12 15L17 10" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M12 15V3" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <input type="file" id="${inputId}" accept="image/*" style="display: none;">
+            `;
+            
+            slot.style.border = '2px dashed #ddd';
+            slot.style.cursor = 'pointer';
+            slot.style.backgroundImage = 'none';
+            
+            console.log('图片槽已清除');
+            
+            // 重新绑定事件监听器
+            initFileUploadListeners();
+        }
+
+        // 获取已选择的图片文件
+        function getSelectedImages() {
+            const images = [];
+            for (let i = 1; i <= 8; i++) {
+                const fileInput = document.getElementById(`file-input-${i}`);
+                if (fileInput && fileInput.files && fileInput.files[0]) {
+                    images.push({
+                        index: i,
+                        file: fileInput.files[0],
+                        isPrimary: i === 1
+                    });
+                }
+            }
+            return images;
+        }
+
+        // 验证图片选择
+        function validateImageSelection() {
+            const selectedImages = getSelectedImages();
+            if (selectedImages.length === 0) {
+                showErrorMessage('Please upload at least one image');
+                return false;
+            }
+            return true;
+        }
+
+        // 为每个文件输入添加事件监听器
+        function initFileUploadListeners() {
+            for (let i = 1; i <= 8; i++) {
+                const fileInput = document.getElementById(`file-input-${i}`);
+                const slot = fileInput?.parentNode;
+                
+                if (fileInput && slot) {
+                    // 文件选择事件
+                    fileInput.addEventListener('change', function(e) {
+                        handleFileUpload(this, slot);
+                    });
+                    
+                    // 拖拽上传支持
+                    slot.addEventListener('dragover', function(e) {
+                        e.preventDefault();
+                        this.style.borderColor = '#007bff';
+                        this.style.backgroundColor = '#f8f9fa';
+                    });
+                    
+                    slot.addEventListener('dragleave', function(e) {
+                        e.preventDefault();
+                        this.style.borderColor = '#ddd';
+                        this.style.backgroundColor = 'transparent';
+                    });
+                    
+                    slot.addEventListener('drop', function(e) {
+                        e.preventDefault();
+                        this.style.borderColor = '#ddd';
+                        this.style.backgroundColor = 'transparent';
+                        
+                        const files = e.dataTransfer.files;
+                        if (files.length > 0) {
+                            fileInput.files = files;
+                            handleFileUpload(fileInput, slot);
+                        }
+                    });
+                }
+            }
+            
+            console.log('Image upload listeners initialized');
+        }
+        
+        // 初始化文件上传监听器
+        initFileUploadListeners();
+    </script>
+</body>
+</html>
