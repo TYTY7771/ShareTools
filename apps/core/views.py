@@ -26,6 +26,18 @@ def login_view(request):
     return render(request, 'login.html')
 
 
+def register_view(request):
+    """渲染注册页面"""
+    return render(request, 'register.html')
+
+
+def logout_view(request):
+    """处理用户登出"""
+    logout(request)
+    messages.success(request, "您已成功登出")
+    return redirect('home')
+
+
 def list_item_view(request):
     """渲染物品发布页面"""
     return render(request, 'list_item.html')
@@ -78,6 +90,11 @@ def about_view(request):
     return render(request, 'about.html')
 
 
+def view_orders(request):
+    """查看订单页面"""
+    return render(request, 'view_orders.html')
+
+
 def product_detail_view(request, product_id=None):
     """渲染商品详情页面"""
     from .models import Item
@@ -105,31 +122,37 @@ def product_detail_view(request, product_id=None):
                     'images', 'prices'
                 ).get(id=product_id)
 
-            # 准备商品数据JSON
+            # 准备商品数据JSON，修正价格显示逻辑
             product_data = {
                 'id': str(item.id),
                 'title': item.title,
                 'itemValue': float(item.item_value) if item.item_value else 500,
-                'minDailyPrice': float(item.min_daily_price) if item.min_daily_price else 20,
+                'minDailyPrice': None,  # 将在下面计算
                 'prices': []
             }
 
-            # 添加价格信息
-            for price in item.prices.filter(is_active=True):
-                product_data['prices'].append({
-                    'duration': price.duration_days,
-                    'totalPrice': float(price.price),
-                    'dailyPrice': float(price.daily_price)
-                })
-
-            # 如果没有价格数据，使用默认价格
-            if not product_data['prices']:
+            # 添加价格信息，确保价格按租期排序
+            active_prices = item.prices.filter(is_active=True).order_by('duration_days')
+            if active_prices.exists():
+                for price in active_prices:
+                    product_data['prices'].append({
+                        'duration': price.duration_days,
+                        'totalPrice': float(price.price),
+                        'dailyPrice': float(price.daily_price)
+                    })
+                
+                # 计算最低日租金
+                min_daily_price = min(price.daily_price for price in active_prices)
+                product_data['minDailyPrice'] = float(min_daily_price)
+            else:
+                # 如果没有价格数据，使用默认价格
                 product_data['prices'] = [
                     {'duration': 1, 'totalPrice': 20, 'dailyPrice': 20},
                     {'duration': 3, 'totalPrice': 54, 'dailyPrice': 18},
                     {'duration': 7, 'totalPrice': 105, 'dailyPrice': 15},
                     {'duration': 30, 'totalPrice': 360, 'dailyPrice': 12}
                 ]
+                product_data['minDailyPrice'] = 12.0  # 30天租期的日租金
 
             context = {
                 'item': item,
@@ -162,7 +185,7 @@ def product_detail_view(request, product_id=None):
                 'id': None,
                 'title': 'Demo Product',
                 'itemValue': 500,
-                'minDailyPrice': 20,
+                'minDailyPrice': 12,
                 'prices': [
                     {'duration': 1, 'totalPrice': 20, 'dailyPrice': 20},
                     {'duration': 3, 'totalPrice': 54, 'dailyPrice': 18},

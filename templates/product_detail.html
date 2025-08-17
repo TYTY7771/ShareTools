@@ -109,6 +109,7 @@
                     <!-- Buttons for logged-in state -->
                     <div id="logged-in-actions" class="user-state-actions" style="display: none;">
                         <a href="{% url 'profile' %}" class="btn btn-secondary">Profile</a>
+                        <a href="{% url 'rental:my_rentals' %}" class="btn btn-secondary">View Orders</a>
                         <a href="{% url 'list_item' %}" class="btn btn-primary">List an Item</a>
                     </div>
                 </div>
@@ -209,17 +210,21 @@
 
                     <div class="price-info">
                         <div class="price-main">
-                            {% if item and item.min_daily_price %}
-                                <span class="price-amount" id="mainPriceDisplay">£{{ item.min_daily_price|floatformat:0 }}</span>
-                            {% elif item and item.prices.exists %}
-                                <span class="price-amount" id="mainPriceDisplay">£{{ item.prices.first.daily_price|floatformat:0 }}</span>
+                            {% if item and item.prices.exists %}
+                                {% with min_price=item.prices.all|dictsort:"daily_price"|first %}
+                                    <span class="price-amount" id="mainPriceDisplay">£{{ min_price.daily_price|floatformat:0 }}</span>
+                                {% endwith %}
                             {% else %}
                                 <span class="price-amount" id="mainPriceDisplay">£20</span>
                             {% endif %}
                             <span class="price-period">/ day</span>
                         </div>
                         <div class="price-details">
-                            <p class="price-note" id="discountNote">10% discount for 3+ day rentals</p>
+                            {% if item and item.prices.exists and item.prices.count > 1 %}
+                                <p class="price-note" id="discountNote">Longer rentals get better rates</p>
+                            {% else %}
+                                <p class="price-note" id="discountNote">Flexible rental periods available</p>
+                            {% endif %}
                             {% if item and item.item_value %}
                                 <p class="price-deposit">Deposit: £{{ item.item_value|floatformat:0 }}</p>
                             {% else %}
@@ -249,10 +254,10 @@
                             <div class="summary-row">
                                 <span>Daily Rate:</span>
                                 <span id="dailyRateDisplay">
-                                    {% if item and item.min_daily_price %}
-                                        £{{ item.min_daily_price|floatformat:0 }} / day
-                                    {% elif item and item.prices.exists %}
-                                        £{{ item.prices.first.daily_price|floatformat:0 }} / day
+                                    {% if item and item.prices.exists %}
+                                        {% with min_price=item.prices.all|dictsort:"daily_price"|first %}
+                                            £{{ min_price.daily_price|floatformat:0 }} / day
+                                        {% endwith %}
                                     {% else %}
                                         £20 / day
                                     {% endif %}
@@ -271,10 +276,10 @@
                             <i class="fas fa-shopping-cart"></i>
                             Add to Cart
                         </button>
-                        <button class="btn btn-secondary btn-large rent-now" id="rentNowBtn">
+                        <a href="{% url 'rental:create_rental' item_id=item.id|default:'demo' %}" class="btn btn-secondary btn-large rent-now" id="rentNowBtn">
                             <i class="fas fa-bolt"></i>
                             Book Now
-                        </button>
+                        </a>
                         <button class="btn-icon favorite-btn" id="favoriteBtn" title="Add to Favorites">
                             <i class="far fa-heart"></i>
                         </button>

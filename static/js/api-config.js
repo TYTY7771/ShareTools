@@ -126,7 +126,7 @@ async function apiRequest(endpoint, options = {}) {
         
         // For other errors (network, JSON parsing, etc.)
         console.error('API request failed:', error);
-        throw new Error('网络请求失败，请检查网络连接');
+        throw new Error('Network request failed, please check your connection');
     }
 }
 
@@ -307,12 +307,12 @@ const ItemImagesAPI = {
         formData.append('alt_text', altText);
         formData.append('order', order);
         
-        // 直接使用fetch，避免apiRequest添加默认的Content-Type头部
+        // Use fetch directly to avoid apiRequest adding default Content-Type header
         const url = getApiUrl(API_CONFIG.ENDPOINTS.API.ITEM_IMAGES);
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                // 不设置Content-Type，让浏览器自动设置multipart/form-data
+                // Don't set Content-Type, let browser set multipart/form-data automatically
                 'X-Requested-With': 'XMLHttpRequest'
             },
             body: formData,

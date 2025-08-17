@@ -23,6 +23,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('', include('apps.core.urls')),  # 包含core应用的URL配置
+    path('rental/', include('apps.rental.urls')),  # 包含rental应用的URL配置
 ]
 
 # 添加静态文件服务（仅在开发环境）

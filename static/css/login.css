@@ -1,6 +1,6 @@
-/* ShareTools 登录页面样式 */
+/* ShareTools Login Page Styles */
 
-/* ===== 页面布局 ===== */
+/* ===== Page Layout ===== */
 .login-main {
   min-height: calc(100vh - var(--header-height) - 80px);
   display: flex;
@@ -28,7 +28,7 @@
   min-height: 600px;
 }
 
-/* ===== 插图区域 ===== */
+/* ===== Illustration Area ===== */
 .login-illustration {
   background: linear-gradient(135deg, #F9F9F9 0%, #E8F4FD 100%);
   padding: var(--spacing-3xl);
@@ -76,7 +76,7 @@
   margin: 0;
 }
 
-/* ===== 表单区域 ===== */
+/* ===== Form Area ===== */
 .login-forms {
   padding: var(--spacing-3xl);
   position: relative;
@@ -126,7 +126,7 @@
   line-height: var(--line-height-tight);
 }
 
-/* ===== 表单组件 ===== */
+/* ===== Form Components ===== */
 .form-group {
   margin-bottom: var(--spacing-lg);
 }
@@ -190,7 +190,7 @@
   font-weight: var(--font-weight-regular);
 }
 
-/* ===== 表单选项 ===== */
+/* ===== Form Options ===== */
 .form-options {
   display: flex;
   justify-content: space-between;
@@ -270,7 +270,7 @@
   text-decoration: underline;
 }
 
-/* ===== 按钮样式 ===== */
+/* ===== Button Styles ===== */
 .auth-button {
   width: 100%;
   padding: var(--spacing-md) var(--spacing-lg);
@@ -312,7 +312,7 @@
   transform: translateY(0);
 }
 
-/* ===== 表单切换 ===== */
+/* ===== Form Toggle ===== */
 .auth-switch {
   text-align: center;
   margin-top: var(--spacing-xl);
@@ -340,7 +340,7 @@
   color: #1F5FCC;
 }
 
-/* ===== 社交登录 ===== */
+/* ===== Social Login ===== */
 .social-login {
   margin-top: var(--spacing-xl);
 }
@@ -411,7 +411,7 @@
   font-size: 1.25rem;
 }
 
-/* ===== 页脚样式 ===== */
+/* ===== Footer Styles ===== */
 .login-footer {
   background: var(--color-surface);
   padding: var(--spacing-xl) 0;
@@ -450,7 +450,7 @@
   text-align: center;
 }
 
-/* ===== 响应式设计 ===== */
+/* ===== Responsive Design ===== */
 @media (max-width: 768px) {
   .login-main {
     padding: var(--spacing-lg) 0;
@@ -559,7 +559,7 @@
   }
 }
 
-/* ===== 动画和交互 ===== */
+/* ===== Animations and Interactions ===== */
 .form-group {
   animation: fadeInUp 0.5s ease;
   animation-fill-mode: both;
@@ -593,7 +593,7 @@
   animation: fadeInUp 0.5s ease 0.7s both;
 }
 
-/* ===== 焦点状态优化 ===== */
+/* ===== Focus State Optimization ===== */
 .form-input:focus,
 .auth-button:focus,
 .switch-button:focus,
@@ -602,7 +602,7 @@
   outline-offset: 2px;
 }
 
-/* ===== 无障碍功能 ===== */
+/* ===== Accessibility Features ===== */
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;
@@ -611,7 +611,7 @@
   }
 }
 
-/* ===== 加载状态 ===== */
+/* ===== Loading State ===== */
 .auth-button.loading {
   pointer-events: none;
   opacity: 0.7;
@@ -631,4 +631,4 @@
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
-} 
+}

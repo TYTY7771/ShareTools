@@ -1,0 +1,540 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Rental Order Details - ShareTools{% endblock %}
+
+{% block extra_css %}
+<style>
+    .rental-detail-header {
+        background: linear-gradient(135deg, var(--color-primary) 0%, #1E40AF 100%);
+        color: var(--color-accent);
+        padding: var(--spacing-2xl) 0;
+        text-align: center;
+        margin-bottom: var(--spacing-2xl);
+    }
+    
+    .rental-detail-header h1 {
+        font-size: var(--font-size-display);
+        font-weight: var(--font-weight-bold);
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    .rental-detail-container {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: var(--spacing-2xl);
+        margin: var(--spacing-2xl) 0;
+    }
+    
+    .rental-info-card {
+        background: var(--color-accent);
+        padding: var(--spacing-2xl);
+        border-radius: var(--radius-default);
+        box-shadow: var(--shadow-medium);
+        margin-bottom: var(--spacing-lg);
+    }
+    
+    .rental-info-card h3 {
+        margin: 0 0 var(--spacing-lg) 0;
+        color: var(--color-text-primary);
+        font-size: var(--font-size-h2);
+        border-bottom: 2px solid var(--color-surface);
+        padding-bottom: var(--spacing-sm);
+    }
+    
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: var(--spacing-lg);
+    }
+    
+    .info-item {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-xs);
+    }
+    
+    .info-label {
+        font-weight: var(--font-weight-medium);
+        color: var(--color-text-secondary);
+        font-size: var(--font-size-caption);
+    }
+    
+    .info-value {
+        font-weight: var(--font-weight-medium);
+        color: var(--color-text-primary);
+        font-size: var(--font-size-body);
+    }
+    
+    .status-badge {
+        display: inline-block;
+        padding: var(--spacing-xs) var(--spacing-sm);
+        border-radius: var(--radius-default);
+        font-size: var(--font-size-caption);
+        font-weight: var(--font-weight-medium);
+        text-transform: uppercase;
+    }
+    
+    .status-pending {
+        background: #FEF3C7;
+        color: #92400E;
+    }
+    
+    .status-confirmed {
+        background: #D1FAE5;
+        color: #065F46;
+    }
+    
+    .status-active {
+        background: #DBEAFE;
+        color: #1E40AF;
+    }
+    
+    .status-completed {
+        background: #D1FAE5;
+        color: #065F46;
+    }
+    
+    .status-cancelled {
+        background: #FEE2E2;
+        color: #991B1B;
+    }
+    
+    .payment-status-paid {
+        background: #D1FAE5;
+        color: #065F46;
+    }
+    
+    .payment-status-pending {
+        background: #FEF3C7;
+        color: #92400E;
+    }
+    
+    .payment-status-failed {
+        background: #FEE2E2;
+        color: #991B1B;
+    }
+    
+    .item-preview {
+        background: var(--color-surface);
+        padding: var(--spacing-lg);
+        border-radius: var(--radius-default);
+        margin-bottom: var(--spacing-lg);
+        border: 1px solid var(--color-surface);
+    }
+    
+    .item-preview-header {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-md);
+        margin-bottom: var(--spacing-md);
+    }
+    
+    .item-image {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: var(--radius-default);
+        background: var(--color-accent);
+    }
+    
+    .item-details h4 {
+        margin: 0 0 var(--spacing-sm) 0;
+        color: var(--color-text-primary);
+        font-size: var(--font-size-h3);
+    }
+    
+    .item-details p {
+        margin: 0;
+        color: var(--color-text-secondary);
+        font-size: var(--font-size-caption);
+    }
+    
+    .price-summary {
+        background: var(--color-surface);
+        padding: var(--spacing-2xl);
+        border-radius: var(--radius-default);
+        border: 2px solid var(--color-surface);
+        position: sticky;
+        top: var(--spacing-lg);
+        height: fit-content;
+    }
+    
+    .price-summary h3 {
+        margin: 0 0 var(--spacing-lg) 0;
+        color: var(--color-text-primary);
+        font-size: var(--font-size-h2);
+        text-align: center;
+    }
+    
+    .price-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--spacing-sm) 0;
+        border-bottom: 1px solid var(--color-surface);
+    }
+    
+    .price-item:last-child {
+        border-bottom: none;
+    }
+    
+    .price-item.total {
+        font-weight: var(--font-weight-bold);
+        font-size: var(--font-size-h3);
+        color: var(--color-primary);
+        border-top: 2px solid var(--color-surface);
+        margin-top: var(--spacing-md);
+        padding-top: var(--spacing-md);
+    }
+    
+    .price-label {
+        color: var(--color-text-secondary);
+    }
+    
+    .price-value {
+        font-weight: var(--font-weight-medium);
+        color: var(--color-text-primary);
+    }
+    
+    .price-value.total {
+        color: var(--color-primary);
+    }
+    
+    .action-buttons {
+        display: flex;
+        gap: var(--spacing-md);
+        margin-top: var(--spacing-lg);
+        flex-wrap: wrap;
+    }
+    
+    .btn-action {
+        padding: var(--spacing-sm) var(--spacing-md);
+        border: none;
+        border-radius: var(--radius-default);
+        font-weight: var(--font-weight-medium);
+        cursor: pointer;
+        transition: all var(--animation-duration) var(--animation-easing);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: var(--spacing-xs);
+    }
+    
+    .btn-primary {
+        background: var(--color-primary);
+        color: var(--color-accent);
+    }
+    
+    .btn-primary:hover {
+        background: #1E40AF;
+        transform: translateY(-1px);
+    }
+    
+    .btn-secondary {
+        background: var(--color-text-secondary);
+        color: var(--color-accent);
+    }
+    
+    .btn-secondary:hover {
+        background: #4B5563;
+        transform: translateY(-1px);
+    }
+    
+    .btn-danger {
+        background: var(--color-error);
+        color: var(--color-accent);
+    }
+    
+    .btn-danger:hover {
+        background: #B91C1C;
+        transform: translateY(-1px);
+    }
+    
+    .btn-success {
+        background: var(--color-success);
+        color: var(--color-accent);
+    }
+    
+    .btn-success:hover {
+        background: #059669;
+        transform: translateY(-1px);
+    }
+    
+    .breadcrumb {
+        background: var(--color-surface);
+        padding: var(--spacing-md) 0;
+        border-bottom: 1px solid var(--color-surface);
+        margin-bottom: var(--spacing-lg);
+    }
+    
+    .breadcrumb-list {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .breadcrumb-item {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+    }
+    
+    .breadcrumb-link {
+        color: var(--color-text-secondary);
+        text-decoration: none;
+        transition: color var(--animation-duration) var(--animation-easing);
+    }
+    
+    .breadcrumb-link:hover {
+        color: var(--color-primary);
+    }
+    
+    .breadcrumb-current {
+        color: var(--color-text-primary);
+        font-weight: var(--font-weight-medium);
+    }
+    
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+        .rental-detail-container {
+            grid-template-columns: 1fr;
+            gap: var(--spacing-lg);
+        }
+        
+        .price-summary {
+            position: static;
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+        }
+        
+        .btn-action {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb Navigation -->
+<nav class="breadcrumb" aria-label="Breadcrumb Navigation">
+    <div class="container">
+        <ol class="breadcrumb-list">
+            <li class="breadcrumb-item">
+                <a href="{% url 'home' %}" class="breadcrumb-link">
+                    <i class="fas fa-home"></i>
+                    Home
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'rental:rental_home' %}" class="breadcrumb-link">Rental Management</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'rental:my_rentals' %}" class="breadcrumb-link">My Rentals</a>
+            </li>
+            <li class="breadcrumb-item active">
+                <span class="breadcrumb-current">Rental Details</span>
+            </li>
+        </ol>
+    </div>
+</nav>
+
+<!-- Page Title -->
+<section class="rental-detail-header">
+    <div class="container">
+        <h1>Rental Order Details</h1>
+        <p>Order #{{ rental.id|truncatechars:8 }}</p>
+    </div>
+</section>
+
+<!-- Main Content -->
+<section class="container">
+    <div class="rental-detail-container">
+        <!-- Rental Information -->
+        <div class="rental-info-section">
+            <!-- Basic Information -->
+            <div class="rental-info-card">
+                <h3>Basic Information</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">Order ID</span>
+                        <span class="info-value">{{ rental.id }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Status</span>
+                        <span class="status-badge status-{{ rental.status }}">{{ rental.get_status_display }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Payment Status</span>
+                        <span class="status-badge payment-status-{{ rental.payment_status }}">{{ rental.get_payment_status_display }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Created Date</span>
+                        <span class="info-value">{{ rental.created_at|date:"M d, Y H:i" }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Start Date</span>
+                        <span class="info-value">{{ rental.start_date|date:"M d, Y" }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">End Date</span>
+                        <span class="info-value">{{ rental.end_date|date:"M d, Y" }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Duration</span>
+                        <span class="info-value">{{ rental.duration_days }} days</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Item Information -->
+            <div class="rental-info-card">
+                <h3>Item Information</h3>
+                <div class="item-preview">
+                    <div class="item-preview-header">
+                        {% if rental.item.primary_image %}
+                            <img src="{{ rental.item.primary_image.image.url }}" alt="{{ rental.item.title }}" class="item-image">
+                        {% elif rental.item.images.first %}
+                            <img src="{{ rental.item.images.first.image.url }}" alt="{{ rental.item.title }}" class="item-image">
+                        {% else %}
+                            <div class="item-image" style="display: flex; align-items: center; justify-content: center; background: var(--color-accent);">
+                                <i class="fas fa-tools" style="font-size: 2rem; color: var(--color-text-secondary);"></i>
+                            </div>
+                        {% endif %}
+                        <div class="item-details">
+                            <h4>{{ rental.item.title }}</h4>
+                            <p>Owner: {{ rental.owner.username }}</p>
+                            <p>Category: {{ rental.item.category.display_name }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Notes -->
+            {% if rental.renter_notes or rental.owner_notes %}
+            <div class="rental-info-card">
+                <h3>Notes</h3>
+                {% if rental.renter_notes %}
+                <div class="info-item" style="margin-bottom: var(--spacing-md);">
+                    <span class="info-label">Renter Notes</span>
+                    <span class="info-value">{{ rental.renter_notes }}</span>
+                </div>
+                {% endif %}
+                {% if rental.owner_notes %}
+                <div class="info-item">
+                    <span class="info-label">Owner Notes</span>
+                    <span class="info-value">{{ rental.owner_notes }}</span>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+            
+            <!-- Action Buttons -->
+            <div class="rental-info-card">
+                <h3>Actions</h3>
+                <div class="action-buttons">
+                    {% if rental.status == 'pending' and rental.renter == request.user %}
+                        <a href="{% url 'rental:cancel_rental' rental_id=rental.id %}" class="btn-action btn-danger">
+                            <i class="fas fa-times"></i>
+                            Cancel Order
+                        </a>
+                    {% endif %}
+                    
+                    {% if rental.status == 'pending' and rental.owner == request.user %}
+                        <a href="{% url 'rental:confirm_rental' rental_id=rental.id %}" class="btn-action btn-success">
+                            <i class="fas fa-check"></i>
+                            Confirm Order
+                        </a>
+                        <a href="{% url 'rental:cancel_rental' rental_id=rental.id %}" class="btn-action btn-danger">
+                            <i class="fas fa-times"></i>
+                            Decline Order
+                        </a>
+                    {% endif %}
+                    
+                    {% if rental.status == 'confirmed' and rental.renter == request.user %}
+                        <a href="#" class="btn-action btn-primary">
+                            <i class="fas fa-credit-card"></i>
+                            Pay Now
+                        </a>
+                    {% endif %}
+                    
+                    <a href="{% url 'rental:my_rentals' %}" class="btn-action btn-secondary">
+                        <i class="fas fa-arrow-left"></i>
+                        Back to My Rentals
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Price Summary -->
+        <div class="price-summary">
+            <h3>Price Summary</h3>
+            
+            <div class="price-item">
+                <span class="price-label">Daily Rate:</span>
+                <span class="price-value">£{{ rental.daily_rate|floatformat:2 }}</span>
+            </div>
+            
+            <div class="price-item">
+                <span class="price-label">Rental Days:</span>
+                <span class="price-value">{{ rental.duration_days }} days</span>
+            </div>
+            
+            <div class="price-item">
+                <span class="price-label">Rental Fee:</span>
+                <span class="price-value">£{{ rental.total_amount|floatformat:2 }}</span>
+            </div>
+            
+            <div class="price-item">
+                <span class="price-label">Service Fee:</span>
+                <span class="price-value">£{{ rental.service_fee|floatformat:2 }}</span>
+            </div>
+            
+            <div class="price-item">
+                <span class="price-label">Security Deposit:</span>
+                <span class="price-value">£{{ rental.security_deposit|floatformat:2 }}</span>
+            </div>
+            
+            <div class="price-item total">
+                <span class="price-label">Total:</span>
+                <span class="price-value total">£{{ rental.get_total_with_deposit|floatformat:2 }}</span>
+            </div>
+            
+            {% if rental.payment_status == 'paid' %}
+            <div style="margin-top: var(--spacing-lg); padding: var(--spacing-md); background: #D1FAE5; border-radius: var(--radius-default); border-left: 4px solid var(--color-success);">
+                <p style="margin: 0; color: #065F46; font-size: var(--font-size-caption);">
+                    <i class="fas fa-check-circle"></i>
+                    Payment completed successfully
+                </p>
+            </div>
+            {% elif rental.payment_status == 'pending' %}
+            <div style="margin-top: var(--spacing-lg); padding: var(--spacing-md); background: #FEF3C7; border-radius: var(--radius-default); border-left: 4px solid var(--color-warning);">
+                <p style="margin: 0; color: #92400E; font-size: var(--font-size-caption);">
+                    <i class="fas fa-clock"></i>
+                    Payment pending
+                </p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Add any JavaScript functionality here
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+</script>
+{% endblock %}

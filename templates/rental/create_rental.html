@@ -1,0 +1,714 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Create Rental Order - ShareTools{% endblock %}
+
+{% block extra_css %}
+<style>
+    .create-rental-header {
+        background: linear-gradient(135deg, var(--color-primary) 0%, #1E40AF 100%);
+        color: var(--color-accent);
+        padding: var(--spacing-2xl) 0;
+        text-align: center;
+        margin-bottom: var(--spacing-2xl);
+    }
+    
+    .create-rental-header h1 {
+        font-size: var(--font-size-display);
+        font-weight: var(--font-weight-bold);
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    .create-rental-header p {
+        font-size: var(--font-size-h3);
+        opacity: 0.9;
+    }
+    
+    .create-rental-container {
+        display: grid;
+        grid-template-columns: 1fr 400px;
+        gap: var(--spacing-2xl);
+        margin: var(--spacing-2xl) 0;
+    }
+    
+    .rental-form {
+        background: var(--color-accent);
+        padding: var(--spacing-2xl);
+        border-radius: var(--radius-default);
+        box-shadow: var(--shadow-medium);
+    }
+    
+    .form-section {
+        margin-bottom: var(--spacing-2xl);
+    }
+    
+    .form-section h3 {
+        margin: 0 0 var(--spacing-md) 0;
+        color: var(--color-text-primary);
+        font-size: var(--font-size-h3);
+        border-bottom: 2px solid var(--color-surface);
+        padding-bottom: var(--spacing-sm);
+    }
+    
+    .form-group {
+        margin-bottom: var(--spacing-lg);
+    }
+    
+    .form-label {
+        display: block;
+        margin-bottom: var(--spacing-sm);
+        font-weight: var(--font-weight-medium);
+        color: var(--color-text-secondary);
+    }
+    
+    .form-input {
+        width: 100%;
+        padding: var(--spacing-sm);
+        border: 2px solid var(--color-surface);
+        border-radius: var(--radius-default);
+        font-size: var(--font-size-body);
+        transition: border-color var(--animation-duration) var(--animation-easing);
+        background: var(--color-accent);
+    }
+    
+    .form-input:focus {
+        outline: none;
+        border-color: var(--color-primary);
+    }
+    
+    .form-textarea {
+        min-height: 100px;
+        resize: vertical;
+    }
+    
+    .date-inputs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--spacing-md);
+    }
+    
+    .price-summary {
+        background: var(--color-surface);
+        padding: var(--spacing-2xl);
+        border-radius: var(--radius-default);
+        border: 2px solid var(--color-surface);
+        position: sticky;
+        top: var(--spacing-lg);
+        height: fit-content;
+    }
+    
+    .price-summary h3 {
+        margin: 0 0 var(--spacing-lg) 0;
+        color: var(--color-text-primary);
+        font-size: var(--font-size-h2);
+        text-align: center;
+    }
+    
+    .price-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--spacing-sm) 0;
+        border-bottom: 1px solid var(--color-surface);
+    }
+    
+    .price-item:last-child {
+        border-bottom: none;
+    }
+    
+    .price-item.total {
+        font-weight: var(--font-weight-bold);
+        font-size: var(--font-size-h3);
+        color: var(--color-primary);
+        border-top: 2px solid var(--color-surface);
+        margin-top: var(--spacing-md);
+        padding-top: var(--spacing-md);
+    }
+    
+    .price-label {
+        color: var(--color-text-secondary);
+    }
+    
+    .price-value {
+        font-weight: var(--font-weight-medium);
+        color: var(--color-text-primary);
+    }
+    
+    .price-value.total {
+        color: var(--color-primary);
+    }
+    
+    .item-preview {
+        background: var(--color-accent);
+        padding: var(--spacing-lg);
+        border-radius: var(--radius-default);
+        margin-bottom: var(--spacing-2xl);
+        border: 1px solid var(--color-surface);
+    }
+    
+    .item-preview-header {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-md);
+        margin-bottom: var(--spacing-md);
+    }
+    
+    .item-image {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: var(--radius-default);
+        background: var(--color-surface);
+    }
+    
+    .item-details h4 {
+        margin: 0 0 var(--spacing-sm) 0;
+        color: var(--color-text-primary);
+        font-size: var(--font-size-h3);
+    }
+    
+    .item-details p {
+        margin: 0;
+        color: var(--color-text-secondary);
+        font-size: var(--font-size-caption);
+    }
+    
+    .pricing-options {
+        margin: var(--spacing-md) 0;
+    }
+    
+    .pricing-option {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--spacing-sm);
+        background: var(--color-surface);
+        border-radius: var(--radius-default);
+        margin-bottom: var(--spacing-sm);
+        border: 2px solid transparent;
+        transition: all var(--animation-duration) var(--animation-easing);
+        cursor: pointer;
+    }
+    
+    .pricing-option:hover {
+        border-color: var(--color-primary);
+        background: #EFF6FF;
+    }
+    
+    .pricing-option.selected {
+        border-color: var(--color-primary);
+        background: #EFF6FF;
+    }
+    
+    .pricing-duration {
+        font-weight: var(--font-weight-medium);
+        color: var(--color-text-primary);
+    }
+    
+    .pricing-price {
+        color: var(--color-primary);
+        font-weight: var(--font-weight-medium);
+    }
+    
+    .btn-create-rental {
+        width: 100%;
+        padding: var(--spacing-md);
+        background: var(--color-primary);
+        color: var(--color-accent);
+        border: none;
+        border-radius: var(--radius-default);
+        font-size: var(--font-size-h3);
+        font-weight: var(--font-weight-medium);
+        cursor: pointer;
+        transition: background-color var(--animation-duration) var(--animation-easing);
+    }
+    
+    .btn-create-rental:hover {
+        background: #1E40AF;
+    }
+    
+    .btn-create-rental:disabled {
+        background: var(--color-text-secondary);
+        cursor: not-allowed;
+    }
+    
+    .breadcrumb {
+        background: var(--color-surface);
+        padding: var(--spacing-md) 0;
+        border-bottom: 1px solid var(--color-surface);
+        margin-bottom: var(--spacing-lg);
+    }
+    
+    .breadcrumb-list {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .breadcrumb-item {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+    }
+    
+    .breadcrumb-link {
+        color: var(--color-text-secondary);
+        text-decoration: none;
+        transition: color var(--animation-duration) var(--animation-easing);
+    }
+    
+    .breadcrumb-link:hover {
+        color: var(--color-primary);
+    }
+    
+    .breadcrumb-current {
+        color: var(--color-text-primary);
+        font-weight: var(--font-weight-medium);
+    }
+    
+    .error-message {
+        color: var(--color-error);
+        font-size: var(--font-size-caption);
+        margin-top: var(--spacing-sm);
+    }
+    
+    .success-message {
+        color: var(--color-success);
+        font-size: var(--font-size-caption);
+        margin-top: var(--spacing-sm);
+    }
+    
+    /* 支付部分样式 */
+    .payment-section {
+        background: var(--color-accent);
+        padding: var(--spacing-2xl);
+        border-radius: var(--radius-default);
+        box-shadow: var(--shadow-medium);
+        margin-top: var(--spacing-2xl);
+        border: 2px solid var(--color-surface);
+    }
+    
+    .payment-methods {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: var(--spacing-md);
+        margin: var(--spacing-lg) 0;
+    }
+    
+    .payment-method {
+        border: 2px solid var(--color-surface);
+        border-radius: var(--radius-default);
+        padding: var(--spacing-md);
+        cursor: pointer;
+        transition: all var(--animation-duration) var(--animation-easing);
+        text-align: center;
+    }
+    
+    .payment-method:hover {
+        border-color: var(--color-primary);
+        background: var(--color-surface);
+    }
+    
+    .payment-method.selected {
+        border-color: var(--color-primary);
+        background: #EFF6FF;
+    }
+    
+    .payment-method i {
+        font-size: 2rem;
+        color: var(--color-primary);
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    .payment-method-name {
+        font-weight: var(--font-weight-medium);
+        color: var(--color-text-primary);
+    }
+    
+    .payment-method-description {
+        font-size: var(--font-size-caption);
+        color: var(--color-text-secondary);
+        margin-top: var(--spacing-xs);
+    }
+    
+    .btn-process-payment {
+        width: 100%;
+        padding: var(--spacing-md);
+        background: var(--color-success);
+        color: var(--color-accent);
+        border: none;
+        border-radius: var(--radius-default);
+        font-size: var(--font-size-h3);
+        font-weight: var(--font-weight-medium);
+        cursor: pointer;
+        transition: background-color var(--animation-duration) var(--animation-easing);
+        margin-top: var(--spacing-lg);
+    }
+    
+    .btn-process-payment:hover {
+        background: #059669;
+    }
+    
+    .btn-process-payment:disabled {
+        background: var(--color-text-secondary);
+        cursor: not-allowed;
+    }
+    
+    .loading {
+        display: none;
+        text-align: center;
+        padding: var(--spacing-lg);
+    }
+    
+    .loading.show {
+        display: block;
+    }
+    
+    .spinner {
+        border: 3px solid var(--color-surface);
+        border-top: 3px solid var(--color-primary);
+        border-radius: var(--radius-round);
+        width: 30px;
+        height: 30px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto var(--spacing-md);
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+        .create-rental-container {
+            grid-template-columns: 1fr;
+            gap: var(--spacing-lg);
+        }
+        
+        .price-summary {
+            position: static;
+        }
+        
+        .date-inputs {
+            grid-template-columns: 1fr;
+        }
+        
+        .payment-methods {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb Navigation -->
+<nav class="breadcrumb" aria-label="Breadcrumb Navigation">
+    <div class="container">
+        <ol class="breadcrumb-list">
+            <li class="breadcrumb-item">
+                <a href="{% url 'home' %}" class="breadcrumb-link">
+                    <span class="icon icon-home"></span>
+                    Home
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'rental:rental_home' %}" class="breadcrumb-link">Rental Management</a>
+            </li>
+            <li class="breadcrumb-item active">
+                <span class="breadcrumb-current">Create Rental Order</span>
+            </li>
+        </ol>
+    </div>
+</nav>
+
+<!-- Page Title -->
+<section class="create-rental-header">
+    <div class="container">
+        <h1>Create Rental Order</h1>
+        <p>Complete your rental order in one simple step</p>
+    </div>
+</section>
+
+<!-- Main Content -->
+<section class="container">
+    <div class="create-rental-container">
+        <!-- Rental Form -->
+        <div class="rental-form">
+            <form method="post" id="rentalForm">
+                {% csrf_token %}
+                
+                <!-- Item Information Preview -->
+                <div class="form-section">
+                    <div class="item-preview">
+                        <div class="item-preview-header">
+                            {% if item.primary_image %}
+                                <img src="{{ item.primary_image.image.url }}" alt="{{ item.title }}" class="item-image">
+                            {% elif item.images.first %}
+                                <img src="{{ item.images.first.image.url }}" alt="{{ item.title }}" class="item-image">
+                            {% else %}
+                                <div class="item-image" style="display: flex; align-items: center; justify-content: center; background: var(--color-surface);">
+                                    <span class="icon icon-tools" style="font-size: 2rem; color: var(--color-text-secondary);"></span>
+                                </div>
+                            {% endif %}
+                            <div class="item-details">
+                                <h4>{{ item.title|default:"Sample Item" }}</h4>
+                                <p>Owner: {{ item.owner.username|default:"Sample User" }}</p>
+                                <p>Category: {{ item.category.display_name|default:"Tools" }}</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Pricing Options -->
+                        {% if prices %}
+                        <div class="pricing-options">
+                            <h5>Pricing Options:</h5>
+                            {% for price in prices %}
+                            <div class="pricing-option" data-duration="{{ price.duration_days }}" data-price="{{ price.daily_price }}">
+                                <span class="pricing-duration">{{ price.duration_days }} days</span>
+                                <span class="pricing-price">£{{ price.daily_price|floatformat:2 }}/day</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Rental Information -->
+                <div class="form-section">
+                    <h3>Rental Information</h3>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Rental Dates</label>
+                        <div class="date-inputs">
+                            <div>
+                                <label class="form-label">Start Date</label>
+                                <input type="date" name="start_date" class="form-input" id="startDate" required>
+                            </div>
+                            <div>
+                                <label class="form-label">End Date</label>
+                                <input type="date" name="end_date" class="form-input" id="endDate" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Notes (Optional)</label>
+                        <textarea name="renter_notes" class="form-input form-textarea" placeholder="Add rental notes, such as special requirements..."></textarea>
+                    </div>
+                </div>
+                
+                <!-- Payment Section -->
+                <div class="payment-section">
+                    <h3>Payment Information</h3>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Select Payment Method</label>
+                        <div class="payment-methods">
+                            <div class="payment-method" data-method="credit_card">
+                                <span class="icon icon-credit-card"></span>
+                                <div class="payment-method-name">Credit Card</div>
+                                <div class="payment-method-description">Visa, Mastercard, American Express</div>
+                            </div>
+                            <div class="payment-method" data-method="debit_card">
+                                <span class="icon icon-credit-card"></span>
+                                <div class="payment-method-name">Debit Card</div>
+                                <div class="payment-method-description">Direct from your bank account</div>
+                            </div>
+                            <div class="payment-method" data-method="paypal">
+                                <span class="icon icon-paypal"></span>
+                                <div class="payment-method-name">PayPal</div>
+                                <div class="payment-method-description">Fast and secure online payments</div>
+                            </div>
+                            <div class="payment-method" data-method="bank_transfer">
+                                <span class="icon icon-university"></span>
+                                <div class="payment-method-name">Bank Transfer</div>
+                                <div class="payment-method-description">Direct bank transfer</div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="payment_method" id="paymentMethod" required>
+                    </div>
+                    
+                    <button type="submit" class="btn-process-payment" id="submitBtn">
+                        <span class="icon icon-credit-card"></span>
+                        Complete Order & Payment
+                    </button>
+                    
+                    <div class="loading" id="loading">
+                        <div class="spinner"></div>
+                        <p>Processing your payment...</p>
+                    </div>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Price Summary -->
+        <div class="price-summary">
+            <h3>Price Summary</h3>
+            
+            <div class="price-item">
+                <span class="price-label">Daily Rate:</span>
+                <span class="price-value" id="dailyRateDisplay">£0.00</span>
+            </div>
+            
+            <div class="price-item">
+                <span class="price-label">Rental Days:</span>
+                <span class="price-value" id="durationDisplay">0 days</span>
+            </div>
+            
+            <div class="price-item">
+                <span class="price-label">Rental Fee:</span>
+                <span class="price-value" id="rentalFeeDisplay">£0.00</span>
+            </div>
+            
+            <div class="price-item">
+                <span class="price-label">Service Fee:</span>
+                <span class="price-value" id="serviceFeeDisplay">£0.00</span>
+            </div>
+            
+            <div class="price-item">
+                <span class="price-label">Security Deposit:</span>
+                <span class="price-value" id="depositDisplay">£0.00</span>
+            </div>
+            
+            <div class="price-item total">
+                <span class="price-label">Total:</span>
+                <span class="price-value total" id="totalDisplay">£0.00</span>
+            </div>
+            
+            <div style="margin-top: var(--spacing-2xl); padding: var(--spacing-md); background: #EFF6FF; border-radius: var(--radius-default); border-left: 4px solid var(--color-primary);">
+                <p style="margin: 0; color: #1E40AF; font-size: var(--font-size-caption);">
+                    <span class="icon icon-info"></span>
+                    Your payment will be processed immediately upon order completion.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Rental order creation logic
+    document.addEventListener('DOMContentLoaded', function() {
+        const startDateInput = document.getElementById('startDate');
+        const endDateInput = document.getElementById('endDate');
+        const submitBtn = document.getElementById('submitBtn');
+        const form = document.getElementById('rentalForm');
+        const loading = document.getElementById('loading');
+        const paymentMethods = document.querySelectorAll('.payment-method');
+        const paymentMethodInput = document.getElementById('paymentMethod');
+        
+        // Set minimum date to today
+        const today = new Date().toISOString().split('T')[0];
+        startDateInput.min = today;
+        endDateInput.min = today;
+        
+        // Pricing option selection
+        const pricingOptions = document.querySelectorAll('.pricing-option');
+        let selectedDailyRate = 20; // Default price
+        
+        pricingOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                // Remove selected state from other options
+                pricingOptions.forEach(opt => opt.classList.remove('selected'));
+                // Add selected state to current option
+                this.classList.add('selected');
+                
+                // Get selected price
+                selectedDailyRate = parseFloat(this.dataset.price);
+                updatePriceSummary();
+            });
+        });
+        
+        // Payment method selection
+        paymentMethods.forEach(method => {
+            method.addEventListener('click', function() {
+                // Remove selected state from other methods
+                paymentMethods.forEach(m => m.classList.remove('selected'));
+                // Add selected state to current method
+                this.classList.add('selected');
+                
+                // Update hidden input
+                paymentMethodInput.value = this.dataset.method;
+            });
+        });
+        
+        // Update price summary when dates change
+        startDateInput.addEventListener('change', updatePriceSummary);
+        endDateInput.addEventListener('change', updatePriceSummary);
+        
+        // Update price summary
+        function updatePriceSummary() {
+            const startDate = new Date(startDateInput.value);
+            const endDate = new Date(endDateInput.value);
+            
+            if (startDate && endDate && startDate <= endDate) {
+                const durationDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+                const rentalFee = selectedDailyRate * durationDays;
+                const serviceFee = Math.max(rentalFee * 0.05, 2); // 5% service fee, minimum £2
+                const deposit = 500; // Default deposit
+                const total = rentalFee + serviceFee + deposit;
+                
+                // Update display with two decimal places
+                document.getElementById('dailyRateDisplay').textContent = `£${selectedDailyRate.toFixed(2)}`;
+                document.getElementById('durationDisplay').textContent = `${durationDays} days`;
+                document.getElementById('rentalFeeDisplay').textContent = `£${rentalFee.toFixed(2)}`;
+                document.getElementById('serviceFeeDisplay').textContent = `£${serviceFee.toFixed(2)}`;
+                document.getElementById('depositDisplay').textContent = `£${deposit.toFixed(2)}`;
+                document.getElementById('totalDisplay').textContent = `£${total.toFixed(2)}`;
+                
+                // Enable submit button if payment method is selected
+                submitBtn.disabled = !paymentMethodInput.value;
+            } else {
+                // Disable submit button
+                submitBtn.disabled = true;
+            }
+        }
+        
+        // Form validation and submission
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const startDate = startDateInput.value;
+            const endDate = endDateInput.value;
+            const paymentMethod = paymentMethodInput.value;
+            
+            if (!startDate || !endDate) {
+                alert('Please select rental start and end dates');
+                return;
+            }
+            
+            if (new Date(startDate) >= new Date(endDate)) {
+                alert('End date must be later than start date');
+                return;
+            }
+            
+            if (new Date(startDate) < new Date(today)) {
+                alert('Start date cannot be in the past');
+                return;
+            }
+            
+            if (!paymentMethod) {
+                alert('Please select a payment method');
+                return;
+            }
+            
+            // Show loading state
+            loading.classList.add('show');
+            submitBtn.disabled = true;
+            
+            // Simulate payment processing
+            setTimeout(() => {
+                // Submit the form
+                form.submit();
+            }, 2000);
+        });
+        
+        // Initialize price summary
+        updatePriceSummary();
+    });
+</script>
+{% endblock %}

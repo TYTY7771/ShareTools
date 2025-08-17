@@ -233,6 +233,13 @@ ShareTools/
 - **HTML5**: Semantic markup and modern web standards
 - **CSS**: Flexbox and Grid layouts with responsive design
 - **JavaScript**: Component-based architecture without framework dependencies
+  - `api-config.js` - API configuration and request handling
+  - `main.js` - Homepage data loading and component initialization
+  - `login.js` - User authentication system
+  - `list_item.js` - Item publishing functionality
+  - `product_detail.js` - Product detail page interactions
+  - `browse_things.js` - Search and browsing features
+  - `components.js` - Reusable component framework
 - **Performance**: Image lazy loading, event debouncing, animation optimization
 - **Accessibility**: WCAG guidelines compliance and screen reader support
 - **Cross-browser**: Modern browser compatibility
@@ -259,27 +266,31 @@ ShareTools/
   - Complete Django project structure
   - Extended User model with profile features
   - Item management system with categories and pricing
-  - Booking system with status tracking
-  - Review and rating system
-  - Shopping cart functionality
-  - Django REST Framework API endpoints
+  - RESTful API endpoints with Django REST Framework
+  - Authentication system (login/register)
   - Admin interface for content management
   - Database models and migrations
+  - CSRF protection and security features
 
 - **Frontend Development**:
   - Responsive web layout for all pages
-  - ProductCard component (product cards)
-  - FeatureCard component (feature highlight cards)
   - Component-based JavaScript architecture
-  - Interactive features (favorites, clicks, hover effects)
-  - Modal system implementation
-  - Complete design system implementation
-  - Accessibility support
-  - Performance optimization
-  - User authentication system
-  - 6-step item listing workflow
-  - Complete profile management
-  - Cross-page navigation system
+  - User authentication system with real-time validation
+  - Item listing and browsing functionality
+  - Product detail page with interactive features
+  - Search functionality with debouncing
+  - Image optimization and lazy loading
+  - Google Maps integration for location services
+  - Performance monitoring and optimization
+  - Cross-browser compatibility
+  - Mobile-responsive design
+
+- **API Integration**:
+  - User login/register API calls
+  - Item data fetching and submission
+  - Real-time form validation
+  - Error handling and user feedback
+  - CSRF token management
 
 ## Installation & Usage
 
@@ -430,19 +441,39 @@ Components support the following custom events:
 
 ### Code Architecture
 - **Component-based Design**: Each UI element is abstracted as reusable components
+- **API-driven**: Centralized API configuration and request handling
 - **Event-driven**: Custom events for inter-component communication
 - **Responsive Layout**: Mobile and desktop support
 - **Accessibility**: WCAG guidelines compliance with screen reader support
-- **Performance Optimization**: CSS variables, debouncing, throttling techniques
+- **Performance Optimization**: 
+  - Image lazy loading and optimization
+  - Event debouncing and throttling
+  - Performance monitoring
+  - Efficient DOM manipulation
+- **Security**: CSRF protection, input validation, secure authentication
 - **Progressive Enhancement**: Ensures functionality across different environments
 
 ### API Endpoints
 The Django backend provides RESTful API endpoints for:
-- User authentication and profile management
-- Item CRUD operations
-- Booking management
-- Review and rating system
-- Cart functionality
+
+#### Authentication APIs
+- `POST /api/auth/login/` - User login authentication
+- `POST /api/auth/register/` - User registration
+- `POST /api/auth/logout/` - User logout
+- `GET /api/auth/user/` - Get current user information
+- `PUT /api/auth/profile/` - Update user profile
+- `POST /api/auth/change-password/` - Change password
+
+#### Item Management APIs
+- `GET /api/items/` - Get items list (used in main.js)
+- `POST /api/items/` - Create new item (used in list_item.js)
+- `GET /api/categories/` - Get categories list
+- `GET /api/locations/` - Get locations information
+- `POST /api/item-images/` - Upload item images
+- `GET /api/item-prices/` - Get item pricing information
+
+#### Third-party Integrations
+- **Google Maps API** - Address viewing and map navigation (used in product_detail.js)
 
 ### Database Schema
 The application uses a well-structured database schema with:

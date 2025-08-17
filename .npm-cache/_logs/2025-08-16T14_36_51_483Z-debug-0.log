@@ -1,0 +1,277 @@
+0 verbose cli C:\Program Files\nodejs\node.exe C:\Program Files\nodejs\node_modules\npm\bin\npm-cli.js
+1 info using npm@10.9.2
+2 info using node@v22.17.0
+3 silly config load:file:C:\Program Files\nodejs\node_modules\npm\npmrc
+4 silly config load:file:C:\Users\QTY\.npmrc
+5 silly config load:file:C:\Program Files\nodejs\node_global\etc\npmrc
+6 verbose title npm exec figma-developer-mcp --stdio
+7 verbose argv "exec" "--yes" "--" "figma-developer-mcp" "--stdio"
+8 verbose logfile logs-max:10 dir:D:\Workspace\ShareTools\.npm-cache\_logs\2025-08-16T14_36_51_483Z-
+9 verbose logfile D:\Workspace\ShareTools\.npm-cache\_logs\2025-08-16T14_36_51_483Z-debug-0.log
+10 silly logfile start cleaning logs, removing 1 files
+11 silly logfile done cleaning log files
+12 silly packumentCache heap:4345298944 maxSize:1086324736 maxEntrySize:543162368
+13 http fetch GET 200 https://registry.npmjs.org/figma-developer-mcp 635ms (cache revalidated)
+14 silly packumentCache heap:4345298944 maxSize:1086324736 maxEntrySize:543162368
+15 silly packumentCache heap:4345298944 maxSize:1086324736 maxEntrySize:543162368
+16 verbose shrinkwrap failed to load node_modules/.package-lock.json out of date, updated: node_modules
+17 silly idealTree buildDeps
+18 silly fetch manifest figma-developer-mcp@0.5.1
+19 silly packumentCache full:https://registry.npmjs.org/figma-developer-mcp cache-miss
+20 http fetch GET 200 https://registry.npmjs.org/figma-developer-mcp 121ms (cache miss)
+21 silly packumentCache full:https://registry.npmjs.org/figma-developer-mcp set size:undefined disposed:false
+22 silly placeDep ROOT figma-developer-mcp@0.5.1 REPLACE for:  want: 0.5.1
+23 silly reify moves {}
+24 silly audit bulk request {
+24 silly audit   '@emnapi/runtime': [ '1.4.5' ],
+24 silly audit   '@figma/rest-api-spec': [ '0.33.0' ],
+24 silly audit   '@img/sharp-darwin-arm64': [ '0.34.3' ],
+24 silly audit   '@img/sharp-darwin-x64': [ '0.34.3' ],
+24 silly audit   '@img/sharp-libvips-darwin-arm64': [ '1.2.0' ],
+24 silly audit   '@img/sharp-libvips-darwin-x64': [ '1.2.0' ],
+24 silly audit   '@img/sharp-libvips-linux-arm': [ '1.2.0' ],
+24 silly audit   '@img/sharp-libvips-linux-arm64': [ '1.2.0' ],
+24 silly audit   '@img/sharp-libvips-linux-ppc64': [ '1.2.0' ],
+24 silly audit   '@img/sharp-libvips-linux-s390x': [ '1.2.0' ],
+24 silly audit   '@img/sharp-libvips-linux-x64': [ '1.2.0' ],
+24 silly audit   '@img/sharp-libvips-linuxmusl-arm64': [ '1.2.0' ],
+24 silly audit   '@img/sharp-libvips-linuxmusl-x64': [ '1.2.0' ],
+24 silly audit   '@img/sharp-linux-arm': [ '0.34.3' ],
+24 silly audit   '@img/sharp-linux-arm64': [ '0.34.3' ],
+24 silly audit   '@img/sharp-linux-ppc64': [ '0.34.3' ],
+24 silly audit   '@img/sharp-linux-s390x': [ '0.34.3' ],
+24 silly audit   '@img/sharp-linux-x64': [ '0.34.3' ],
+24 silly audit   '@img/sharp-linuxmusl-arm64': [ '0.34.3' ],
+24 silly audit   '@img/sharp-linuxmusl-x64': [ '0.34.3' ],
+24 silly audit   '@img/sharp-wasm32': [ '0.34.3' ],
+24 silly audit   '@img/sharp-win32-arm64': [ '0.34.3' ],
+24 silly audit   '@img/sharp-win32-ia32': [ '0.34.3' ],
+24 silly audit   '@modelcontextprotocol/sdk': [ '1.17.2' ],
+24 silly audit   accepts: [ '2.0.0', '1.3.8' ],
+24 silly audit   'body-parser': [ '2.2.0', '1.20.3' ],
+24 silly audit   'content-disposition': [ '1.0.0', '0.5.4' ],
+24 silly audit   'cookie-signature': [ '1.2.2', '1.0.6' ],
+24 silly audit   debug: [ '4.4.1', '2.6.9' ],
+24 silly audit   express: [ '5.1.0', '4.21.2' ],
+24 silly audit   finalhandler: [ '2.1.0', '1.3.1' ],
+24 silly audit   fresh: [ '2.0.0', '0.5.2' ],
+24 silly audit   'iconv-lite': [ '0.6.3', '0.4.24' ],
+24 silly audit   'media-typer': [ '1.1.0', '0.3.0' ],
+24 silly audit   'merge-descriptors': [ '2.0.0', '1.0.3' ],
+24 silly audit   'mime-db': [ '1.54.0', '1.52.0' ],
+24 silly audit   'mime-types': [ '3.0.1', '2.1.35' ],
+24 silly audit   ms: [ '2.1.3', '2.0.0' ],
+24 silly audit   negotiator: [ '1.0.0', '0.6.3' ],
+24 silly audit   qs: [ '6.14.0', '6.13.0' ],
+24 silly audit   send: [ '1.2.0', '0.19.0' ],
+24 silly audit   'serve-static': [ '2.2.0', '1.16.2' ],
+24 silly audit   'type-is': [ '2.0.1', '1.6.18' ],
+24 silly audit   '@types/yargs': [ '17.0.33' ],
+24 silly audit   '@types/yargs-parser': [ '21.0.3' ],
+24 silly audit   ajv: [ '6.12.6' ],
+24 silly audit   'ansi-regex': [ '5.0.1' ],
+24 silly audit   'ansi-styles': [ '4.3.0' ],
+24 silly audit   argparse: [ '2.0.1' ],
+24 silly audit   'array-flatten': [ '1.1.1' ],
+24 silly audit   'raw-body': [ '2.5.2', '3.0.0' ],
+24 silly audit   bytes: [ '3.1.2' ],
+24 silly audit   'call-bind-apply-helpers': [ '1.0.2' ],
+24 silly audit   'call-bound': [ '1.0.4' ],
+24 silly audit   cliui: [ '8.0.1' ],
+24 silly audit   color: [ '4.2.3' ],
+24 silly audit   'color-convert': [ '2.0.1' ],
+24 silly audit   'color-name': [ '1.1.4' ],
+24 silly audit   'color-string': [ '1.9.1' ],
+24 silly audit   'content-type': [ '1.0.5' ],
+24 silly audit   cookie: [ '0.7.1' ],
+24 silly audit   cors: [ '2.8.5' ],
+24 silly audit   'cross-env': [ '7.0.3' ],
+24 silly audit   'cross-spawn': [ '7.0.6' ],
+24 silly audit   depd: [ '2.0.0' ],
+24 silly audit   destroy: [ '1.2.0' ],
+24 silly audit   'detect-libc': [ '2.0.4' ],
+24 silly audit   dotenv: [ '16.6.1' ],
+24 silly audit   'dunder-proto': [ '1.0.1' ],
+24 silly audit   'ee-first': [ '1.1.1' ],
+24 silly audit   'emoji-regex': [ '8.0.0' ],
+24 silly audit   encodeurl: [ '2.0.0', '1.0.2' ],
+24 silly audit   'es-define-property': [ '1.0.1' ],
+24 silly audit   'es-errors': [ '1.3.0' ],
+24 silly audit   'es-object-atoms': [ '1.1.1' ],
+24 silly audit   escalade: [ '3.2.0' ],
+24 silly audit   'escape-html': [ '1.0.3' ],
+24 silly audit   etag: [ '1.8.1' ],
+24 silly audit   eventsource: [ '3.0.7' ],
+24 silly audit   'eventsource-parser': [ '3.0.3' ],
+24 silly audit   'express-rate-limit': [ '7.5.1' ],
+24 silly audit   'fast-deep-equal': [ '3.1.3' ],
+24 silly audit   'fast-json-stable-stringify': [ '2.1.0' ],
+24 silly audit   forwarded: [ '0.2.0' ],
+24 silly audit   'function-bind': [ '1.1.2' ],
+24 silly audit   'get-caller-file': [ '2.0.5' ],
+24 silly audit   'get-intrinsic': [ '1.3.0' ],
+24 silly audit   'get-proto': [ '1.0.1' ],
+24 silly audit   gopd: [ '1.2.0' ],
+24 silly audit   'has-symbols': [ '1.1.0' ],
+24 silly audit   hasown: [ '2.0.2' ],
+24 silly audit   'http-errors': [ '2.0.0' ],
+24 silly audit   inherits: [ '2.0.4' ],
+24 silly audit   'ipaddr.js': [ '1.9.1' ],
+24 silly audit   'is-arrayish': [ '0.3.2' ],
+24 silly audit   'is-fullwidth-code-point': [ '3.0.0' ],
+24 silly audit   'is-promise': [ '4.0.0' ],
+24 silly audit   isexe: [ '2.0.0' ],
+24 silly audit   'js-yaml': [ '4.1.0' ],
+24 silly audit   'json-schema-traverse': [ '0.4.1' ],
+24 silly audit   'math-intrinsics': [ '1.1.0' ],
+24 silly audit   methods: [ '1.1.2' ],
+24 silly audit   mime: [ '1.6.0' ],
+24 silly audit   'object-assign': [ '4.1.1' ],
+24 silly audit   'object-inspect': [ '1.13.4' ],
+24 silly audit   'on-finished': [ '2.4.1' ],
+24 silly audit   once: [ '1.4.0' ],
+24 silly audit   parseurl: [ '1.3.3' ],
+24 silly audit   'path-key': [ '3.1.1' ],
+24 silly audit   'path-to-regexp': [ '0.1.12', '8.2.0' ],
+24 silly audit   'pkce-challenge': [ '5.0.0' ],
+24 silly audit   'proxy-addr': [ '2.0.7' ],
+24 silly audit   punycode: [ '2.3.1' ],
+24 silly audit   'range-parser': [ '1.2.1' ],
+24 silly audit   remeda: [ '2.30.0' ],
+24 silly audit   'require-directory': [ '2.1.1' ],
+24 silly audit   router: [ '2.2.0' ],
+24 silly audit   'safe-buffer': [ '5.2.1' ],
+24 silly audit   'safer-buffer': [ '2.1.2' ],
+24 silly audit   semver: [ '7.7.2' ],
+24 silly audit   setprototypeof: [ '1.2.0' ],
+24 silly audit   sharp: [ '0.34.3' ],
+24 silly audit   '@img/sharp-win32-x64': [ '0.34.3' ],
+24 silly audit   'shebang-command': [ '2.0.0' ],
+24 silly audit   'shebang-regex': [ '3.0.0' ],
+24 silly audit   'side-channel': [ '1.1.0' ],
+24 silly audit   'side-channel-list': [ '1.0.0' ],
+24 silly audit   'side-channel-map': [ '1.0.1' ],
+24 silly audit   'side-channel-weakmap': [ '1.0.2' ],
+24 silly audit   'simple-swizzle': [ '0.2.2' ],
+24 silly audit   statuses: [ '2.0.1' ],
+24 silly audit   'string-width': [ '4.2.3' ],
+24 silly audit   'strip-ansi': [ '6.0.1' ],
+24 silly audit   toidentifier: [ '1.0.1' ],
+24 silly audit   tslib: [ '2.8.1' ],
+24 silly audit   'type-fest': [ '4.41.0' ],
+24 silly audit   unpipe: [ '1.0.0' ],
+24 silly audit   'uri-js': [ '4.4.1' ],
+24 silly audit   'utils-merge': [ '1.0.1' ],
+24 silly audit   vary: [ '1.1.2' ],
+24 silly audit   which: [ '2.0.2' ],
+24 silly audit   'wrap-ansi': [ '7.0.0' ],
+24 silly audit   wrappy: [ '1.0.2' ],
+24 silly audit   y18n: [ '5.0.8' ],
+24 silly audit   yargs: [ '17.7.2' ],
+24 silly audit   'yargs-parser': [ '21.1.1' ],
+24 silly audit   zod: [ '3.25.76' ],
+24 silly audit   'zod-to-json-schema': [ '3.24.6' ],
+24 silly audit   'figma-developer-mcp': [ '0.5.1' ]
+24 silly audit }
+25 verbose reify failed optional dependency D:\Workspace\ShareTools\.npm-cache\_npx\e05028111420be70\node_modules\@img\sharp-win32-ia32
+26 silly reify mark deleted [
+26 silly reify   'D:\\Workspace\\ShareTools\\.npm-cache\\_npx\\e05028111420be70\\node_modules\\@img\\sharp-win32-ia32'
+26 silly reify ]
+27 verbose reify failed optional dependency D:\Workspace\ShareTools\.npm-cache\_npx\e05028111420be70\node_modules\@img\sharp-win32-arm64
+28 silly reify mark deleted [
+28 silly reify   'D:\\Workspace\\ShareTools\\.npm-cache\\_npx\\e05028111420be70\\node_modules\\@img\\sharp-win32-arm64'
+28 silly reify ]
+29 verbose reify failed optional dependency D:\Workspace\ShareTools\.npm-cache\_npx\e05028111420be70\node_modules\@img\sharp-wasm32
+30 silly reify mark deleted [
+30 silly reify   'D:\\Workspace\\ShareTools\\.npm-cache\\_npx\\e05028111420be70\\node_modules\\@img\\sharp-wasm32'
+30 silly reify ]
+31 verbose reify failed optional dependency D:\Workspace\ShareTools\.npm-cache\_npx\e05028111420be70\node_modules\@emnapi\runtime
+32 silly reify mark deleted [
+32 silly reify   'D:\\Workspace\\ShareTools\\.npm-cache\\_npx\\e05028111420be70\\node_modules\\@emnapi\\runtime'
+32 silly reify ]
+33 verbose reify failed optional dependency D:\Workspace\ShareTools\.npm-cache\_npx\e05028111420be70\node_modules\tslib
+34 silly reify mark deleted [
+34 silly reify   'D:\\Workspace\\ShareTools\\.npm-cache\\_npx\\e05028111420be70\\node_modules\\tslib'
+34 silly reify ]
+35 verbose reify failed optional dependency D:\Workspace\ShareTools\.npm-cache\_npx\e05028111420be70\node_modules\@img\sharp-linuxmusl-x64
+36 silly reify mark deleted [
+36 silly reify   'D:\\Workspace\\ShareTools\\.npm-cache\\_npx\\e05028111420be70\\node_modules\\@img\\sharp-linuxmusl-x64'
+36 silly reify ]
+37 verbose reify failed optional dependency D:\Workspace\ShareTools\.npm-cache\_npx\e05028111420be70\node_modules\@img\sharp-linuxmusl-arm64
+38 silly reify mark deleted [
+38 silly reify   'D:\\Workspace\\ShareTools\\.npm-cache\\_npx\\e05028111420be70\\node_modules\\@img\\sharp-linuxmusl-arm64'
+38 silly reify ]
+39 verbose reify failed optional dependency D:\Workspace\ShareTools\.npm-cache\_npx\e05028111420be70\node_modules\@img\sharp-linux-x64
+40 silly reify mark deleted [
+40 silly reify   'D:\\Workspace\\ShareTools\\.npm-cache\\_npx\\e05028111420be70\\node_modules\\@img\\sharp-linux-x64'
+40 silly reify ]
+41 verbose reify failed optional dependency D:\Workspace\ShareTools\.npm-cache\_npx\e05028111420be70\node_modules\@img\sharp-linux-s390x
+42 silly reify mark deleted [
+42 silly reify   'D:\\Workspace\\ShareTools\\.npm-cache\\_npx\\e05028111420be70\\node_modules\\@img\\sharp-linux-s390x'
+42 silly reify ]
+43 verbose reify failed optional dependency D:\Workspace\ShareTools\.npm-cache\_npx\e05028111420be70\node_modules\@img\sharp-linux-ppc64
+44 silly reify mark deleted [
+44 silly reify   'D:\\Workspace\\ShareTools\\.npm-cache\\_npx\\e05028111420be70\\node_modules\\@img\\sharp-linux-ppc64'
+44 silly reify ]
+45 verbose reify failed optional dependency D:\Workspace\ShareTools\.npm-cache\_npx\e05028111420be70\node_modules\@img\sharp-linux-arm64
+46 silly reify mark deleted [
+46 silly reify   'D:\\Workspace\\ShareTools\\.npm-cache\\_npx\\e05028111420be70\\node_modules\\@img\\sharp-linux-arm64'
+46 silly reify ]
+47 verbose reify failed optional dependency D:\Workspace\ShareTools\.npm-cache\_npx\e05028111420be70\node_modules\@img\sharp-linux-arm
+48 silly reify mark deleted [
+48 silly reify   'D:\\Workspace\\ShareTools\\.npm-cache\\_npx\\e05028111420be70\\node_modules\\@img\\sharp-linux-arm'
+48 silly reify ]
+49 verbose reify failed optional dependency D:\Workspace\ShareTools\.npm-cache\_npx\e05028111420be70\node_modules\@img\sharp-libvips-linuxmusl-x64
+50 silly reify mark deleted [
+50 silly reify   'D:\\Workspace\\ShareTools\\.npm-cache\\_npx\\e05028111420be70\\node_modules\\@img\\sharp-libvips-linuxmusl-x64'
+50 silly reify ]
+51 verbose reify failed optional dependency D:\Workspace\ShareTools\.npm-cache\_npx\e05028111420be70\node_modules\@img\sharp-libvips-linuxmusl-arm64
+52 silly reify mark deleted [
+52 silly reify   'D:\\Workspace\\ShareTools\\.npm-cache\\_npx\\e05028111420be70\\node_modules\\@img\\sharp-libvips-linuxmusl-arm64'
+52 silly reify ]
+53 verbose reify failed optional dependency D:\Workspace\ShareTools\.npm-cache\_npx\e05028111420be70\node_modules\@img\sharp-libvips-linux-x64
+54 silly reify mark deleted [
+54 silly reify   'D:\\Workspace\\ShareTools\\.npm-cache\\_npx\\e05028111420be70\\node_modules\\@img\\sharp-libvips-linux-x64'
+54 silly reify ]
+55 verbose reify failed optional dependency D:\Workspace\ShareTools\.npm-cache\_npx\e05028111420be70\node_modules\@img\sharp-libvips-linux-s390x
+56 silly reify mark deleted [
+56 silly reify   'D:\\Workspace\\ShareTools\\.npm-cache\\_npx\\e05028111420be70\\node_modules\\@img\\sharp-libvips-linux-s390x'
+56 silly reify ]
+57 verbose reify failed optional dependency D:\Workspace\ShareTools\.npm-cache\_npx\e05028111420be70\node_modules\@img\sharp-libvips-linux-ppc64
+58 silly reify mark deleted [
+58 silly reify   'D:\\Workspace\\ShareTools\\.npm-cache\\_npx\\e05028111420be70\\node_modules\\@img\\sharp-libvips-linux-ppc64'
+58 silly reify ]
+59 verbose reify failed optional dependency D:\Workspace\ShareTools\.npm-cache\_npx\e05028111420be70\node_modules\@img\sharp-libvips-linux-arm64
+60 silly reify mark deleted [
+60 silly reify   'D:\\Workspace\\ShareTools\\.npm-cache\\_npx\\e05028111420be70\\node_modules\\@img\\sharp-libvips-linux-arm64'
+60 silly reify ]
+61 verbose reify failed optional dependency D:\Workspace\ShareTools\.npm-cache\_npx\e05028111420be70\node_modules\@img\sharp-libvips-linux-arm
+62 silly reify mark deleted [
+62 silly reify   'D:\\Workspace\\ShareTools\\.npm-cache\\_npx\\e05028111420be70\\node_modules\\@img\\sharp-libvips-linux-arm'
+62 silly reify ]
+63 verbose reify failed optional dependency D:\Workspace\ShareTools\.npm-cache\_npx\e05028111420be70\node_modules\@img\sharp-libvips-darwin-x64
+64 silly reify mark deleted [
+64 silly reify   'D:\\Workspace\\ShareTools\\.npm-cache\\_npx\\e05028111420be70\\node_modules\\@img\\sharp-libvips-darwin-x64'
+64 silly reify ]
+65 verbose reify failed optional dependency D:\Workspace\ShareTools\.npm-cache\_npx\e05028111420be70\node_modules\@img\sharp-libvips-darwin-arm64
+66 silly reify mark deleted [
+66 silly reify   'D:\\Workspace\\ShareTools\\.npm-cache\\_npx\\e05028111420be70\\node_modules\\@img\\sharp-libvips-darwin-arm64'
+66 silly reify ]
+67 verbose reify failed optional dependency D:\Workspace\ShareTools\.npm-cache\_npx\e05028111420be70\node_modules\@img\sharp-darwin-x64
+68 silly reify mark deleted [
+68 silly reify   'D:\\Workspace\\ShareTools\\.npm-cache\\_npx\\e05028111420be70\\node_modules\\@img\\sharp-darwin-x64'
+68 silly reify ]
+69 verbose reify failed optional dependency D:\Workspace\ShareTools\.npm-cache\_npx\e05028111420be70\node_modules\@img\sharp-darwin-arm64
+70 silly reify mark deleted [
+70 silly reify   'D:\\Workspace\\ShareTools\\.npm-cache\\_npx\\e05028111420be70\\node_modules\\@img\\sharp-darwin-arm64'
+70 silly reify ]
+71 http cache tslib@https://registry.npmjs.org/tslib/-/tslib-2.8.1.tgz 0ms (cache hit)
+72 http cache @emnapi/runtime@https://registry.npmjs.org/@emnapi/runtime/-/runtime-1.4.5.tgz 0ms (cache hit)
+73 http fetch POST 200 https://registry.npmjs.org/-/npm/v1/security/advisories/bulk 240ms
+74 silly audit report {}
+75 verbose cwd C:\Users\QTY
+76 verbose os Windows_NT 10.0.26100
+77 verbose node v22.17.0
+78 verbose npm  v10.9.2
+79 verbose exit 0
+80 info ok

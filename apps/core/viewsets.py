@@ -1,4 +1,4 @@
-"""ShareTools 核心应用的视图集"""
+"""ViewSets for ShareTools core application"""
 
 from rest_framework import viewsets, status, filters
 from rest_framework.decorators import action
@@ -19,7 +19,7 @@ from .serializers import (
 
 @method_decorator(csrf_exempt, name='dispatch')
 class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
-    """分类视图集（只读）"""
+    """Category ViewSet (Read-only)"""
     queryset = Category.objects.filter(is_active=True)
     serializer_class = CategorySerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
@@ -27,7 +27,7 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
 
 @method_decorator(csrf_exempt, name='dispatch')
 class LocationViewSet(viewsets.ReadOnlyModelViewSet):
-    """位置视图集（只读）"""
+    """Location ViewSet (Read-only)"""
     queryset = Location.objects.filter(is_active=True)
     serializer_class = LocationSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
@@ -35,9 +35,9 @@ class LocationViewSet(viewsets.ReadOnlyModelViewSet):
 
 @method_decorator(csrf_exempt, name='dispatch')
 class ItemViewSet(viewsets.ModelViewSet):
-    """物品视图集"""
+    """Item ViewSet"""
     queryset = Item.objects.select_related('owner', 'category', 'location').prefetch_related('images', 'prices')
-    permission_classes = []  # 临时移除权限限制用于测试
+    permission_classes = []  # Temporarily remove permission restrictions for testing
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['category', 'location', 'status', 'condition']
     search_fields = ['title', 'description', 'address']
@@ -45,7 +45,7 @@ class ItemViewSet(viewsets.ModelViewSet):
     ordering = ['-created_at']
     
     def get_serializer_class(self):
-        """根据动作选择序列化器"""
+        """Select serializer based on action"""
         if self.action == 'list':
             return ItemListSerializer
         elif self.action in ['create', 'update', 'partial_update']:
@@ -53,16 +53,16 @@ class ItemViewSet(viewsets.ModelViewSet):
         return ItemSerializer
     
     def get_queryset(self):
-        """获取查询集"""
+        """Get queryset"""
         queryset = self.queryset
         
-        # 如果是列表视图，只显示已发布的物品
+        # If it's list view, only show published items
         if self.action == 'list':
-            # 非物品所有者只能看到已发布的物品
+            # Non-owners can only see published items
             if not self.request.user.is_authenticated:
                 queryset = queryset.filter(status='active')
             else:
-                # 已登录用户可以看到所有已发布的物品 + 自己的所有物品
+                # Authenticated users can see all published items + their own items
                 queryset = queryset.filter(
                     Q(status='active') | Q(owner=self.request.user)
                 )
@@ -70,29 +70,29 @@ class ItemViewSet(viewsets.ModelViewSet):
         return queryset
     
     def create(self, request, *args, **kwargs):
-        """创建物品并返回完整信息"""
+        """Create item and return complete information"""
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         
-        # 临时测试：获取或创建测试用户
+        # Temporary test: get or create test user
         from django.contrib.auth import get_user_model
         from .models import ItemPrice
         User = get_user_model()
         
-        # 尝试获取现有的测试用户
+        # Try to get existing test user
         owner = User.objects.filter(username='testuser').first()
         if not owner:
-            # 如果没有测试用户，创建一个
+            # If no test user exists, create one
             owner = User.objects.create_user(
                 username='testuser',
                 email='test@example.com',
                 password='testpass123'
             )
         
-        # 保存物品
+        # Save item
         item = serializer.save(owner=owner)
         
-        # 处理价格信息
+        # Handle price information
         price_data = request.data
         if 'price_1_day' in price_data and price_data['price_1_day']:
             try:
@@ -115,30 +115,30 @@ class ItemViewSet(viewsets.ModelViewSet):
             except (ValueError, TypeError):
                 pass
         
-        # 自动发布新创建的物品
+        # Automatically publish newly created item
         item.publish()
         
-        # 使用完整的序列化器返回数据
+        # Return data using complete serializer
         response_serializer = ItemSerializer(item, context={'request': request})
         headers = self.get_success_headers(response_serializer.data)
         return Response(response_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
     
     def perform_update(self, serializer):
-        """更新物品时检查权限"""
+        """Check permissions when updating item"""
         if serializer.instance.owner != self.request.user:
-            raise PermissionError("您只能编辑自己的物品")
+            raise PermissionError("You can only edit your own items")
         serializer.save()
     
     def perform_destroy(self, instance):
-        """删除物品时检查权限"""
+        """Check permissions when deleting item"""
         if instance.owner != self.request.user:
-            raise PermissionError("您只能删除自己的物品")
+            raise PermissionError("You can only delete your own items")
         instance.delete()
     
     def retrieve(self, request, *args, **kwargs):
-        """获取单个物品详情时增加浏览次数"""
+        """Increase view count when retrieving item details"""
         instance = self.get_object()
-        # 增加浏览次数（避免物品所有者浏览自己的物品时增加次数）
+        # Increase view count (avoid counting when owner views their own item)
         if request.user != instance.owner:
             Item.objects.filter(pk=instance.pk).update(view_count=instance.view_count + 1)
             instance.refresh_from_db()
@@ -148,18 +148,18 @@ class ItemViewSet(viewsets.ModelViewSet):
     
     @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
     def publish(self, request, pk=None):
-        """发布物品"""
+        """Publish item"""
         item = self.get_object()
         
         if item.owner != request.user:
             return Response(
-                {'error': '您只能发布自己的物品'},
+                {'error': 'You can only publish your own items'},
                 status=status.HTTP_403_FORBIDDEN
             )
         
         if item.status != 'draft':
             return Response(
-                {'error': '只能发布草稿状态的物品'},
+                {'error': 'Only draft items can be published'},
                 status=status.HTTP_400_BAD_REQUEST
             )
         
@@ -169,10 +169,10 @@ class ItemViewSet(viewsets.ModelViewSet):
     
     @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
     def my_items(self, request):
-        """获取当前用户的所有物品"""
+        """Get all items of current user"""
         queryset = self.get_queryset().filter(owner=request.user)
         
-        # 应用过滤和搜索
+        # Apply filtering and search
         queryset = self.filter_queryset(queryset)
         
         page = self.paginate_queryset(queryset)
@@ -185,8 +185,8 @@ class ItemViewSet(viewsets.ModelViewSet):
     
     @action(detail=False, methods=['get'])
     def featured(self, request):
-        """获取推荐物品"""
-        # 获取浏览量高、评分好的物品
+        """Get featured items"""
+        # Get items with high views and good ratings
         queryset = self.get_queryset().filter(
             status='active'
         ).order_by('-view_count', '-booking_count')[:10]
@@ -196,10 +196,10 @@ class ItemViewSet(viewsets.ModelViewSet):
     
     @action(detail=False, methods=['get'])
     def search(self, request):
-        """高级搜索"""
+        """Advanced search"""
         queryset = self.get_queryset().filter(status='active')
         
-        # 关键词搜索
+        # Keyword search
         q = request.query_params.get('q')
         if q:
             queryset = queryset.filter(
@@ -208,7 +208,7 @@ class ItemViewSet(viewsets.ModelViewSet):
                 Q(address__icontains=q)
             )
         
-        # 价格范围
+        # Price range
         min_price = request.query_params.get('min_price')
         max_price = request.query_params.get('max_price')
         if min_price:
@@ -216,27 +216,27 @@ class ItemViewSet(viewsets.ModelViewSet):
         if max_price:
             queryset = queryset.filter(item_value__lte=max_price)
         
-        # 分类过滤
+        # Category filter
         category = request.query_params.get('category')
         if category:
             queryset = queryset.filter(category_id=category)
         
-        # 位置过滤
+        # Location filter
         location = request.query_params.get('location')
         if location:
             queryset = queryset.filter(location_id=location)
         
-        # 状况过滤
+        # Condition filter
         condition = request.query_params.get('condition')
         if condition:
             queryset = queryset.filter(condition=condition)
         
-        # 排序
+        # Sorting
         sort_by = request.query_params.get('sort', '-created_at')
         if sort_by in ['created_at', '-created_at', 'item_value', '-item_value', 'view_count', '-view_count']:
             queryset = queryset.order_by(sort_by)
         
-        # 分页
+        # Pagination
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = ItemListSerializer(page, many=True, context={'request': request})
@@ -248,34 +248,34 @@ class ItemViewSet(viewsets.ModelViewSet):
 
 @method_decorator(csrf_exempt, name='dispatch')
 class ItemImageViewSet(viewsets.ModelViewSet):
-    """物品图片视图集"""
+    """Item Image ViewSet"""
     serializer_class = ItemImageSerializer
-    permission_classes = []  # 临时移除权限限制用于测试
+    permission_classes = []  # Temporarily remove permission restrictions for testing
     
     def get_queryset(self):
-        """获取所有物品图片（临时测试）"""
+        """Get all item images (temporary test)"""
         return ItemImage.objects.all()
     
     def perform_create(self, serializer):
-        """创建图片时的处理（临时测试版本）"""
-        # 临时测试：允许任何人为任何物品添加图片
+        """Handle image creation (temporary test version)"""
+        # Temporary test: allow anyone to add images to any item
         serializer.save()
     
     def perform_update(self, serializer):
-        """更新图片时检查权限"""
+        """Check permissions when updating image"""
         if serializer.instance.item.owner != self.request.user:
-            raise PermissionError("您只能编辑自己物品的图片")
+            raise PermissionError("You can only edit images of your own items")
         serializer.save()
     
     def perform_destroy(self, instance):
-        """删除图片时检查权限"""
+        """Check permissions when deleting image"""
         if instance.item.owner != self.request.user:
-            raise PermissionError("您只能删除自己物品的图片")
+            raise PermissionError("You can only delete images of your own items")
         instance.delete()
     
     @action(detail=False, methods=['post'], permission_classes=[])
     def bulk_upload(self, request):
-        """批量上传图片"""
+        """Bulk upload images"""
         try:
             item_id = request.data.get('item_id')
             if not item_id:
@@ -290,13 +290,13 @@ class ItemImageViewSet(viewsets.ModelViewSet):
             uploaded_images = []
             errors = []
             
-            # 处理多个图片文件
+            # Process multiple image files
             for key, file in request.FILES.items():
                 if key.startswith('image_'):
                     try:
-                        # 创建图片记录
+                        # Create image record
                         order = len(uploaded_images) + 1
-                        is_primary = order == 1  # 第一张图片设为主图
+                        is_primary = order == 1  # Set first image as primary
                         
                         image_data = {
                             'item': item.id,
@@ -338,27 +338,27 @@ class ItemImageViewSet(viewsets.ModelViewSet):
 
 @method_decorator(csrf_exempt, name='dispatch')
 class ItemPriceViewSet(viewsets.ModelViewSet):
-    """物品价格视图集"""
+    """Item Price ViewSet"""
     serializer_class = ItemPriceSerializer
-    permission_classes = []  # 临时移除权限限制用于测试
+    permission_classes = []  # Temporarily remove permission restrictions for testing
     
     def get_queryset(self):
-        """获取所有物品价格（临时测试）"""
+        """Get all item prices (temporary test)"""
         return ItemPrice.objects.all()
     
     def perform_create(self, serializer):
-        """创建价格时的处理（临时测试版本）"""
-        # 临时测试：允许任何人为任何物品设置价格
+        """Handle price creation (temporary test version)"""
+        # Temporary test: allow anyone to set prices for any item
         serializer.save()
     
     def perform_update(self, serializer):
-        """更新价格时检查权限"""
+        """Check permissions when updating price"""
         if serializer.instance.item.owner != self.request.user:
-            raise PermissionError("您只能编辑自己物品的价格")
+            raise PermissionError("You can only edit prices of your own items")
         serializer.save()
     
     def perform_destroy(self, instance):
-        """删除价格时检查权限"""
+        """Check permissions when deleting price"""
         if instance.item.owner != self.request.user:
-            raise PermissionError("您只能删除自己物品的价格")
+            raise PermissionError("You can only delete prices of your own items")
         instance.delete()

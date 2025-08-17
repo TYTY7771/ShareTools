@@ -1,0 +1,516 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Rental Management - ShareTools{% endblock %}
+
+{% block extra_css %}
+<style>
+    .rental-home-header {
+        background: linear-gradient(135deg, var(--color-primary) 0%, #1E40AF 100%);
+        color: var(--color-accent);
+        padding: var(--spacing-2xl) 0;
+        text-align: center;
+        margin-bottom: var(--spacing-2xl);
+    }
+    
+    .rental-home-header h1 {
+        font-size: var(--font-size-display);
+        font-weight: var(--font-weight-bold);
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    .rental-home-header p {
+        font-size: var(--font-size-h3);
+        opacity: 0.9;
+    }
+    
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: var(--spacing-2xl);
+        margin-bottom: var(--spacing-2xl);
+    }
+    
+    .feature-card {
+        background: var(--color-accent);
+        padding: var(--spacing-2xl);
+        border-radius: var(--radius-default);
+        box-shadow: var(--shadow-medium);
+        text-align: center;
+        transition: all var(--animation-duration) var(--animation-easing);
+        border: 1px solid var(--color-surface);
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-high);
+    }
+    
+    .feature-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, var(--color-primary) 0%, #1E40AF 100%);
+        border-radius: var(--radius-round);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto var(--spacing-lg);
+        font-size: 2rem;
+        color: var(--color-accent);
+    }
+    
+    .feature-title {
+        font-size: var(--font-size-h2);
+        font-weight: var(--font-weight-bold);
+        color: var(--color-text-primary);
+        margin-bottom: var(--spacing-md);
+    }
+    
+    .feature-description {
+        color: var(--color-text-secondary);
+        line-height: var(--line-height-relaxed);
+        margin-bottom: var(--spacing-lg);
+    }
+    
+    .quick-actions {
+        background: var(--color-surface);
+        padding: var(--spacing-2xl);
+        border-radius: var(--radius-default);
+        margin-bottom: var(--spacing-2xl);
+        text-align: center;
+    }
+    
+    .quick-actions h2 {
+        font-size: var(--font-size-h2);
+        font-weight: var(--font-weight-bold);
+        color: var(--color-text-primary);
+        margin-bottom: var(--spacing-lg);
+    }
+    
+    .action-buttons {
+        display: flex;
+        gap: var(--spacing-md);
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .btn-action {
+        padding: var(--spacing-md) var(--spacing-xl);
+        border: none;
+        border-radius: var(--radius-default);
+        font-weight: var(--font-weight-medium);
+        cursor: pointer;
+        transition: all var(--animation-duration) var(--animation-easing);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+        font-size: var(--font-size-body);
+    }
+    
+    .btn-primary {
+        background: var(--color-primary);
+        color: var(--color-accent);
+    }
+    
+    .btn-primary:hover {
+        background: #1E40AF;
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-medium);
+    }
+    
+    .btn-secondary {
+        background: var(--color-text-secondary);
+        color: var(--color-accent);
+    }
+    
+    .btn-secondary:hover {
+        background: #4B5563;
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-medium);
+    }
+    
+    .btn-success {
+        background: var(--color-success);
+        color: var(--color-accent);
+    }
+    
+    .btn-success:hover {
+        background: #059669;
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-medium);
+    }
+    
+    .stats-section {
+        background: var(--color-accent);
+        padding: var(--spacing-2xl);
+        border-radius: var(--radius-default);
+        box-shadow: var(--shadow-medium);
+        margin-bottom: var(--spacing-2xl);
+    }
+    
+    .stats-section h2 {
+        font-size: var(--font-size-h2);
+        font-weight: var(--font-weight-bold);
+        color: var(--color-text-primary);
+        margin-bottom: var(--spacing-lg);
+        text-align: center;
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: var(--spacing-lg);
+    }
+    
+    .stat-card {
+        background: var(--color-surface);
+        padding: var(--spacing-lg);
+        border-radius: var(--radius-default);
+        text-align: center;
+        border: 1px solid var(--color-surface);
+    }
+    
+    .stat-number {
+        font-size: var(--font-size-display);
+        font-weight: var(--font-weight-bold);
+        color: var(--color-primary);
+        margin-bottom: var(--spacing-xs);
+    }
+    
+    .stat-label {
+        color: var(--color-text-secondary);
+        font-size: var(--font-size-caption);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .info-section {
+        background: var(--color-surface);
+        padding: var(--spacing-2xl);
+        border-radius: var(--radius-default);
+        margin-bottom: var(--spacing-2xl);
+    }
+    
+    .info-section h2 {
+        font-size: var(--font-size-h2);
+        font-weight: var(--font-weight-bold);
+        color: var(--color-text-primary);
+        margin-bottom: var(--spacing-lg);
+        text-align: center;
+    }
+    
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: var(--spacing-lg);
+    }
+    
+    .info-card {
+        background: var(--color-accent);
+        padding: var(--spacing-lg);
+        border-radius: var(--radius-default);
+        border: 1px solid var(--color-surface);
+    }
+    
+    .info-card h3 {
+        font-size: var(--font-size-h3);
+        font-weight: var(--font-weight-bold);
+        color: var(--color-text-primary);
+        margin-bottom: var(--spacing-sm);
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+    }
+    
+    .info-card p {
+        color: var(--color-text-secondary);
+        line-height: var(--line-height-relaxed);
+        margin-bottom: var(--spacing-md);
+    }
+    
+    .info-card ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .info-card li {
+        padding: var(--spacing-xs) 0;
+        color: var(--color-text-secondary);
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+    }
+    
+    .info-card li::before {
+        content: "✓";
+        color: var(--color-success);
+        font-weight: var(--font-weight-bold);
+    }
+    
+    .breadcrumb {
+        background: var(--color-surface);
+        padding: var(--spacing-md) 0;
+        border-bottom: 1px solid var(--color-surface);
+        margin-bottom: var(--spacing-lg);
+    }
+    
+    .breadcrumb-list {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .breadcrumb-item {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+    }
+    
+    .breadcrumb-link {
+        color: var(--color-text-secondary);
+        text-decoration: none;
+        transition: color var(--animation-duration) var(--animation-easing);
+    }
+    
+    .breadcrumb-link:hover {
+        color: var(--color-primary);
+    }
+    
+    .breadcrumb-current {
+        color: var(--color-text-primary);
+        font-weight: var(--font-weight-medium);
+    }
+    
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+        .features-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .btn-action {
+            width: 100%;
+            max-width: 300px;
+            justify-content: center;
+        }
+        
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb Navigation -->
+<nav class="breadcrumb" aria-label="Breadcrumb Navigation">
+    <div class="container">
+        <ol class="breadcrumb-list">
+            <li class="breadcrumb-item">
+                <a href="{% url 'home' %}" class="breadcrumb-link">
+                    <span class="icon icon-home"></span>
+                    Home
+                </a>
+            </li>
+            <li class="breadcrumb-item active">
+                <span class="breadcrumb-current">Rental Management</span>
+            </li>
+        </ol>
+    </div>
+</nav>
+
+<!-- Page Title -->
+<section class="rental-home-header">
+    <div class="container">
+        <h1>Rental Management</h1>
+        <p>Manage your tool rentals and connect with the community</p>
+    </div>
+</section>
+
+<!-- Main Content -->
+<section class="container">
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+        <h2>Quick Actions</h2>
+        <div class="action-buttons">
+            {% if user.is_authenticated %}
+                <a href="{% url 'rental:my_rentals' %}" class="btn-action btn-primary">
+                    <span class="icon icon-list"></span>
+                    My Rentals
+                </a>
+                <a href="{% url 'rental:owner_rentals' %}" class="btn-action btn-success">
+                    <span class="icon icon-handshake"></span>
+                    My Item Rentals
+                </a>
+                <a href="{% url 'browse_things' %}" class="btn-action btn-secondary">
+                    <span class="icon icon-search"></span>
+                    Browse Items
+                </a>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn-action btn-primary">
+                    <span class="icon icon-signin"></span>
+                    Login to Start
+                </a>
+                <a href="{% url 'register' %}" class="btn-action btn-success">
+                    <span class="icon icon-user-plus"></span>
+                    Sign Up
+                </a>
+                <a href="{% url 'browse_things' %}" class="btn-action btn-secondary">
+                    <span class="icon icon-search"></span>
+                    Browse Items
+                </a>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Features -->
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-icon">
+                <span class="icon icon-tools"></span>
+            </div>
+            <h3 class="feature-title">Easy Item Sharing</h3>
+            <p class="feature-description">
+                List your tools and equipment for rent. Set your own prices and availability. 
+                Connect with trusted community members.
+            </p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">
+                <span class="icon icon-handshake"></span>
+            </div>
+            <h3 class="feature-title">Secure Rentals</h3>
+            <p class="feature-description">
+                Built-in payment processing, rental agreements, and insurance options. 
+                Your items are protected during rentals.
+            </p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">
+                <span class="icon icon-users"></span>
+            </div>
+            <h3 class="feature-title">Community Trust</h3>
+            <p class="feature-description">
+                User reviews, ratings, and verification systems. Build trust with other 
+                community members through positive interactions.
+            </p>
+        </div>
+    </div>
+    
+    <!-- Statistics (if user is authenticated) -->
+    {% if user.is_authenticated %}
+    <div class="stats-section">
+        <h2>Your Rental Statistics</h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">{{ user.rental_orders_new.count|default:"0" }}</div>
+                <div class="stat-label">Total Rentals</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ user.owned_rentals_new.count|default:"0" }}</div>
+                <div class="stat-label">Items Rented Out</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ user.rental_orders_new.filter.status='completed'|length|default:"0" }}</div>
+                <div class="stat-label">Completed Rentals</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ user.rental_orders_new.filter.status='active'|length|default:"0" }}</div>
+                <div class="stat-label">Active Rentals</div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Information Section -->
+    <div class="info-section">
+        <h2>How It Works</h2>
+        <div class="info-grid">
+            <div class="info-card">
+                <h3><span class="icon icon-plus"></span>List Your Items</h3>
+                <p>Upload photos, set prices, and describe your tools. Choose your availability and rental terms.</p>
+                <ul>
+                    <li>Set your own daily rates</li>
+                    <li>Choose rental duration options</li>
+                    <li>Set security deposit amounts</li>
+                    <li>Manage availability calendar</li>
+                </ul>
+            </div>
+            
+            <div class="info-card">
+                <h3><span class="icon icon-search"></span>Find What You Need</h3>
+                <p>Browse available tools in your area. Filter by category, price, location, and availability.</p>
+                <ul>
+                    <li>Search by location and category</li>
+                    <li>Compare prices and reviews</li>
+                    <li>Check availability calendars</li>
+                    <li>Read owner descriptions</li>
+                </ul>
+            </div>
+            
+            <div class="info-card">
+                <h3><span class="icon icon-credit-card"></span>Secure Payments</h3>
+                <p>All payments are processed securely through our platform. Multiple payment methods accepted.</p>
+                <ul>
+                    <li>Credit and debit cards</li>
+                    <li>PayPal integration</li>
+                    <li>Bank transfer options</li>
+                    <li>Secure transaction processing</li>
+                </ul>
+            </div>
+            
+            <div class="info-card">
+                <h3><span class="icon icon-shield-alt"></span>Safety & Protection</h3>
+                <p>Your items and transactions are protected with our comprehensive safety measures.</p>
+                <ul>
+                    <li>User verification systems</li>
+                    <li>Insurance coverage options</li>
+                    <li>Dispute resolution process</li>
+                    <li>24/7 customer support</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Call to Action -->
+    <div class="quick-actions">
+        <h2>Ready to Get Started?</h2>
+        <div class="action-buttons">
+            {% if user.is_authenticated %}
+                <a href="{% url 'list_item' %}" class="btn-action btn-primary">
+                    <span class="icon icon-plus"></span>
+                    List Your First Item
+                </a>
+                <a href="{% url 'browse_things' %}" class="btn-action btn-success">
+                    <span class="icon icon-search"></span>
+                    Find Tools to Rent
+                </a>
+            {% else %}
+                <a href="{% url 'register' %}" class="btn-action btn-primary">
+                    <span class="icon icon-user-plus"></span>
+                    Join ShareTools
+                </a>
+                <a href="{% url 'browse_things' %}" class="btn-action btn-secondary">
+                    <span class="icon icon-eye"></span>
+                    See What's Available
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

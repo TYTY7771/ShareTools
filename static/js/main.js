@@ -1,7 +1,7 @@
-/* ShareTools 主JavaScript文件 */
-/* 页面初始化和数据管理 */
+/* ShareTools Main JavaScript File */
+/* Page initialization and data management */
 
-// 应用程序主类
+// Main application class
 class ShareToolsApp {
   constructor() {
     this.productCards = [];
@@ -11,7 +11,7 @@ class ShareToolsApp {
     this.init();
   }
 
-  // 初始化应用
+  // Initialize application
   async init() {
     this.bindGlobalEvents();
     this.initNavigation();
@@ -19,23 +19,23 @@ class ShareToolsApp {
     this.initializeComponents();
   }
 
-  // 初始化导航栏功能
+  // Initialize navigation functionality
   initNavigation() {
-    console.log('初始化导航栏...');
+    console.log('Initializing navigation...');
 
-    // 处理下拉菜单导航（只有Locations）
+    // Handle dropdown menu navigation (Locations only)
     const navDropdowns = document.querySelectorAll('.nav-dropdown');
     navDropdowns.forEach(dropdown => {
       const navLink = dropdown.querySelector('.nav-link');
       const dropdownMenu = dropdown.querySelector('.dropdown-menu');
 
       if (navLink && dropdownMenu) {
-        // 下拉菜单链接 - 阻止默认行为，显示菜单
+        // Dropdown menu link - prevent default behavior, show menu
         navLink.addEventListener('click', (e) => {
           e.preventDefault();
           e.stopPropagation();
 
-          // 关闭其他所有下拉菜单
+          // Close all other dropdown menus
           navDropdowns.forEach(otherDropdown => {
             if (otherDropdown !== dropdown) {
               const otherMenu = otherDropdown.querySelector('.dropdown-menu');
@@ -45,11 +45,11 @@ class ShareToolsApp {
             }
           });
 
-          // 切换当前下拉菜单
+          // Toggle current dropdown menu
           dropdownMenu.classList.toggle('dropdown-active');
         });
 
-        // 移动设备支持
+        // Mobile device support
         navLink.addEventListener('touchstart', (e) => {
           e.preventDefault();
           dropdownMenu.classList.toggle('dropdown-active');
@@ -57,21 +57,21 @@ class ShareToolsApp {
       }
     });
 
-    // 处理普通导航链接（The Things, About, List an Item）
+    // Handle regular navigation links (The Things, About, List an Item)
     const regularNavLinks = document.querySelectorAll('.nav-item:not(.nav-dropdown) .nav-link');
     console.log(`Found ${regularNavLinks.length} regular navigation links`);
 
     regularNavLinks.forEach(link => {
       console.log(`Regular nav link: ${link.textContent.trim()} -> ${link.href}`);
 
-      // 确保链接可以正常工作
+      // Ensure links work properly
       link.addEventListener('click', (e) => {
         console.log(`🔗 Clicking: ${link.textContent.trim()} -> ${link.href}`);
 
-        // 不阻止默认行为，让链接正常跳转
+        // Don't prevent default behavior, let links navigate normally
         if (link.href && link.href !== '#') {
           console.log(`✅ Allowing navigation to: ${link.href}`);
-          // 可以添加一个小延迟来确保日志可以看到
+          // Add small delay to ensure logs are visible
           setTimeout(() => {
             if (e.defaultPrevented) {
               console.log('⚠️ Navigation was prevented by another handler');
@@ -84,7 +84,7 @@ class ShareToolsApp {
         }
       });
 
-      // 添加视觉反馈
+      // Add visual feedback
       link.addEventListener('mousedown', () => {
         link.style.opacity = '0.7';
       });
@@ -98,7 +98,7 @@ class ShareToolsApp {
       });
     });
 
-    // 点击页面其他地方关闭下拉菜单
+    // Click elsewhere on page to close dropdown menus
     document.addEventListener('click', (e) => {
       const clickedDropdown = e.target.closest('.nav-dropdown');
       if (!clickedDropdown) {
@@ -111,7 +111,7 @@ class ShareToolsApp {
       }
     });
 
-    // ESC键关闭下拉菜单
+    // ESC key to close dropdown menus
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         navDropdowns.forEach(dropdown => {
@@ -123,16 +123,16 @@ class ShareToolsApp {
       }
     });
 
-    console.log('导航栏初始化完成');
+    console.log('Navigation initialization completed');
   }
 
-  // 加载数据（从API获取真实数据）
+  // Load data (get real data from API)
   async loadData() {
     try {
-      // 显示加载状态
+      // Show loading state
       this.showLoadingState();
 
-      // 并行加载产品数据和特色功能数据
+      // Load product data and feature data in parallel
       const [productsResponse, featuresResponse] = await Promise.all([
         this.loadProductsData(),
         this.loadFeaturesData()
@@ -141,31 +141,31 @@ class ShareToolsApp {
       this.productsData = productsResponse;
       this.featuresData = featuresResponse;
 
-      // 隐藏加载状态
+      // Hide loading state
       this.hideLoadingState();
 
     } catch (error) {
-      console.error('加载数据失败:', error);
-      // 如果API调用失败，使用备用数据
+      console.error('Failed to load data:', error);
+      // If API call fails, use fallback data
       this.loadFallbackData();
       this.hideLoadingState();
     }
   }
 
-  // 从API加载产品数据
+  // Load product data from API
   async loadProductsData() {
     try {
-      console.log('开始加载产品数据...');
+      console.log('Starting to load product data...');
       if (typeof ItemsAPI !== 'undefined') {
-        console.log('ItemsAPI 可用，调用API...');
+        console.log('ItemsAPI available, calling API...');
         const response = await ItemsAPI.getItems({ limit: 6, status: 'active' });
-        console.log('API响应:', response);
+        console.log('API response:', response);
 
-        // 转换API数据格式为组件所需格式
+        // Transform API data format to component required format
         const transformedData = response.results.map(item => {
           console.log('Processing item:', item);
 
-          // 获取图片URL
+          // Get image URL
           let imageUrl = null;
           if (item.primary_image && item.primary_image.image) {
             imageUrl = item.primary_image.image;
@@ -173,7 +173,7 @@ class ShareToolsApp {
             imageUrl = item.images[0].image;
           }
 
-          // 获取最低价格
+          // Get minimum price
           let minPrice = '1';
           if (item.min_daily_price) {
             minPrice = item.min_daily_price.toString();
@@ -194,29 +194,29 @@ class ShareToolsApp {
             currency: '£',
             period: 'day',
             icon: this.getItemIcon(item.category),
-            image: imageUrl, // 添加真实图片
+            image: imageUrl, // Add real image
             badge: this.getItemBadge(item),
             isFavorited: false,
-            originalData: item // 保存原始数据以备后用
+            originalData: item // Save original data for later use
           };
         });
-        console.log('转换后的产品数据:', transformedData);
+        console.log('Transformed product data:', transformedData);
         return transformedData;
       } else {
-        console.warn('ItemsAPI 未定义，将使用备用数据');
-        throw new Error('ItemsAPI 未定义');
+        console.warn('ItemsAPI not defined, will use fallback data');
+        throw new Error('ItemsAPI not defined');
       }
     } catch (error) {
-      console.error('从API加载产品数据失败:', error);
+      console.error('Failed to load product data from API:', error);
       throw error;
     }
   }
 
-  // 加载备用数据（静态数据）
+  // Load fallback data (static data)
   loadFallbackData() {
-    console.log('使用备用数据');
+    console.log('Using fallback data');
 
-    // 产品数据
+    // Product data
     this.productsData = [
       {
         id: 'tool-1',
@@ -275,7 +275,7 @@ class ShareToolsApp {
       }
     ];
 
-    // 特色功能数据
+    // Feature data
     this.featuresData = [
       {
         id: 'feature-1',
@@ -322,9 +322,9 @@ class ShareToolsApp {
     ];
   }
 
-  // 从API加载特色功能数据
+  // Load feature data from API
   async loadFeaturesData() {
-    // 特色功能数据通常是静态的，但也可以从API获取
+    // Feature data is usually static, but can also be fetched from API
     return [
       {
         id: 'feature-1',
@@ -371,7 +371,7 @@ class ShareToolsApp {
     ];
   }
 
-  // 根据分类获取物品图标
+  // Get item icon based on category
   getItemIcon(category) {
     const iconMap = {
       'tools': '🔧',
@@ -391,7 +391,7 @@ class ShareToolsApp {
     return iconMap[category] || '🔧';
   }
 
-  // 根据物品属性获取徽章
+  // Get badge based on item properties
   getItemBadge(item) {
     if (item.is_featured) {
       return { type: 'hot', text: 'FEATURED' };
@@ -410,58 +410,58 @@ class ShareToolsApp {
     return null;
   }
 
-  // 显示加载状态
+  // Show loading state
   showLoadingState() {
     const productsContainer = document.getElementById('products-container');
     const featuresContainer = document.getElementById('features-container');
 
     if (productsContainer) {
-      productsContainer.innerHTML = '<div class="loading-spinner">加载中...</div>';
+      productsContainer.innerHTML = '<div class="loading-spinner">Loading...</div>';
     }
 
     if (featuresContainer) {
-      featuresContainer.innerHTML = '<div class="loading-spinner">加载中...</div>';
+      featuresContainer.innerHTML = '<div class="loading-spinner">Loading...</div>';
     }
   }
 
-  // 隐藏加载状态
+  // Hide loading state
   hideLoadingState() {
-    // 加载状态会在渲染组件时被替换，这里可以添加额外的清理逻辑
-    console.log('数据加载完成');
+    // Loading state will be replaced when rendering components, additional cleanup logic can be added here
+    console.log('Data loading completed');
   }
 
-  // 初始化组件
+  // Initialize components
   initializeComponents() {
     this.renderProductCards();
     this.renderFeatureCards();
   }
 
-  // 渲染产品卡片
+  // Render product cards
   renderProductCards() {
-    console.log('开始渲染产品卡片...');
+    console.log('Starting to render product cards...');
     const container = document.getElementById('products-container');
     if (!container) {
-      console.warn('产品容器未找到');
+      console.warn('Product container not found');
       return;
     }
 
-    // 检查数据是否存在
+    // Check if data exists
     if (!this.productsData || this.productsData.length === 0) {
-      console.warn('产品数据为空，显示占位符');
+      console.warn('Product data is empty, showing placeholder');
       container.innerHTML = `
         <div class="no-products-message">
-          <h3>暂无物品展示</h3>
-          <p>目前还没有活跃的物品，请稍后再来查看或 <a href="/list-item/">发布您的物品</a>。</p>
+          <h3>No items to display</h3>
+          <p>There are currently no active items. Please check back later or <a href="/list-item/">list your item</a>.</p>
         </div>
       `;
       return;
     }
 
-    console.log('产品数据:', this.productsData);
+    console.log('Product data:', this.productsData);
 
-    // 检查componentManager是否存在
+    // Check if componentManager exists
     if (typeof componentManager === 'undefined') {
-      console.error('componentManager 未定义，尝试等待加载...');
+      console.error('componentManager not defined, trying to wait for loading...');
       setTimeout(() => {
         if (typeof componentManager !== 'undefined') {
           this.renderProductCards();
@@ -472,26 +472,26 @@ class ShareToolsApp {
       return;
     }
 
-    // 清空容器
+    // Clear container
     container.innerHTML = '';
 
-    // 创建产品卡片
+    // Create product cards
     try {
       this.productCards = componentManager.createProductCards(this.productsData, container);
-      console.log('产品卡片创建成功:', this.productCards);
+      console.log('Product cards created successfully:', this.productCards);
     } catch (error) {
-      console.error('创建产品卡片失败:', error);
+      console.error('Failed to create product cards:', error);
       this.renderProductCardsFallback(container);
       return;
     }
 
-    // 绑定产品卡片事件
+    // Bind product card events
     this.bindProductEvents();
   }
 
-  // 备用的产品卡片渲染方法
+  // Fallback product card rendering method
   renderProductCardsFallback(container) {
-    console.log('使用备用渲染方法...');
+    console.log('Using fallback rendering method...');
     container.innerHTML = '';
 
     this.productsData.forEach(product => {
@@ -523,7 +523,7 @@ class ShareToolsApp {
     });
   }
 
-  // 备用的星级评分渲染
+  // Fallback star rating rendering
   renderStarsFallback(rating) {
     const maxStars = 5;
     let starsHtml = '';
@@ -534,51 +534,51 @@ class ShareToolsApp {
     return starsHtml;
   }
 
-  // 渲染特色功能卡片
+  // Render feature cards
   renderFeatureCards() {
-    console.log('开始渲染特色功能卡片...');
+    console.log('Starting to render feature cards...');
     const container = document.getElementById('features-container');
     if (!container) {
-      console.warn('特色功能容器未找到');
+      console.warn('Feature container not found');
       return;
     }
 
-    // 检查数据是否存在
+    // Check if data exists
     if (!this.featuresData || this.featuresData.length === 0) {
-      console.warn('特色功能数据为空');
-      container.innerHTML = '<div class="no-features-message"><p>暂无特色功能展示</p></div>';
+      console.warn('Feature data is empty');
+      container.innerHTML = '<div class="no-features-message"><p>No features to display</p></div>';
       return;
     }
 
-    console.log('特色功能数据:', this.featuresData);
+    console.log('Feature data:', this.featuresData);
 
-    // 检查componentManager是否存在
+    // Check if componentManager exists
     if (typeof componentManager === 'undefined') {
-      console.error('componentManager 未定义，使用备用渲染方法...');
+      console.error('componentManager not defined, using fallback rendering method...');
       this.renderFeatureCardsFallback(container);
       return;
     }
 
-    // 清空容器
+    // Clear container
     container.innerHTML = '';
 
-    // 创建特色功能卡片
+    // Create feature cards
     try {
       this.featureCards = componentManager.createFeatureCards(this.featuresData, container);
-      console.log('特色功能卡片创建成功:', this.featureCards);
+      console.log('Feature cards created successfully:', this.featureCards);
     } catch (error) {
-      console.error('创建特色功能卡片失败:', error);
+      console.error('Failed to create feature cards:', error);
       this.renderFeatureCardsFallback(container);
       return;
     }
 
-    // 绑定特色功能事件
+    // Bind feature events
     this.bindFeatureEvents();
   }
 
-  // 备用的特色功能卡片渲染方法
+  // Fallback feature card rendering method
   renderFeatureCardsFallback(container) {
-    console.log('使用备用特色功能渲染方法...');
+    console.log('Using fallback feature rendering method...');
     container.innerHTML = '';
 
     this.featuresData.forEach(feature => {
@@ -595,12 +595,12 @@ class ShareToolsApp {
     });
   }
 
-  // 绑定产品卡片事件
+  // Bind product card events
   bindProductEvents() {
     const container = document.getElementById('products-container');
     if (!container) return;
 
-    // 收藏切换事件
+    // Favorite toggle event
     container.addEventListener('favoriteToggle', (e) => {
       const { productId, isFavorited } = e.detail;
 
@@ -610,46 +610,46 @@ class ShareToolsApp {
         this.favoriteProducts.delete(productId);
       }
 
-      console.log(`产品 ${productId} ${isFavorited ? '已添加到' : '已从'}收藏夹${isFavorited ? '' : '移除'}`);
+      console.log(`Product ${productId} ${isFavorited ? 'added to' : 'removed from'} favorites`);
 
-      // 更新收藏数量显示
+      // Update favorite count display
       this.updateFavoriteCount();
     });
 
-    // 产品点击事件
+    // Product click event
     container.addEventListener('productClick', (e) => {
       const { productId, product } = e.detail;
-      console.log(`点击了产品: ${product.title}`);
+      console.log(`Clicked product: ${product.title}`);
 
-      // 这里可以添加跳转到产品详情页的逻辑
+      // Logic for navigating to product details page can be added here
       this.showProductDetails(product);
     });
 
-    // 产品悬停事件
+    // Product hover event
     container.addEventListener('productHover', (e) => {
       const { product } = e.detail;
-      // 可以在这里添加悬停时的额外效果
+      // Additional hover effects can be added here
     });
   }
 
-  // 绑定特色功能事件
+  // Bind feature events
   bindFeatureEvents() {
     const container = document.getElementById('features-container');
     if (!container) return;
 
-    // 特色功能点击事件
+    // Feature click event
     container.addEventListener('featureClick', (e) => {
       const { feature } = e.detail;
-      console.log(`点击了特色功能: ${feature.title}`);
+      console.log(`Clicked feature: ${feature.title}`);
 
-      // 这里可以添加显示功能详情的逻辑
+      // Logic for displaying feature details can be added here
       this.showFeatureDetails(feature);
     });
   }
 
-  // 绑定全局事件
+  // Bind global events
   bindGlobalEvents() {
-    // 购物车点击事件
+    // Cart click event
     const cartIcon = document.querySelector('.cart-icon');
     if (cartIcon) {
       cartIcon.addEventListener('click', () => {
@@ -657,7 +657,7 @@ class ShareToolsApp {
       });
     }
 
-    // 导航链接点击事件
+    // Navigation link click event
     document.querySelectorAll('.nav-link').forEach(link => {
       link.addEventListener('click', (e) => {
         e.preventDefault();
@@ -666,39 +666,39 @@ class ShareToolsApp {
       });
     });
 
-    // 响应式菜单切换
+    // Responsive menu toggle
     window.addEventListener('resize', ComponentUtils.debounce(() => {
       this.handleResize();
     }, 250));
 
-    // 滚动事件
+    // Scroll event
     window.addEventListener('scroll', ComponentUtils.throttle(() => {
       this.handleScroll();
     }, 100));
   }
 
-  // 显示产品详情
+  // Show product details
   showProductDetails(product) {
-    // 简单的模态框显示产品信息
+    // Simple modal to display product information
     const modal = this.createModal({
       title: product.title,
       content: `
         <div class="product-details">
           <div class="product-icon-large">${product.icon}</div>
-          <p><strong>评分:</strong> ${product.rating}/5 星</p>
-          <p><strong>价格:</strong> ${product.currency}${product.price}/${product.period}</p>
-          <p><strong>状态:</strong> ${product.badge ? product.badge.text : '普通'}</p>
-          <p>这是一个优秀的工具，可以帮助您提高工作效率。</p>
+          <p><strong>Rating:</strong> ${product.rating}/5 stars</p>
+          <p><strong>Price:</strong> ${product.currency}${product.price}/${product.period}</p>
+          <p><strong>Status:</strong> ${product.badge ? product.badge.text : 'Normal'}</p>
+          <p>This is an excellent tool that can help you improve your work efficiency.</p>
         </div>
       `,
       actions: [
-        { text: '立即租用', class: 'btn-primary', action: () => this.rentProduct(product) },
-        { text: '关闭', class: 'btn-secondary', action: () => this.closeModal() }
+        { text: 'Rent Now', class: 'btn-primary', action: () => this.rentProduct(product) },
+        { text: 'Close', class: 'btn-secondary', action: () => this.closeModal() }
       ]
     });
   }
 
-  // 显示特色功能详情
+  // Show feature details
   showFeatureDetails(feature) {
     const modal = this.createModal({
       title: feature.title,
@@ -708,19 +708,19 @@ class ShareToolsApp {
             ${feature.icon}
           </div>
           <p>${feature.description}</p>
-          <p>了解更多关于这个特色功能的详细信息。</p>
+          <p>Learn more about the detailed information of this feature.</p>
         </div>
       `,
       actions: [
-        { text: '了解更多', class: 'btn-primary', action: () => this.learnMore(feature) },
-        { text: '关闭', class: 'btn-secondary', action: () => this.closeModal() }
+        { text: 'Learn More', class: 'btn-primary', action: () => this.learnMore(feature) },
+        { text: 'Close', class: 'btn-secondary', action: () => this.closeModal() }
       ]
     });
   }
 
-  // 创建模态框
+  // Create modal
   createModal({ title, content, actions }) {
-    // 移除现有模态框
+    // Remove existing modal
     this.closeModal();
 
     const modal = document.createElement('div');
@@ -742,7 +742,7 @@ class ShareToolsApp {
       </div>
     `;
 
-    // 绑定事件
+    // Bind events
     modal.querySelector('.modal-close').addEventListener('click', () => this.closeModal());
     modal.addEventListener('click', (e) => {
       if (e.target === modal) this.closeModal();
@@ -759,7 +759,7 @@ class ShareToolsApp {
     return modal;
   }
 
-  // 关闭模态框
+  // Close modal
   closeModal() {
     const modal = document.querySelector('.modal-overlay');
     if (modal) {
@@ -768,33 +768,33 @@ class ShareToolsApp {
     }
   }
 
-  // 切换购物车
+  // Toggle cart
   toggleCart() {
-    console.log('切换购物车显示');
-    // 这里可以实现购物车的显示/隐藏逻辑
+    console.log('Toggle cart display');
+    // Logic for showing/hiding cart can be implemented here
   }
 
-  // 导航处理
+  // Navigation handling
   navigateTo(href) {
-    console.log(`导航到: ${href}`);
-    // 这里可以实现单页应用的路由逻辑
+    console.log(`Navigate to: ${href}`);
+    // Single page application routing logic can be implemented here
   }
 
-  // 租用产品
+  // Rent product
   rentProduct(product) {
-    console.log(`租用产品: ${product.title}`);
+    console.log(`Rent product: ${product.title}`);
     this.closeModal();
-    // 这里可以实现租用逻辑
+    // Rental logic can be implemented here
   }
 
-  // 了解更多
+  // Learn more
   learnMore(feature) {
-    console.log(`了解更多: ${feature.title}`);
+    console.log(`Learn more: ${feature.title}`);
     this.closeModal();
-    // 这里可以实现跳转到详情页的逻辑
+    // Logic for navigating to details page can be implemented here
   }
 
-  // 更新收藏数量
+  // Update favorite count
   updateFavoriteCount() {
     const count = this.favoriteProducts.size;
     const cartIcon = document.querySelector('.cart-icon');
@@ -805,9 +805,9 @@ class ShareToolsApp {
     }
   }
 
-  // 处理窗口大小变化
+  // Handle window resize
   handleResize() {
-    // 响应式处理逻辑
+    // Responsive handling logic
     const width = window.innerWidth;
     if (width < 768) {
       document.body.classList.add('mobile');
@@ -816,7 +816,7 @@ class ShareToolsApp {
     }
   }
 
-  // 处理滚动事件
+  // Handle scroll event
   handleScroll() {
     const scrollY = window.scrollY;
     const header = document.querySelector('.header');
@@ -829,7 +829,7 @@ class ShareToolsApp {
   }
 }
 
-// 模态框和加载状态样式（动态添加到页面）
+// Modal and loading state styles (dynamically added to page)
 const modalStyles = `
   .modal-overlay {
     position: fixed;
@@ -966,25 +966,25 @@ const modalStyles = `
   }
 `;
 
-// 添加模态框样式到页面
+// Add modal styles to page
 const styleSheet = document.createElement('style');
 styleSheet.textContent = modalStyles;
 document.head.appendChild(styleSheet);
 
-// 全局应用实例
+// Global application instance
 let app;
 
-// DOM加载完成后初始化应用
+// Initialize application after DOM is loaded
 document.addEventListener('DOMContentLoaded', async () => {
   try {
     app = new ShareToolsApp();
     window.shareToolsApp = app;
 
-    console.log('ShareTools 应用已初始化');
+    console.log('ShareTools application initialized');
   } catch (error) {
-    console.error('应用初始化失败:', error);
+    console.error('Application initialization failed:', error);
   }
 });
 
-// 导出到全局作用域
+// Export to global scope
 window.ShareToolsApp = ShareToolsApp;

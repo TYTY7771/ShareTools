@@ -1,28 +1,28 @@
-/* ShareTools 组件JavaScript文件 */
-/* 实现组件的交互功能和动态行为 */
+/* ShareTools Component JavaScript File */
+/* Implements component interaction functionality and dynamic behavior */
 
-// 组件工厂类
+// Component Factory Class
 class ComponentFactory {
   constructor() {
     this.components = new Map();
   }
 
-  // 注册组件
+  // Register component
   register(name, component) {
     this.components.set(name, component);
   }
 
-  // 创建组件实例
+  // Create component instance
   create(name, ...args) {
     const Component = this.components.get(name);
     if (!Component) {
-      throw new Error(`组件 ${name} 未注册`);
+      throw new Error(`Component ${name} not registered`);
     }
     return new Component(...args);
   }
 }
 
-// 全局组件工厂实例
+// Global component factory instance
 const componentFactory = new ComponentFactory();
 
 // ===== ProductCard 组件 =====
@@ -36,13 +36,13 @@ class ProductCard {
     this.init();
   }
 
-  // 初始化组件
+  // Initialize component
   init() {
     this.render();
     this.bindEvents();
   }
 
-  // 渲染组件HTML
+  // Render component HTML
   render() {
     const { title, rating, price, currency, period, badge, icon, image } = this.data;
     
@@ -94,7 +94,7 @@ class ProductCard {
     }
   }
 
-  // 渲染星级评分
+  // Render star rating
   renderStars(rating) {
     const maxStars = 5;
     let starsHtml = '';
@@ -107,23 +107,23 @@ class ProductCard {
     return starsHtml;
   }
 
-  // 绑定事件
+  // Bind events
   bindEvents() {
     if (!this.element) return;
 
-    // 收藏按钮点击事件
+    // Favorite button click event
     const favoriteBtn = this.element.querySelector('.favorite-btn');
     favoriteBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       this.toggleFavorite();
     });
 
-    // 卡片点击事件
+    // Card click event
     this.element.addEventListener('click', () => {
       this.onClick();
     });
 
-    // 卡片悬停事件
+    // Card hover event
     this.element.addEventListener('mouseenter', () => {
       this.onHover();
     });
@@ -133,16 +133,16 @@ class ProductCard {
     });
   }
 
-  // 切换收藏状态
+  // Toggle favorite status
   toggleFavorite() {
     this.isFavorited = !this.isFavorited;
     const favoriteBtn = this.element.querySelector('.favorite-btn');
     
     favoriteBtn.innerHTML = this.isFavorited ? '❤️' : '🤍';
     favoriteBtn.className = `favorite-btn ${this.isFavorited ? 'active' : ''}`;
-    favoriteBtn.setAttribute('aria-label', this.isFavorited ? '取消收藏' : '添加收藏');
+    favoriteBtn.setAttribute('aria-label', this.isFavorited ? 'Remove from favorites' : 'Add to favorites');
 
-    // 触发自定义事件
+    // Trigger custom event
     this.element.dispatchEvent(new CustomEvent('favoriteToggle', {
       detail: { 
         productId: this.data.id, 
@@ -151,14 +151,14 @@ class ProductCard {
       }
     }));
 
-    // 添加动画效果
+    // Add animation effect
     favoriteBtn.style.transform = 'scale(1.2)';
     setTimeout(() => {
       favoriteBtn.style.transform = 'scale(1)';
     }, 150);
   }
 
-  // 卡片点击处理
+  // Card click handler
   onClick() {
     this.element.dispatchEvent(new CustomEvent('productClick', {
       detail: { 
@@ -168,7 +168,7 @@ class ProductCard {
     }));
   }
 
-  // 卡片悬停处理
+  // Card hover handler
   onHover() {
     this.element.dispatchEvent(new CustomEvent('productHover', {
       detail: { 
@@ -178,7 +178,7 @@ class ProductCard {
     }));
   }
 
-  // 卡片离开处理
+  // Card leave handler
   onLeave() {
     this.element.dispatchEvent(new CustomEvent('productLeave', {
       detail: { 
@@ -188,14 +188,14 @@ class ProductCard {
     }));
   }
 
-  // 更新数据
+  // Update data
   updateData(newData) {
     this.data = { ...this.data, ...newData };
     this.render();
     this.bindEvents();
   }
 
-  // 销毁组件
+  // Destroy component
   destroy() {
     if (this.element && this.element.parentNode) {
       this.element.parentNode.removeChild(this.element);
@@ -204,7 +204,7 @@ class ProductCard {
   }
 }
 
-// ===== FeatureCard 组件 =====
+// ===== FeatureCard Component =====
 class FeatureCard {
   constructor(data, container) {
     this.data = data;
@@ -214,13 +214,13 @@ class FeatureCard {
     this.init();
   }
 
-  // 初始化组件
+  // Initialize component
   init() {
     this.render();
     this.bindEvents();
   }
 
-  // 渲染组件HTML
+  // Render component HTML
   render() {
     const { title, description, icon, iconColor } = this.data;
     
@@ -239,16 +239,16 @@ class FeatureCard {
     }
   }
 
-  // 绑定事件
+  // Bind events
   bindEvents() {
     if (!this.element) return;
 
-    // 卡片点击事件
+    // Card click event
     this.element.addEventListener('click', () => {
       this.onClick();
     });
 
-    // 添加悬停动画
+    // Add hover animation
     this.element.addEventListener('mouseenter', () => {
       const icon = this.element.querySelector('.feature-icon');
       icon.style.transform = 'scale(1.1) rotate(5deg)';
@@ -260,7 +260,7 @@ class FeatureCard {
     });
   }
 
-  // 卡片点击处理
+  // Card click handler
   onClick() {
     this.element.dispatchEvent(new CustomEvent('featureClick', {
       detail: { 
@@ -270,14 +270,14 @@ class FeatureCard {
     }));
   }
 
-  // 更新数据
+  // Update data
   updateData(newData) {
     this.data = { ...this.data, ...newData };
     this.render();
     this.bindEvents();
   }
 
-  // 销毁组件
+  // Destroy component
   destroy() {
     if (this.element && this.element.parentNode) {
       this.element.parentNode.removeChild(this.element);
@@ -286,7 +286,7 @@ class FeatureCard {
   }
 }
 
-// ===== DropdownMenu 组件 =====
+// ===== DropdownMenu Component =====
 class DropdownMenu {
   constructor(element) {
     this.element = element;
@@ -296,13 +296,13 @@ class DropdownMenu {
     this.init();
   }
 
-  // 初始化组件
+  // Initialize component
   init() {
     this.setupAccessibility();
     this.bindKeyboardEvents();
   }
 
-  // 设置无障碍属性
+  // Setup accessibility attributes
   setupAccessibility() {
     this.navLink.setAttribute('aria-haspopup', 'true');
     this.navLink.setAttribute('aria-expanded', 'false');
@@ -315,13 +315,13 @@ class DropdownMenu {
     });
   }
 
-  // 绑定键盘事件（保留无障碍功能）
+  // Bind keyboard events (preserve accessibility features)
   bindKeyboardEvents() {
-    // 键盘导航支持
+    // Keyboard navigation support
     this.navLink.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
-        // 键盘触发时手动切换显示状态
+        // Manually toggle display state when triggered by keyboard
         this.element.classList.toggle('keyboard-active');
       } else if (e.key === 'Escape') {
         this.element.classList.remove('keyboard-active');
@@ -329,7 +329,7 @@ class DropdownMenu {
       }
     });
 
-    // 下拉链接键盘导航
+    // Dropdown link keyboard navigation
     const dropdownLinks = this.dropdownMenu.querySelectorAll('.dropdown-link');
     dropdownLinks.forEach((link, index) => {
       link.addEventListener('keydown', (e) => {
@@ -350,27 +350,27 @@ class DropdownMenu {
   }
 }
 
-// ===== 组件管理器 =====
+// ===== Component Manager =====
 class ComponentManager {
   constructor() {
     this.instances = new Map();
   }
 
-  // 创建产品卡片
+  // Create product card
   createProductCard(data, container) {
     const card = new ProductCard(data, container);
     this.instances.set(`product-${data.id}`, card);
     return card;
   }
 
-  // 创建特色功能卡片
+  // Create feature card
   createFeatureCard(data, container) {
     const card = new FeatureCard(data, container);
     this.instances.set(`feature-${data.id}`, card);
     return card;
   }
 
-  // 批量创建产品卡片
+  // Batch create product cards
   createProductCards(dataArray, container) {
     const cards = [];
     dataArray.forEach(data => {
@@ -380,7 +380,7 @@ class ComponentManager {
     return cards;
   }
 
-  // 批量创建特色功能卡片
+  // Batch create feature cards
   createFeatureCards(dataArray, container) {
     const cards = [];
     dataArray.forEach(data => {
@@ -390,12 +390,12 @@ class ComponentManager {
     return cards;
   }
 
-  // 获取组件实例
+  // Get component instance
   getInstance(id) {
     return this.instances.get(id);
   }
 
-  // 销毁组件
+  // Destroy component
   destroyComponent(id) {
     const instance = this.instances.get(id);
     if (instance) {
@@ -404,7 +404,7 @@ class ComponentManager {
     }
   }
 
-  // 销毁所有组件
+  // Destroy all components
   destroyAll() {
     this.instances.forEach((instance, id) => {
       instance.destroy();
@@ -413,15 +413,15 @@ class ComponentManager {
   }
 }
 
-// 注册组件到工厂
+// Register components to factory
 componentFactory.register('ProductCard', ProductCard);
 componentFactory.register('FeatureCard', FeatureCard);
 componentFactory.register('DropdownMenu', DropdownMenu);
 
-// 全局组件管理器实例
+// Global component manager instance
 const componentManager = new ComponentManager();
 
-// 导出到全局作用域
+// Export to global scope
 window.ComponentFactory = ComponentFactory;
 window.ProductCard = ProductCard;
 window.FeatureCard = FeatureCard;
@@ -430,9 +430,9 @@ window.ComponentManager = ComponentManager;
 window.componentFactory = componentFactory;
 window.componentManager = componentManager;
 
-// 工具函数
+// Utility functions
 const ComponentUtils = {
-  // 延迟加载动画
+  // Lazy loading animation
   animateOnScroll() {
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
@@ -451,7 +451,7 @@ const ComponentUtils = {
     });
   },
 
-  // 防抖函数
+  // Debounce function
   debounce(func, wait) {
     let timeout;
     return function executedFunction(...args) {
@@ -464,7 +464,7 @@ const ComponentUtils = {
     };
   },
 
-  // 节流函数
+  // Throttle function
   throttle(func, limit) {
     let inThrottle;
     return function() {
@@ -481,16 +481,16 @@ const ComponentUtils = {
 
 window.ComponentUtils = ComponentUtils;
 
-// DOM加载完成后初始化
+// Initialize after DOM loaded
 document.addEventListener('DOMContentLoaded', () => {
-  // 初始化滚动动画
+  // Initialize scroll animation
   ComponentUtils.animateOnScroll();
   
-  // 暂时禁用下拉菜单JS，纯CSS测试
+  // Temporarily disable dropdown menu JS, pure CSS test
   // const dropdownElements = document.querySelectorAll('.nav-dropdown');
   // dropdownElements.forEach(element => {
   //   new DropdownMenu(element);
   // });
   
-  console.log('ShareTools 组件系统已初始化');
+  console.log('ShareTools component system initialized');
 });

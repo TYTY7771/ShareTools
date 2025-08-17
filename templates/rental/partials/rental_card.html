@@ -1,0 +1,101 @@
+{% load static %}
+
+<div class="rental-card">
+    <div class="rental-card-header">
+        <div class="rental-info">
+            <div class="rental-title">{{ rental.item.title }}</div>
+            <div class="rental-meta">
+                <span class="meta-item">
+                    <i class="fas fa-calendar"></i>
+                    {{ rental.start_date|date:"M d, Y" }} - {{ rental.end_date|date:"M d, Y" }}
+                </span>
+                <span class="meta-item">
+                    <i class="fas fa-user"></i>
+                    {% if rental.renter == request.user %}
+                        Owner: {{ rental.owner.username }}
+                    {% else %}
+                        Renter: {{ rental.renter.username }}
+                    {% endif %}
+                </span>
+                <span class="rental-status status-{{ rental.status }}">
+                    {{ rental.get_status_display }}
+                </span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="rental-details">
+        <div class="detail-item">
+            <span class="detail-label">Duration</span>
+            <span class="detail-value">{{ rental.duration_days }} days</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Daily Rate</span>
+            <span class="detail-value">£{{ rental.daily_rate|floatformat:2 }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Total Amount</span>
+            <span class="detail-value">£{{ rental.total_amount|floatformat:2 }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Created</span>
+            <span class="detail-value">{{ rental.created_at|date:"M d, Y" }}</span>
+        </div>
+    </div>
+    
+    <div class="rental-actions">
+        <a href="{% url 'rental:rental_detail' rental_id=rental.id %}" class="btn-rental-action btn-primary">
+            <i class="fas fa-eye"></i>
+            View Details
+        </a>
+        
+        {% if rental.status == 'pending' and rental.renter == request.user %}
+            {% if rental.payment_status == 'pending' %}
+                <span class="btn-rental-action btn-secondary" style="cursor: default;">
+                    <i class="fas fa-credit-card"></i>
+                    Payment Required
+                </span>
+            {% else %}
+                <span class="btn-rental-action btn-secondary" style="cursor: default;">
+                    <i class="fas fa-clock"></i>
+                    Waiting for Owner
+                </span>
+            {% endif %}
+        {% endif %}
+        
+        {% if rental.status == 'pending' and rental.owner == request.user %}
+            <a href="{% url 'rental:confirm_rental' rental_id=rental.id %}" class="btn-rental-action btn-success">
+                <i class="fas fa-check"></i>
+                Confirm
+            </a>
+        {% endif %}
+        
+        {% if rental.can_be_cancelled and rental.renter == request.user %}
+            <a href="{% url 'rental:cancel_rental' rental_id=rental.id %}" class="btn-rental-action btn-danger">
+                <i class="fas fa-times"></i>
+                Cancel
+            </a>
+        {% endif %}
+        
+        {% if rental.status == 'active' and rental.renter == request.user %}
+            <span class="btn-rental-action btn-success" style="cursor: default;">
+                <i class="fas fa-play"></i>
+                Active
+            </span>
+        {% endif %}
+        
+        {% if rental.status == 'completed' %}
+            <span class="btn-rental-action btn-secondary" style="cursor: default;">
+                <i class="fas fa-check-circle"></i>
+                Completed
+            </span>
+        {% endif %}
+        
+        {% if rental.status == 'cancelled' %}
+            <span class="btn-rental-action btn-danger" style="cursor: default;">
+                <i class="fas fa-times-circle"></i>
+                Cancelled
+            </span>
+        {% endif %}
+    </div>
+</div>

@@ -1,6 +1,6 @@
-/* ===== Browse Things 页面样式 ===== */
+/* ===== Browse Things Page Styles ===== */
 
-/* 基础设置 */
+/* Basic Settings */
 * {
     margin: 0;
     padding: 0;
@@ -14,15 +14,15 @@ body {
     line-height: 1.6;
 }
 
-/* 主容器 */
+/* Main Container */
 .main-container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 40px 20px;
-    min-height: calc(100vh - 200px); /* 减去导航栏和页尾高度 */
+    min-height: calc(100vh - 200px); /* Subtract navigation bar and footer height */
 }
 
-/* ===== 页面标题区域 ===== */
+/* ===== Page Header Area ===== */
 .page-header {
     text-align: left;
     margin-bottom: 48px;
@@ -44,7 +44,7 @@ body {
     max-width: 400px;
 }
 
-/* ===== 搜索区域 ===== */
+/* ===== Search Area ===== */
 .search-section {
     margin-bottom: 32px;
 }
@@ -100,7 +100,7 @@ body {
     font-size: 16px;
 }
 
-/* ===== 主要内容区域 ===== */
+/* ===== Main Content Area ===== */
 .main-content {
     display: grid;
     grid-template-columns: 300px 1fr;
@@ -108,7 +108,7 @@ body {
     margin-bottom: 80px;
 }
 
-/* ===== 左侧分类菜单 ===== */
+/* ===== Left Sidebar Category Menu ===== */
 .categories-sidebar {
     background: #ffffff;
 }
@@ -210,7 +210,7 @@ body {
     line-height: 1.6;
 }
 
-/* 分类分隔符和标题 */
+/* Category Divider and Title */
 .category-divider {
     height: 1px;
     background: #e5e5e5;
@@ -237,7 +237,7 @@ body {
     padding-left: 0;
 }
 
-/* ===== 产品展示区域 ===== */
+/* ===== Product Display Area ===== */
 .products-section {
     background: #ffffff;
 }
@@ -312,7 +312,7 @@ body {
     line-height: 1.6;
 }
 
-/* ===== 底部CTA区域 ===== */
+/* ===== Bottom CTA Area ===== */
 .cta-section {
     margin-top: 80px;
 }
@@ -384,8 +384,8 @@ body {
     object-fit: cover;
     transition: transform 0.3s ease, opacity 0.5s ease;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    opacity: 0; /* 初始透明，等待JavaScript设置加载完成 */
-    background: rgba(250, 205, 144, 0.1); /* 占位背景色 */
+    opacity: 0; /* Initially transparent, waiting for JavaScript to set loading complete */
+    background: rgba(250, 205, 144, 0.1); /* Placeholder background color */
 }
 
 .decoration-image-1 {
@@ -428,7 +428,7 @@ body {
     --initial-rotation: 8deg;
 }
 
-/* 图片加载完成后的状态 */
+/* State after image loading is complete */
 .decoration-image.loaded {
     opacity: 1;
 }
@@ -443,7 +443,7 @@ body {
     animation-delay: 1s;
 }
 
-/* ===== 导航栏集成样式 ===== */
+/* ===== Navigation Bar Integration Styles ===== */
 .nav-link.active {
     color: #2d7efe !important;
     font-weight: 600;
@@ -461,17 +461,17 @@ body {
     border-radius: 1px;
 }
 
-/* 确保页面布局与导航栏配合 */
+/* Ensure page layout works with navigation bar */
 body {
     background-color: #ffffff;
 }
 
-/* 调整主要内容区域的顶部边距 */
+/* Adjust top margin of main content area */
 .main-container {
-    margin-top: 0; /* 移除额外的顶部边距，因为已有导航栏 */
+    margin-top: 0; /* Remove extra top margin since navigation bar exists */
 }
 
-/* 用户状态操作按钮样式同步 */
+/* User state action button style synchronization */
 .user-state-actions {
     display: flex;
     align-items: center;
@@ -482,7 +482,7 @@ body {
     transition: all 0.3s ease;
 }
 
-/* 登录状态切换动画 */
+/* Login state transition animation */
 .user-state-actions.fade-out {
     opacity: 0;
     transform: translateX(10px);
@@ -493,9 +493,9 @@ body {
     transform: translateX(0);
 }
 
-/* ===== 响应式设计 ===== */
+/* ===== Responsive Design ===== */
 
-/* 平板设备 */
+/* Tablet Devices */
 @media (max-width: 1024px) {
     .main-content {
         grid-template-columns: 1fr;
@@ -545,7 +545,7 @@ body {
     }
 }
 
-/* 手机设备 */
+/* Mobile Devices */
 @media (max-width: 768px) {
     .main-container {
         padding: 20px 16px;
@@ -597,7 +597,7 @@ body {
     }
 }
 
-/* 超小屏幕 */
+/* Extra Small Screens */
 @media (max-width: 480px) {
     .main-container {
         padding: 16px 12px;
@@ -643,7 +643,7 @@ body {
     }
 }
 
-/* ===== 筛选状态样式 ===== */
+/* ===== Filter State Styles ===== */
 .product-card.hidden {
     display: none;
 }
@@ -657,7 +657,7 @@ body {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* ===== 加载状态 ===== */
+/* ===== Loading State ===== */
 .loading {
     display: flex;
     align-items: center;

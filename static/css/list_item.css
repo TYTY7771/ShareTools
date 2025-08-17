@@ -1,5 +1,5 @@
-/* 物品发布页面专用样式 */
-/* 基于Figma设计稿实现 */
+/* Item Listing Page Specific Styles */
+/* Implemented based on Figma design */
 
 .list-item-container {
     max-width: 800px;
@@ -383,7 +383,7 @@
     padding: var(--spacing-2xl) var(--spacing-lg);
 }
 
-/* 地址标签样式 */
+/* Address Tag Styles */
 .location-tag-display {
     margin-top: 8px;
     display: flex;
@@ -411,7 +411,7 @@
     border: 1px solid #e1bee7;
 }
 
-/* 响应式设计 */
+/* Responsive Design */
 @media (max-width: 1024px) {
     .main-content {
         grid-template-columns: 1fr;

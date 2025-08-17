@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ShareTools - Share Your Tools{% endblock %}</title>
+
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+          content="ShareTools - Professional tool sharing platform providing quality tool rental services">
+    <meta name="keywords" content="tool sharing,tool rental,ShareTools,online tools">
+    <title>ShareTools - Tool Sharing Platform</title>
+
+    <!-- Preload critical resources -->
+    <link rel="preload" href="{% static 'css/main.css' %}" as="style">
+    <link rel="preload" href="{% static 'css/components.css' %}" as="style">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'css/components.css' %}">
+    <!-- JavaScript files -->
+    <script src="{% static 'js/api-config.js' %}"></script>
+    <script src="{% static 'js/components.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml"
+          href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔧</text></svg>">
+
+    <style>
+        /* User state related styles */
+        .user-state-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .user-state-actions .btn {
+            transition: all 0.3s ease;
+        }
+
+        /* Login state transition animation */
+        .user-state-actions.fade-out {
+            opacity: 0;
+            transform: translateX(10px);
+        }
+
+        .user-state-actions.fade-in {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Responsive adaptation */
+        @media (max-width: 768px) {
+            .user-state-actions {
+                gap: var(--spacing-xs);
+            }
+
+            .user-state-actions .btn {
+                padding: var(--spacing-xs) var(--spacing-sm);
+                font-size: var(--font-size-caption);
+            }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+
+    <style>
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--color-error);
+            color: var(--color-accent);
+            border-radius: var(--radius-round);
+            width: 18px;
+            height: 18px;
+            font-size: var(--font-size-small);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            color: var(--color-text-secondary);
+            font-weight: var(--font-weight-medium);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--color-accent);
+            border-radius: var(--radius-default);
+            box-shadow: var(--shadow-high);
+            min-width: 200px;
+            padding: var(--spacing-sm) 0;
+            display: none;
+            z-index: 1000;
+        }
+
+        .dropdown.show .dropdown-menu {
+            display: block;
+        }
+
+        .dropdown-item {
+            display: block;
+            padding: var(--spacing-sm) var(--spacing-md);
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            transition: background-color var(--animation-duration) var(--animation-easing);
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--color-surface);
+            color: var(--color-text-primary);
+        }
+
+        .dropdown-header {
+            padding: var(--spacing-sm) var(--spacing-md);
+            font-weight: var(--font-weight-bold);
+            color: var(--color-text-primary);
+            border-bottom: 1px solid var(--color-surface);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: var(--color-surface);
+            margin: var(--spacing-xs) 0;
+        }
+
+        /* 消息样式 */
+        .messages {
+            margin: var(--spacing-md) 0;
+        }
+
+        .alert {
+            padding: var(--spacing-md);
+            border-radius: var(--radius-default);
+            margin-bottom: var(--spacing-md);
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .alert-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .alert-info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .alert-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            margin-left: auto;
+            color: inherit;
+            opacity: 0.7;
+        }
+
+        .alert-close:hover {
+            opacity: 1;
+        }
+
+        /* 主内容区域 */
+        .main-content {
+            min-height: calc(100vh - var(--header-height) - 200px);
+            padding: var(--spacing-xl) 0;
+        }
+
+        /* 页脚样式 */
+        .footer {
+            background: var(--color-secondary);
+            color: var(--color-accent);
+            padding: var(--spacing-2xl) 0 var(--spacing-lg);
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: var(--container-max-width);
+            margin: 0 auto;
+            padding: 0 var(--spacing-lg);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-xl);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .footer h5 {
+            color: var(--color-accent);
+            font-weight: var(--font-weight-bold);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .footer p, .footer a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            margin-bottom: var(--spacing-xs);
+            display: block;
+        }
+
+        .footer a:hover {
+            color: var(--color-accent);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: var(--spacing-lg);
+            text-align: center;
+        }
+
+        .social-links {
+            display: flex;
+            gap: var(--spacing-sm);
+            margin-top: var(--spacing-md);
+        }
+
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-round);
+            transition: all var(--animation-duration) var(--animation-easing);
+        }
+
+        .social-links a:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* 本地图标样式 */
+        .icon {
+            display: inline-block;
+            width: 1em;
+            height: 1em;
+            vertical-align: middle;
+            text-align: center;
+            font-weight: bold;
+            font-style: normal;
+        }
+
+        .icon-tools::before {
+            content: "🔧";
+        }
+
+        .icon-home::before {
+            content: "🏠";
+        }
+
+        .icon-search::before {
+            content: "🔍";
+        }
+
+        .icon-plus::before {
+            content: "➕";
+        }
+
+        .icon-location::before {
+            content: "📍";
+        }
+
+        .icon-handshake::before {
+            content: "🤝";
+        }
+
+        .icon-info::before {
+            content: "ℹ️";
+        }
+
+        .icon-bell::before {
+            content: "🔔";
+        }
+
+        .icon-user::before {
+            content: "👤";
+        }
+
+        .icon-list::before {
+            content: "📋";
+        }
+
+        .icon-cog::before {
+            content: "⚙️";
+        }
+
+        .icon-signout::before {
+            content: "🚪";
+        }
+
+        .icon-signin::before {
+            content: "🔑";
+        }
+
+        .icon-userplus::before {
+            content: "👥";
+        }
+
+        .icon-user-plus::before {
+            content: "👤➕";
+        }
+
+        .icon-heart::before {
+            content: "❤️";
+        }
+
+        .icon-question::before {
+            content: "❓";
+        }
+
+        .icon-shield::before {
+            content: "🛡️";
+        }
+
+        .icon-file::before {
+            content: "📄";
+        }
+
+        .icon-envelope::before {
+            content: "✉️";
+        }
+
+        .icon-users::before {
+            content: "👥";
+        }
+
+        .icon-star::before {
+            content: "⭐";
+        }
+
+        .icon-calendar::before {
+            content: "📅";
+        }
+
+        .icon-newspaper::before {
+            content: "📰";
+        }
+
+        .icon-facebook::before {
+            content: "📘";
+        }
+
+        .icon-twitter::before {
+            content: "🐦";
+        }
+
+        .icon-instagram::before {
+            content: "📷";
+        }
+
+        .icon-linkedin::before {
+            content: "💼";
+        }
+
+        /* 额外图标 */
+        .icon-arrow-left::before {
+            content: "⬅️";
+        }
+
+        .icon-arrow-right::before {
+            content: "➡️";
+        }
+
+        .icon-exclamation-triangle::before {
+            content: "⚠️";
+        }
+
+        .icon-box::before {
+            content: "📦";
+        }
+
+        .icon-clock::before {
+            content: "🕐";
+        }
+
+        .icon-calendar::before {
+            content: "📅";
+        }
+
+        .icon-calendar-alt::before {
+            content: "📅";
+        }
+
+        .icon-user::before {
+            content: "👤";
+        }
+
+        .icon-eye::before {
+            content: "👁️";
+        }
+
+        .icon-times::before {
+            content: "✖️";
+        }
+
+        .icon-times-circle::before {
+            content: "❌";
+        }
+
+        .icon-check::before {
+            content: "✅";
+        }
+
+        .icon-check-circle::before {
+            content: "✅";
+        }
+
+        .icon-credit-card::before {
+            content: "💳";
+        }
+
+        .icon-paypal::before {
+            content: "💳";
+        }
+
+        .icon-university::before {
+            content: "🏛️";
+        }
+
+        .icon-info-circle::before {
+            content: "ℹ️";
+        }
+
+        .icon-play::before {
+            content: "▶️";
+        }
+
+        .icon-play-circle::before {
+            content: "▶️";
+        }
+
+        .icon-flag-checkered::before {
+            content: "🏁";
+        }
+
+        .icon-spinner::before {
+            content: "🔄";
+        }
+
+        .icon-spin::before {
+            content: "🔄";
+        }
+
+        .icon-calculator::before {
+            content: "🧮";
+        }
+
+        .icon-shield-alt::before {
+            content: "🛡️";
+        }
+
+        .icon-lock::before {
+            content: "🔒";
+        }
+
+        .icon-sticky-note::before {
+            content: "📝";
+        }
+
+        .icon-me::before {
+            content: "👤";
+        }
+
+        .icon-me-1::before {
+            content: "👤";
+        }
+
+        .icon-me-2::before {
+            content: "👤";
+        }
+
+        .icon-me-3::before {
+            content: "👤";
+        }
+
+        .icon-text-muted::before {
+            content: "📝";
+        }
+
+        .icon-text-warning::before {
+            content: "⚠️";
+        }
+
+        .icon-text-info::before {
+            content: "ℹ️";
+        }
+
+        .icon-text-success::before {
+            content: "✅";
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .navbar-container {
+                flex-direction: column;
+                height: auto;
+                padding: var(--spacing-md) var(--spacing-lg);
+            }
+
+            .navbar-nav {
+                margin: var(--spacing-md) 0;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .navbar-actions {
+                margin-top: var(--spacing-md);
+            }
+
+            .main-content {
+                padding: var(--spacing-lg) 0;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Navigation -->
+<header class="header" role="banner">
+    <div class="container">
+        <div class="header-content">
+            <!-- Logo Area -->
+            <a href="{% url 'home' %}" class="logo" aria-label="ShareTools Home">
+                <img src="{% static 'images/ShareTools Web Logo.png' %}" alt="ShareTools Logo" class="logo-image">
+                <span>ShareTools</span>
+            </a>
+
+            <!-- Navigation Menu -->
+            <nav class="nav-menu" role="navigation" aria-label="Main Navigation">
+                <ul>
+                    <li class="nav-item">
+                        <a href="{% url 'browse_things' %}" class="nav-link active">The Things</a>
+                    </li>
+                    <li class="nav-item nav-dropdown">
+                        <a href="{% url 'locations' %}" class="nav-link">Locations</a>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-content">
+                                <div class="dropdown-section">
+                                    <h4 class="dropdown-section-title">NORTH GLASGOW</h4>
+                                    <ul class="dropdown-list">
+                                        <li><a href="{% url 'browse_things' %}?location=maryhill" class="dropdown-link">Maryhill</a>
+                                        </li>
+                                        <li><a href="{% url 'browse_things' %}?location=hillhead" class="dropdown-link">Hillhead</a>
+                                        </li>
+                                        <li><a href="{% url 'browse_things' %}?location=partick" class="dropdown-link">Partick</a>
+                                        </li>
+                                        <li><a href="{% url 'browse_things' %}?location=springburn"
+                                               class="dropdown-link">Springburn</a></li>
+                                    </ul>
+                                </div>
+                                <div class="dropdown-section">
+                                    <h4 class="dropdown-section-title">SOUTH GLASGOW</h4>
+                                    <ul class="dropdown-list">
+                                        <li><a href="{% url 'browse_things' %}?location=gorbals" class="dropdown-link">Gorbals</a>
+                                        </li>
+                                        <li><a href="{% url 'browse_things' %}?location=pollokshields"
+                                               class="dropdown-link">Pollokshields</a></li>
+                                        <li><a href="{% url 'browse_things' %}?location=shawlands"
+                                               class="dropdown-link">Shawlands</a></li>
+                                        <li><a href="{% url 'browse_things' %}?location=giffnock" class="dropdown-link">Giffnock</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="dropdown-section">
+                                    <h4 class="dropdown-section-title">EAST GLASGOW</h4>
+                                    <ul class="dropdown-list">
+                                        <li><a href="{% url 'browse_things' %}?location=dennistoun"
+                                               class="dropdown-link">Dennistoun</a></li>
+                                        <li><a href="{% url 'browse_things' %}?location=bridgeton"
+                                               class="dropdown-link">Bridgeton</a></li>
+                                        <li><a href="{% url 'browse_things' %}?location=calton" class="dropdown-link">Calton</a>
+                                        </li>
+                                        <li><a href="{% url 'browse_things' %}?location=parkhead" class="dropdown-link">Parkhead</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="dropdown-section">
+                                    <h4 class="dropdown-section-title">WEST GLASGOW</h4>
+                                    <ul class="dropdown-list">
+                                        <li><a href="{% url 'browse_things' %}?location=finnieston"
+                                               class="dropdown-link">Finnieston</a></li>
+                                        <li><a href="{% url 'browse_things' %}?location=kelvingrove"
+                                               class="dropdown-link">Kelvingrove</a></li>
+                                        <li><a href="{% url 'browse_things' %}?location=byres-road"
+                                               class="dropdown-link">Byres Road</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'about' %}" class="nav-link">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'list_item' %}" class="nav-link">List an Item</a>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- User Actions -->
+            <div class="nav-actions">
+                <button class="cart-icon" aria-label="Shopping Cart" title="View Cart">
+                    🛒
+                </button>
+
+                <!-- Buttons for guest state -->
+                <div id="guest-actions" class="user-state-actions">
+                    <a href="{% url 'login' %}" class="btn btn-secondary">Sign in</a>
+                    <a href="{% url 'login' %}#signup" class="btn btn-primary">Join</a>
+                </div>
+
+                <!-- Buttons for logged-in state -->
+                <div id="logged-in-actions" class="user-state-actions" style="display: none;">
+                    <a href="{% url 'profile' %}" class="btn btn-secondary">Profile</a>
+                    <a href="{% url 'rental:my_rentals' %}" class="btn btn-secondary">View Orders</a>
+                    <a href="{% url 'list_item' %}" class="btn btn-primary">List an Item</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<!-- Messages -->
+{% if messages %}
+    <div class="container">
+        <div class="messages">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}" role="alert">
+                    {% if message.tags == 'error' %}
+                        <span class="icon icon-info"></span>
+                    {% elif message.tags == 'success' %}
+                        <span class="icon icon-star"></span>
+                    {% elif message.tags == 'warning' %}
+                        <span class="icon icon-info"></span>
+                    {% elif message.tags == 'info' %}
+                        <span class="icon icon-info"></span>
+                    {% endif %}
+                    {{ message }}
+                    <button type="button" class="alert-close" onclick="this.parentElement.remove()">
+                        <span class="icon">✕</span>
+                    </button>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}
+
+<!-- Main Content -->
+<main class="main-content">
+    {% block content %}{% endblock %}
+</main>
+
+<!-- Footer -->
+<footer class="footer" role="contentinfo">
+    <div class="footer-content">
+        <div class="footer-grid">
+            <!-- Company Info -->
+            <div>
+                <h5><span class="icon icon-tools"></span>ShareTools</h5>
+                <p>Connect with your community to share tools, save money, and build relationships. Join thousands of
+                    users who are already sharing and saving.</p>
+                <div class="social-links">
+                    <a href="#"><span class="icon icon-facebook"></span></a>
+                    <a href="#"><span class="icon icon-twitter"></span></a>
+                    <a href="#"><span class="icon icon-instagram"></span></a>
+                    <a href="#"><span class="icon icon-linkedin"></span></a>
+                </div>
+            </div>
+
+            <!-- Quick Links -->
+            <div>
+                <h5>Quick Links</h5>
+                <a href="{% url 'home' %}">Home</a>
+                <a href="{% url 'browse_things' %}">Browse Items</a>
+                <a href="{% url 'list_item' %}">List Item</a>
+                <a href="{% url 'rental:rental_home' %}">Rentals</a>
+                <a href="{% url 'view_orders' %}">View Orders</a>
+                <a href="{% url 'about' %}">About</a>
+            </div>
+
+            <!-- Support -->
+            <div>
+                <h5>Support</h5>
+                <a href="#"><span class="icon icon-question"></span>Help Center</a>
+                <a href="#"><span class="icon icon-shield"></span>Safety Guidelines</a>
+                <a href="#"><span class="icon icon-file"></span>Terms of Service</a>
+                <a href="#"><span class="icon icon-shield"></span>Privacy Policy</a>
+                <a href="#"><span class="icon icon-envelope"></span>Contact Support</a>
+            </div>
+
+            <!-- Community -->
+            <div>
+                <h5>Community</h5>
+                <a href="#"><span class="icon icon-users"></span>Community Guidelines</a>
+                <a href="#"><span class="icon icon-star"></span>Success Stories</a>
+                <a href="#"><span class="icon icon-calendar"></span>Events</a>
+                <a href="#"><span class="icon icon-newspaper"></span>Blog</a>
+                <a href="#"><span class="icon icon-heart"></span>Donate</a>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2024 ShareTools. All rights reserved. | Made with <span class="icon icon-heart"
+                                                                              style="color: #dc2626;"></span> for the
+                community</p>
+        </div>
+    </div>
+</footer>
+
+<!-- Custom JavaScript -->
+<script src="{% static 'js/main.js' %}"></script>
+{% block extra_js %}{% endblock %}
+
+<script>
+    // 下拉菜单功能
+    function toggleDropdown(element) {
+        const dropdown = element.parentElement;
+        dropdown.classList.toggle('show');
+
+        // 点击其他地方关闭下拉菜单
+        document.addEventListener('click', function (event) {
+            if (!dropdown.contains(event.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+    }
+
+    // 自动关闭消息提示
+    document.addEventListener('DOMContentLoaded', function () {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => {
+            setTimeout(() => {
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 300);
+            }, 5000);
+        });
+    });
+</script>
+
+<script>
+    // User login state management
+    class UserAuthManager {
+        constructor() {
+            this.storageKey = 'sharetools_user_logged_in';
+            this.userDataKey = 'sharetools_user_data';
+            this.init();
+        }
+
+        // Initialize
+        init() {
+            this.updateNavigation();
+            this.bindEvents();
+            console.log('User authentication manager initialized');
+        }
+
+        // Check if user is logged in
+        isLoggedIn() {
+            // Check login status in localStorage
+            const loginStatus = localStorage.getItem(this.storageKey);
+            const userData = localStorage.getItem(this.userDataKey);
+
+            // Check sessionStorage (for session-level login status)
+            const sessionLogin = sessionStorage.getItem(this.storageKey);
+
+            return (loginStatus === 'true' && userData) || sessionLogin === 'true';
+        }
+
+        // Set login status
+        setLoginStatus(isLoggedIn, userData = null, rememberMe = false) {
+            if (isLoggedIn) {
+                // Set login status
+                if (rememberMe) {
+                    localStorage.setItem(this.storageKey, 'true');
+                    if (userData) {
+                        localStorage.setItem(this.userDataKey, JSON.stringify(userData));
+                    }
+                } else {
+                    // Keep login only during session
+                    sessionStorage.setItem(this.storageKey, 'true');
+                    if (userData) {
+                        sessionStorage.setItem(this.userDataKey, JSON.stringify(userData));
+                    }
+                }
+                console.log('User login status has been set');
+            } else {
+                // Clear login status
+                localStorage.removeItem(this.storageKey);
+                localStorage.removeItem(this.userDataKey);
+                sessionStorage.removeItem(this.storageKey);
+                sessionStorage.removeItem(this.userDataKey);
+                console.log('User login status has been cleared');
+            }
+
+            this.updateNavigation();
+        }
+
+        // Get user data
+        getUserData() {
+            const localData = localStorage.getItem(this.userDataKey);
+            const sessionData = sessionStorage.getItem(this.userDataKey);
+
+            if (localData) {
+                try {
+                    return JSON.parse(localData);
+                } catch (e) {
+                    console.error('Failed to parse user data:', e);
+                }
+            }
+
+            if (sessionData) {
+                try {
+                    return JSON.parse(sessionData);
+                } catch (e) {
+                    console.error('Failed to parse session user data:', e);
+                }
+            }
+
+            return null;
+        }
+
+        // Update navigation display
+        updateNavigation() {
+            const guestActions = document.getElementById('guest-actions');
+            const loggedInActions = document.getElementById('logged-in-actions');
+
+            if (!guestActions || !loggedInActions) {
+                console.warn('Navigation elements not found');
+                return;
+            }
+
+            const isLoggedIn = this.isLoggedIn();
+
+            if (isLoggedIn) {
+                // Show logged-in navigation state
+                this.showElement(loggedInActions);
+                this.hideElement(guestActions);
+                console.log('Showing logged-in navigation state');
+            } else {
+                // Show logged-out navigation state
+                this.showElement(guestActions);
+                this.hideElement(loggedInActions);
+                console.log('Showing logged-out navigation state');
+            }
+        }
+
+        // Show element (with animation)
+        showElement(element) {
+            element.style.display = 'flex';
+            element.classList.remove('fade-out');
+            element.classList.add('fade-in');
+        }
+
+        // Hide element (with animation)
+        hideElement(element) {
+            element.classList.remove('fade-in');
+            element.classList.add('fade-out');
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 300);
+        }
+
+        // Bind events
+        bindEvents() {
+            // Listen for storage changes (cross-tab sync)
+            window.addEventListener('storage', (e) => {
+                if (e.key === this.storageKey || e.key === this.userDataKey) {
+                    console.log('Detected cross-tab login status change');
+                    this.updateNavigation();
+                }
+            });
+
+            // Listen for custom login events
+            window.addEventListener('userLogin', (e) => {
+                console.log('Received user login event:', e.detail);
+                this.setLoginStatus(true, e.detail.userData, e.detail.rememberMe);
+            });
+
+            // Listen for custom logout events
+            window.addEventListener('userLogout', () => {
+                console.log('Received user logout event');
+                this.setLoginStatus(false);
+            });
+        }
+
+        // Simulate login (for testing)
+        simulateLogin(userData = null, rememberMe = true) {
+            const defaultUserData = {
+                id: 'user_123',
+                email: 'user@example.com',
+                name: 'Test User',
+                avatar: null,
+                loginTime: new Date().toISOString()
+            };
+
+            this.setLoginStatus(true, userData || defaultUserData, rememberMe);
+
+            // Trigger custom event
+            window.dispatchEvent(new CustomEvent('userLogin', {
+                detail: {userData: userData || defaultUserData, rememberMe}
+            }));
+        }
+
+        // Simulate logout (for testing)
+        simulateLogout() {
+            this.setLoginStatus(false);
+
+            // Trigger custom event
+            window.dispatchEvent(new CustomEvent('userLogout'));
+        }
+
+        // Real logout
+        async logout() {
+            try {
+                // Call real logout API
+                if (typeof AuthAPI !== 'undefined') {
+                    await AuthAPI.logout();
+                }
+
+                // Clear locally stored authentication info
+                localStorage.removeItem('sharetools_auth_token');
+                sessionStorage.removeItem('sharetools_auth_token');
+
+                // Set logout status
+                this.setLoginStatus(false);
+
+                // Trigger custom event
+                window.dispatchEvent(new CustomEvent('userLogout'));
+
+                console.log('User successfully logged out');
+
+                // Optional: redirect to homepage
+                // window.location.href = '/';
+
+            } catch (error) {
+                console.error('Logout failed:', error);
+                // Clear local state even if API call fails
+                this.setLoginStatus(false);
+                window.dispatchEvent(new CustomEvent('userLogout'));
+            }
+        }
+    }
+
+    // Global user authentication manager instance
+    let userAuthManager;
+
+    // Initialize after DOM is loaded
+    document.addEventListener('DOMContentLoaded', () => {
+        userAuthManager = new UserAuthManager();
+
+        // Add test buttons (for development, remove in production)
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            addTestControls();
+        }
+    });
+
+    // Add test controls (development only)
+    function addTestControls() {
+        const testControls = document.createElement('div');
+        testControls.style.cssText = `
+                position: fixed;
+                top: 10px;
+                right: 10px;
+                background: rgba(0, 0, 0, 0.8);
+                color: white;
+                padding: 10px;
+                border-radius: 5px;
+                font-size: 12px;
+                z-index: 10000;
+                display: flex;
+                gap: 5px;
+                flex-direction: column;
+            `;
+
+        testControls.innerHTML = `
+                <div style="margin-bottom: 5px; font-weight: bold;">Dev Test</div>
+                <button onclick="userAuthManager.simulateLogin()" style="padding: 5px; font-size: 11px;">Simulate Login</button>
+                <button onclick="userAuthManager.simulateLogout()" style="padding: 5px; font-size: 11px;">Simulate Logout</button>
+                <button onclick="console.log('Login Status:', userAuthManager.isLoggedIn())" style="padding: 5px; font-size: 11px;">Check Status</button>
+            `;
+
+        document.body.appendChild(testControls);
+    }
+
+    // Page load performance monitoring
+    window.addEventListener('load', () => {
+        if ('performance' in window) {
+            const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
+            console.log(`Page load time: ${loadTime}ms`);
+        }
+    });
+
+    // Error monitoring
+    window.addEventListener('error', (e) => {
+        console.error('Page error:', e.error);
+    });
+
+    // Unhandled Promise errors
+    window.addEventListener('unhandledrejection', (e) => {
+        console.error('Unhandled Promise error:', e.reason);
+    });
+</script>
+</body>
+</html>

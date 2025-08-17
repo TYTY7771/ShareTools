@@ -1,8 +1,8 @@
-/* ShareTools 登录页面 JavaScript */
+/* ShareTools Login Page JavaScript */
 
-// ===== 页面加载完成后初始化 =====
+// ===== Initialize after page load =====
 document.addEventListener('DOMContentLoaded', () => {
-    // 初始化登录功能
+    // Initialize login functionality
     initLoginForms();
     initFormValidation();
     initURLHandling();
@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('ShareTools login page initialized');
 });
 
-// ===== 表单切换功能 =====
+// ===== Form switching functionality =====
 function initLoginForms() {
     const signinForm = document.getElementById('signin-form');
     const signupForm = document.getElementById('signup-form');
@@ -22,72 +22,72 @@ function initLoginForms() {
         return;
     }
     
-    // 切换到注册表单
+    // Switch to signup form
     showSignupBtn.addEventListener('click', (e) => {
         e.preventDefault();
         switchToForm('signup');
     });
     
-    // 切换到登录表单
+    // Switch to signin form
     showSigninBtn.addEventListener('click', (e) => {
         e.preventDefault();
         switchToForm('signin');
     });
     
-    // 表单切换函数
+    // Form switching function
     function switchToForm(formType) {
         const signinForm = document.getElementById('signin-form');
         const signupForm = document.getElementById('signup-form');
         
         if (formType === 'signup') {
-            // 显示注册表单，隐藏登录表单
+            // Show signup form, hide signin form
             signinForm.classList.add('hidden');
             signupForm.classList.remove('hidden');
             signupForm.classList.add('slide-in');
             
-            // 更新页面标题
+            // Update page title
             document.title = 'Sign Up - ShareTools';
             
-            // 更新URL hash
+            // Update URL hash
             window.history.pushState(null, '', '#signup');
             
-            // 焦点到第一个输入框
+            // Focus on first input field
             setTimeout(() => {
                 const firstInput = signupForm.querySelector('.form-input');
                 if (firstInput) firstInput.focus();
             }, 100);
             
         } else {
-            // 显示登录表单，隐藏注册表单
+            // Show signin form, hide signup form
             signupForm.classList.add('hidden');
             signinForm.classList.remove('hidden');
             signinForm.classList.add('slide-in');
             
-            // 更新页面标题
-            document.title = '登录 - ShareTools';
+            // Update page title
+            document.title = 'Sign In - ShareTools';
             
-            // 清除URL hash
+            // Clear URL hash
             window.history.pushState(null, '', window.location.pathname);
             
-            // 焦点到第一个输入框
+            // Focus on first input field
             setTimeout(() => {
                 const firstInput = signinForm.querySelector('.form-input');
                 if (firstInput) firstInput.focus();
             }, 100);
         }
         
-        // 清除动画类
+        // Clear animation classes
         setTimeout(() => {
             signinForm.classList.remove('slide-in');
             signupForm.classList.remove('slide-in');
         }, 500);
     }
     
-    // 暴露给全局
+    // Expose to global
     window.switchToForm = switchToForm;
 }
 
-// ===== 表单验证 =====
+// ===== Form validation =====
 function initFormValidation() {
     const forms = document.querySelectorAll('.auth-form');
     
@@ -95,7 +95,7 @@ function initFormValidation() {
         const inputs = form.querySelectorAll('.form-input');
         const submitBtn = form.querySelector('.auth-button');
         
-        // 实时验证
+        // Real-time validation
         inputs.forEach(input => {
             input.addEventListener('input', () => {
                 validateInput(input);
@@ -107,7 +107,7 @@ function initFormValidation() {
             });
         });
         
-        // 表单提交
+        // Form submission
         form.addEventListener('submit', (e) => {
             e.preventDefault();
             
@@ -118,52 +118,52 @@ function initFormValidation() {
     });
 }
 
-// 验证单个输入框
+// Validate individual input
 function validateInput(input) {
     const inputBox = input.closest('.input-box');
     const value = input.value.trim();
     const type = input.type;
     const placeholder = input.placeholder;
     
-    // 移除之前的错误状态
+    // Remove previous error state
     removeError(inputBox);
     
-    // 基础验证
+    // Basic validation
     if (!value) {
-        showError(inputBox, `${placeholder}不能为空`);
+        showError(inputBox, `${placeholder} cannot be empty`);
         return false;
     }
     
-    // 邮箱验证
+    // Email validation
     if (type === 'email') {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(value)) {
-            showError(inputBox, '请输入有效的邮箱地址');
+            showError(inputBox, 'Please enter a valid email address');
             return false;
         }
     }
     
-    // 密码验证
-    if (type === 'password' && placeholder.includes('密码') && !placeholder.includes('确认')) {
+    // Password validation
+    if (type === 'password' && placeholder.includes('Password') && !placeholder.includes('Confirm')) {
         if (value.length < 6) {
-            showError(inputBox, '密码至少需要6个字符');
+            showError(inputBox, 'Password must be at least 6 characters');
             return false;
         }
     }
     
-    // 确认密码验证
-    if (placeholder.includes('确认密码')) {
-        const passwordInput = input.form.querySelector('input[placeholder="密码"]');
+    // Confirm password validation
+    if (placeholder.includes('Confirm Password')) {
+        const passwordInput = input.form.querySelector('input[placeholder="Password"]');
         if (passwordInput && value !== passwordInput.value) {
-            showError(inputBox, '两次输入的密码不一致');
+            showError(inputBox, 'Passwords do not match');
             return false;
         }
     }
     
-    // 用户名验证
-    if (placeholder.includes('用户名')) {
+    // Username validation
+    if (placeholder.includes('Username')) {
         if (value.length < 3) {
-            showError(inputBox, '用户名至少需要3个字符');
+            showError(inputBox, 'Username must be at least 3 characters');
             return false;
         }
     }
@@ -171,7 +171,7 @@ function validateInput(input) {
     return true;
 }
 
-// 验证整个表单
+// Validate entire form
 function validateForm(form) {
     const inputs = form.querySelectorAll('.form-input');
     let isValid = true;
@@ -182,11 +182,11 @@ function validateForm(form) {
         }
     });
     
-    // 验证必选复选框
+    // Validate required checkboxes
     const requiredCheckboxes = form.querySelectorAll('.checkbox[required]');
     requiredCheckboxes.forEach(checkbox => {
         if (!checkbox.checked) {
-            showError(checkbox.closest('.form-options'), '请同意服务条款和隐私政策');
+            showError(checkbox.closest('.form-options'), 'Please agree to the terms of service and privacy policy');
             isValid = false;
         }
     });
@@ -194,7 +194,7 @@ function validateForm(form) {
     return isValid;
 }
 
-// 显示错误信息
+// Show error message
 function showError(container, message) {
     removeError(container);
     
@@ -211,14 +211,14 @@ function showError(container, message) {
     container.appendChild(errorDiv);
     container.classList.add('error');
     
-    // 输入框边框变红
+    // Input box border turns red
     const inputBox = container.querySelector('.input-box');
     if (inputBox) {
         inputBox.style.borderColor = 'var(--color-error)';
     }
 }
 
-// 移除错误信息
+// Remove error message
 function removeError(container) {
     const errorMessage = container.querySelector('.error-message');
     if (errorMessage) {
@@ -227,14 +227,14 @@ function removeError(container) {
     
     container.classList.remove('error');
     
-    // 恢复输入框边框
+    // Restore input box border
     const inputBox = container.querySelector('.input-box');
     if (inputBox) {
         inputBox.style.borderColor = '';
     }
 }
 
-// 更新提交按钮状态
+// Update submit button state
 function updateSubmitButton(form) {
     const submitBtn = form.querySelector('.auth-button');
     const inputs = form.querySelectorAll('.form-input');
@@ -242,21 +242,21 @@ function updateSubmitButton(form) {
     
     let allValid = true;
     
-    // 检查所有输入框
+    // Check all input fields
     inputs.forEach(input => {
         if (!input.value.trim()) {
             allValid = false;
         }
     });
     
-    // 检查必选复选框
+    // Check required checkboxes
     requiredCheckboxes.forEach(checkbox => {
         if (!checkbox.checked) {
             allValid = false;
         }
     });
     
-    // 更新按钮状态
+    // Update button state
     if (allValid) {
         submitBtn.removeAttribute('disabled');
         submitBtn.style.opacity = '1';
@@ -266,20 +266,20 @@ function updateSubmitButton(form) {
     }
 }
 
-// 处理表单提交
+// Handle form submission
 function handleFormSubmit(form) {
     const submitBtn = form.querySelector('.auth-button');
     const formId = form.id;
     
-    // 显示加载状态
+    // Show loading state
     submitBtn.classList.add('loading');
-    submitBtn.textContent = formId === 'signin-form' ? '登录中...' : '注册中...';
+    submitBtn.textContent = formId === 'signin-form' ? 'Signing in...' : 'Signing up...';
     
-    // 收集表单数据
+    // Collect form data
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
     
-    // 手动收集输入框数据（因为没有name属性）
+    // Manually collect input data (because there are no name attributes)
     const inputs = form.querySelectorAll('.form-input');
     const collectData = {};
     
@@ -298,9 +298,9 @@ function handleFormSubmit(form) {
         if (key) collectData[key] = input.value.trim();
     });
     
-    console.log('表单数据:', collectData);
+    console.log('Form data:', collectData);
     
-    // 调用API
+    // Call API
     if (formId === 'signin-form') {
         handleSignin(collectData, submitBtn);
     } else {
@@ -414,7 +414,7 @@ async function handleSignup(data, submitBtn) {
             setTimeout(() => {
                 window.switchToForm('signin');
                 // Pre-fill username
-                const usernameInput = document.querySelector('#signin-form input[placeholder*="用户名"]');
+                const usernameInput = document.querySelector('#signin-form input[placeholder*="Username"]');
                 if (usernameInput) {
                     usernameInput.value = data.username;
                 }
@@ -447,14 +447,14 @@ async function handleSignup(data, submitBtn) {
     }
 }
 
-// 获取CSRF令牌
+// Get CSRF token
 function getCsrfToken() {
     const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
     if (csrfToken) {
         return csrfToken.value;
     }
     
-    // 从cookie中获取CSRF令牌
+    // Get CSRF token from cookie
     const cookies = document.cookie.split(';');
     for (let cookie of cookies) {
         const [name, value] = cookie.trim().split('=');
@@ -466,9 +466,9 @@ function getCsrfToken() {
     return '';
 }
 
-// 显示错误消息
+// Show error message
 function showErrorMessage(message) {
-    // 移除之前的消息
+    // Remove previous message
     const existingMessage = document.querySelector('.error-message-toast');
     if (existingMessage) {
         existingMessage.remove();
@@ -494,16 +494,16 @@ function showErrorMessage(message) {
     
     document.body.appendChild(messageDiv);
     
-    // 3秒后自动移除
+    // Auto remove after 3 seconds
     setTimeout(() => {
         messageDiv.style.animation = 'slideInRight 0.5s ease reverse';
         setTimeout(() => messageDiv.remove(), 500);
     }, 4000);
 }
 
-// 显示成功消息
+// Show success message
 function showSuccessMessage(message) {
-    // 移除之前的消息
+    // Remove previous message
     const existingMessage = document.querySelector('.success-message');
     if (existingMessage) {
         existingMessage.remove();
@@ -525,7 +525,7 @@ function showSuccessMessage(message) {
         animation: slideInRight 0.5s ease;
     `;
     
-    // 添加滑入动画
+    // Add slide-in animation
     const style = document.createElement('style');
     style.textContent = `
         @keyframes slideInRight {
@@ -543,16 +543,16 @@ function showSuccessMessage(message) {
     
     document.body.appendChild(messageDiv);
     
-    // 3秒后自动移除
+    // Auto remove after 3 seconds
     setTimeout(() => {
         messageDiv.style.animation = 'slideInRight 0.5s ease reverse';
         setTimeout(() => messageDiv.remove(), 500);
     }, 3000);
 }
 
-// ===== URL处理 =====
+// ===== URL handling =====
 function initURLHandling() {
-    // 检查URL hash
+    // Check URL hash
     const hash = window.location.hash;
     if (hash === '#signup') {
         setTimeout(() => {
@@ -560,7 +560,7 @@ function initURLHandling() {
         }, 100);
     }
     
-    // 监听浏览器后退/前进
+    // Listen for browser back/forward
     window.addEventListener('popstate', () => {
         const hash = window.location.hash;
         if (hash === '#signup') {
@@ -571,7 +571,7 @@ function initURLHandling() {
     });
 }
 
-// ===== 密码显示/隐藏功能 =====
+// ===== Password show/hide functionality =====
 function initPasswordToggle() {
     const passwordInputs = document.querySelectorAll('input[type="password"]');
     
@@ -605,12 +605,12 @@ function initPasswordToggle() {
     });
 }
 
-// 页面加载完成后添加密码切换功能
+// Add password toggle functionality after page load
 document.addEventListener('DOMContentLoaded', () => {
     setTimeout(initPasswordToggle, 100);
 });
 
-// ===== 社交登录处理 =====
+// ===== Social login handling =====
 document.addEventListener('DOMContentLoaded', () => {
     const socialButtons = document.querySelectorAll('.social-button');
     
@@ -619,15 +619,15 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             
             const provider = button.classList.contains('google') ? 'Google' : 'GitHub';
-            showSuccessMessage(`正在跳转到${provider}登录...`);
+            showSuccessMessage(`Redirecting to ${provider} login...`);
             
-            // 这里应该实现实际的社交登录逻辑
-            console.log(`${provider}登录被点击`);
+            // Actual social login logic should be implemented here
+            console.log(`${provider} login clicked`);
         });
     });
 });
 
-// ===== 键盘导航优化 =====
+// ===== Keyboard navigation optimization =====
 document.addEventListener('DOMContentLoaded', () => {
     const forms = document.querySelectorAll('.auth-form');
     
@@ -640,10 +640,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     e.preventDefault();
                     
                     if (input.classList.contains('auth-button')) {
-                        // 如果是提交按钮，提交表单
+                        // If it's submit button, submit form
                         form.dispatchEvent(new Event('submit'));
                     } else {
-                        // 跳转到下一个输入框
+                        // Jump to next input field
                         const nextInput = inputs[index + 1];
                         if (nextInput) {
                             nextInput.focus();
@@ -655,12 +655,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// ===== 错误处理 =====
+// ===== Error handling =====
 window.addEventListener('error', (e) => {
-    console.error('登录页面JavaScript错误:', e.error);
+    console.error('Login page JavaScript error:', e.error);
 });
 
-// ===== 导出函数供其他模块使用 =====
+// ===== Export functions for other modules =====
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
         switchToForm: window.switchToForm,

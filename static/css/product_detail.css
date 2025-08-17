@@ -1,6 +1,6 @@
-/* ===== 商品详情页面样式 ===== */
+/* ===== Product Detail Page Styles ===== */
 
-/* 基础设置 */
+/* Basic Settings */
 * {
     margin: 0;
     padding: 0;
@@ -14,7 +14,7 @@ body {
     line-height: 1.6;
 }
 
-/* ===== 面包屑导航 ===== */
+/* ===== Breadcrumb Navigation ===== */
 .breadcrumb {
     background: #f8f9fa;
     padding: 16px 0;
@@ -60,7 +60,7 @@ body {
     font-weight: 500;
 }
 
-/* ===== 主要内容区域 ===== */
+/* ===== Main Content Area ===== */
 .main-content {
     padding: 40px 0;
     min-height: calc(100vh - 200px);
@@ -73,7 +73,7 @@ body {
     margin-bottom: 80px;
 }
 
-/* ===== 商品图片区域 ===== */
+/* ===== Product Image Area ===== */
 .product-gallery {
     display: flex;
     flex-direction: column;
@@ -161,7 +161,7 @@ body {
     object-fit: cover;
 }
 
-/* ===== 商品信息区域 ===== */
+/* ===== Product Information Area ===== */
 .product-info {
     display: flex;
     flex-direction: column;
@@ -205,7 +205,7 @@ body {
     font-size: 14px;
 }
 
-/* ===== 价格信息 ===== */
+/* ===== Price Information ===== */
 .price-info {
     background: #f8f9fa;
     padding: 24px;
@@ -247,7 +247,7 @@ body {
     color: #dc3545 !important;
 }
 
-/* ===== 租期选择 ===== */
+/* ===== Rental Period Selection ===== */
 .rental-dates {
     background: #ffffff;
     border: 1px solid #e9ecef;
@@ -323,7 +323,7 @@ body {
     margin-top: 8px;
 }
 
-/* ===== 操作按钮 ===== */
+/* ===== Action Buttons ===== */
 .action-buttons {
     display: flex;
     gap: 12px;
@@ -417,7 +417,7 @@ body {
     color: white;
 }
 
-/* ===== 位置信息 ===== */
+/* ===== Location Information ===== */
 .location-info {
     background: #ffffff;
     border: 1px solid #e9ecef;
@@ -457,7 +457,7 @@ body {
     color: #6c757d;
 }
 
-/* 地址标签样式 */
+/* Address Tag Styles */
 .location-tag-display {
     margin-top: 8px;
     display: flex;
@@ -485,7 +485,7 @@ body {
     border: 1px solid #e1bee7;
 }
 
-/* ===== 详情标签页 ===== */
+/* ===== Detail Tabs ===== */
 .product-details {
     margin-top: 60px;
 }
@@ -541,7 +541,7 @@ body {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* ===== 产品描述 ===== */
+/* ===== Product Description ===== */
 .description-content h3 {
     font-size: 24px;
     font-weight: 600;
@@ -605,7 +605,7 @@ body {
     color: #2d7efe;
 }
 
-/* ===== 商品详情样式 ===== */
+/* ===== Product Details Styles ===== */
 .item-description {
     font-size: 16px;
     line-height: 1.6;
@@ -691,7 +691,7 @@ body {
     font-weight: 400;
 }
 
-/* ===== 技术规格 ===== */
+/* ===== Technical Specifications ===== */
 .specs-content h3 {
     font-size: 24px;
     font-weight: 600;
@@ -747,7 +747,7 @@ body {
     font-size: 14px;
 }
 
-/* ===== 用户评价 ===== */
+/* ===== User Reviews ===== */
 .reviews-content h3 {
     font-size: 24px;
     font-weight: 600;
@@ -843,7 +843,7 @@ body {
     margin: 0;
 }
 
-/* ===== 出租方信息 ===== */
+/* ===== Lessor Information ===== */
 .owner-content {
     display: flex;
     flex-direction: column;
@@ -912,7 +912,7 @@ body {
     gap: 16px;
 }
 
-/* ===== 相关推荐 ===== */
+/* ===== Related Recommendations ===== */
 .related-products {
     margin-top: 80px;
     padding-top: 40px;
@@ -981,9 +981,9 @@ body {
     color: #2d7efe;
 }
 
-/* ===== 响应式设计 ===== */
+/* ===== Responsive Design ===== */
 
-/* 平板设备 */
+/* Tablet Devices */
 @media (max-width: 1024px) {
     .product-detail-container {
         grid-template-columns: 1fr;
@@ -1003,7 +1003,7 @@ body {
     }
 }
 
-/* 手机设备 */
+/* Mobile Devices */
 @media (max-width: 768px) {
     .main-content {
         padding: 20px 0;
@@ -1070,7 +1070,7 @@ body {
     }
 }
 
-/* 超小屏幕 */
+/* Extra Small Screens */
 @media (max-width: 480px) {
     .breadcrumb {
         padding: 12px 0;
@@ -1104,7 +1104,7 @@ body {
     }
 }
 
-/* ===== 加载和动画效果 ===== */
+/* ===== Loading and Animation Effects ===== */
 .fade-in {
     animation: fadeIn 0.5s ease;
 }
@@ -1124,7 +1124,7 @@ body {
     }
 }
 
-/* ===== 交互状态 ===== */
+/* ===== Interactive States ===== */
 .loading {
     opacity: 0.6;
     pointer-events: none;
@@ -1135,7 +1135,7 @@ body {
     cursor: not-allowed;
 }
 
-/* ===== 无障碍改进 ===== */
+/* ===== Accessibility Improvements ===== */
 @media (prefers-reduced-motion: reduce) {
     * {
         animation: none !important;
@@ -1143,7 +1143,7 @@ body {
     }
 }
 
-/* 聚焦样式 */
+/* Focus Styles */
 button:focus,
 input:focus,
 a:focus {
@@ -1151,7 +1151,7 @@ a:focus {
     outline-offset: 2px;
 }
 
-/* 高对比度模式 */
+/* High Contrast Mode */
 @media (prefers-contrast: high) {
     .btn-primary {
         background: #000000;

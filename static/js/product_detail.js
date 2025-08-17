@@ -1,27 +1,27 @@
 /**
- * 商品详情页面交互功能
- * 处理图片切换、日期选择、价格计算、标签页切换等功能
+ * Product detail page interactive functionality
+ * Handles image switching, date selection, price calculation, tab switching and other features
  */
 
-// 页面加载完成后初始化
+// Initialize after page load
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Product detail page initialization started');
     
-    // 初始化各个功能模块
+    // Initialize various functional modules
     initImageGallery();
     initDatePicker();
     initTabs();
     initButtons();
     initTooltips();
     
-    // 初始化价格显示
+    // Initialize price display
     initPriceDisplay();
     
     console.log('Product detail page initialization completed');
 });
 
 /**
- * 图片画廊功能
+ * Image gallery functionality
  */
 function initImageGallery() {
     const mainImage = document.getElementById('mainImage');
@@ -32,10 +32,10 @@ function initImageGallery() {
         return;
     }
     
-    // 添加主图加载错误处理
+    // Add main image loading error handling
     mainImage.addEventListener('error', function() {
         console.warn('Failed to load main image:', this.src);
-        this.src = '/static/images/pressure_washer.png'; // 设置备用图片
+        this.src = '/static/images/pressure_washer.png'; // Set fallback image
     });
     
     if (thumbnails.length === 0) {
@@ -46,7 +46,7 @@ function initImageGallery() {
     thumbnails.forEach((thumbnail, index) => {
         const thumbnailImg = thumbnail.querySelector('.thumbnail-image');
         
-        // 添加缩略图加载错误处理
+        // Add thumbnail loading error handling
         if (thumbnailImg) {
             thumbnailImg.addEventListener('error', function() {
                 console.warn('Failed to load thumbnail image:', this.src);
@@ -58,20 +58,20 @@ function initImageGallery() {
             const newImageSrc = this.dataset.image;
             
             if (newImageSrc) {
-                // 预加载新图片以确保能正常显示
+                // Preload new image to ensure proper display
                 const img = new Image();
                 img.onload = function() {
-                    // 更新主图
+                    // Update main image
                     mainImage.src = newImageSrc;
                     if (thumbnailImg) {
                         mainImage.alt = thumbnailImg.alt || 'Product Image';
                     }
                     
-                    // 更新活动状态
+                    // Update active state
                     thumbnails.forEach(btn => btn.classList.remove('active'));
                     thumbnail.classList.add('active');
                     
-                    // 添加切换动画
+                    // Add switching animation
                     mainImage.style.opacity = '0.8';
                     setTimeout(() => {
                         mainImage.style.opacity = '1';
@@ -82,7 +82,7 @@ function initImageGallery() {
                 
                 img.onerror = function() {
                     console.error('Failed to preload image:', newImageSrc);
-                    // 仍然尝试更新，可能是缓存问题
+                    // Still try to update, might be a cache issue
                     mainImage.src = newImageSrc;
                 };
                 
@@ -90,7 +90,7 @@ function initImageGallery() {
             }
         });
         
-        // 添加键盘支持
+        // Add keyboard support
         thumbnail.addEventListener('keydown', function(e) {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
@@ -103,7 +103,7 @@ function initImageGallery() {
 }
 
 /**
- * 日期选择和价格计算功能
+ * Date selection and price calculation functionality
  */
 function initDatePicker() {
     const startDateInput = document.getElementById('startDate');
@@ -117,13 +117,13 @@ function initDatePicker() {
         return;
     }
     
-    // 设置最小日期为今天
+    // Set minimum date to today
     const today = new Date();
     const todayString = today.toISOString().split('T')[0];
     startDateInput.min = todayString;
     endDateInput.min = todayString;
     
-    // 监听开始日期变化
+    // Listen for start date changes
     startDateInput.addEventListener('change', function() {
         const startDate = new Date(this.value);
         const minEndDate = new Date(startDate);
@@ -131,7 +131,7 @@ function initDatePicker() {
         
         endDateInput.min = minEndDate.toISOString().split('T')[0];
         
-        // 如果结束日期早于开始日期，清空结束日期
+        // If end date is earlier than start date, clear end date
         if (endDateInput.value && new Date(endDateInput.value) <= startDate) {
             endDateInput.value = '';
         }
@@ -139,13 +139,13 @@ function initDatePicker() {
         calculatePrice();
     });
     
-    // 监听结束日期变化
+    // Listen for end date changes
     endDateInput.addEventListener('change', function() {
         calculatePrice();
     });
     
     /**
-     * 计算租金
+     * Calculate rental price
      */
     function calculatePrice() {
         try {
@@ -156,7 +156,7 @@ function initDatePicker() {
                 if (rentalSummary) {
                     rentalSummary.style.display = 'none';
                 }
-                // 重置主要价格显示为最低价格
+                // Reset main price display to minimum price
                 updateMainPriceDisplay();
                 return;
             }
@@ -164,7 +164,7 @@ function initDatePicker() {
             const start = new Date(startDate);
             const end = new Date(endDate);
             
-            // 验证日期有效性
+            // Validate date validity
             if (isNaN(start.getTime()) || isNaN(end.getTime())) {
                 console.error('Invalid date values provided');
                 if (rentalSummary) {
@@ -186,13 +186,13 @@ function initDatePicker() {
                 return;
             }
             
-            // 使用数据库中的价格数据进行计算
+            // Calculate using price data from database
             const priceData = calculatePriceFromDatabase(diffDays);
             
-            // 更新主要价格显示
+            // Update main price display
             updateMainPriceDisplay(priceData.dailyRate, diffDays);
             
-            // 安全地更新显示
+            // Safely update display
             if (totalDaysSpan) {
                 totalDaysSpan.textContent = diffDays + ' day' + (diffDays > 1 ? 's' : '');
             }
@@ -204,7 +204,7 @@ function initDatePicker() {
                 rentalSummary.classList.add('fade-in');
             }
             
-            // 更新每日费率显示
+            // Update daily rate display
             const dailyRateDisplay = document.getElementById('dailyRateDisplay');
             if (dailyRateDisplay) {
                 dailyRateDisplay.textContent = '£' + priceData.dailyRate.toFixed(0) + ' / day';
@@ -228,10 +228,10 @@ function initDatePicker() {
     }
     
     /**
-     * 使用数据库价格数据计算租金
+     * Calculate rental price using database price data
      */
     function calculatePriceFromDatabase(days) {
-        // 获取产品数据
+        // Get product data
         const productData = window.productData || {
             minDailyPrice: 20,
             prices: [
@@ -243,7 +243,7 @@ function initDatePicker() {
         
         console.log('Using product data for calculation:', productData);
         
-        // 如果没有价格数据，使用默认计算
+        // If no price data available, use default calculation
         if (!productData.prices || productData.prices.length === 0) {
             const dailyRate = productData.minDailyPrice || 20;
             return {
@@ -255,11 +255,11 @@ function initDatePicker() {
             };
         }
         
-        // 按持续时间升序排序价格，找到最适合的价格层级
+        // Sort prices by duration in ascending order, find the most suitable price tier
         const sortedPrices = [...productData.prices].sort((a, b) => a.duration - b.duration);
         
-        // 找到最适合的价格层级（小于等于租赁天数的最大层级）
-        let bestPrice = sortedPrices[0]; // 默认使用最小层级
+        // Find the most suitable price tier (maximum tier less than or equal to rental days)
+        let bestPrice = sortedPrices[0]; // Default to minimum tier
         for (const price of sortedPrices) {
             if (price.duration <= days) {
                 bestPrice = price;
@@ -268,28 +268,28 @@ function initDatePicker() {
             }
         }
         
-        // 计算总价格
+        // Calculate total price
         let totalPrice;
         let dailyRate = bestPrice.dailyPrice;
         let discountMessage = '';
         
         if (bestPrice.duration === 1) {
-            // 使用日租价格
+            // Use daily rental price
             totalPrice = dailyRate * days;
         } else {
-            // 使用套餐价格计算
+            // Calculate using package price
             const fullPackages = Math.floor(days / bestPrice.duration);
             const remainingDays = days % bestPrice.duration;
             
             totalPrice = fullPackages * bestPrice.totalPrice;
             
-            // 剩余天数使用日租价格
+            // Use daily rate for remaining days
             if (remainingDays > 0) {
                 totalPrice += remainingDays * dailyRate;
             }
         }
         
-        // 设置折扣信息
+        // Set discount information
         if (bestPrice.duration >= 7) {
             discountMessage = ' (Weekly rate applied)';
         } else if (bestPrice.duration >= 3) {
@@ -319,7 +319,7 @@ function initDatePicker() {
 }
 
 /**
- * 更新主要价格显示
+ * Update main price display
  */
 function updateMainPriceDisplay(dailyRate = null, days = null) {
     const mainPriceDisplay = document.getElementById('mainPriceDisplay');
@@ -330,7 +330,7 @@ function updateMainPriceDisplay(dailyRate = null, days = null) {
     const productData = window.productData || { minDailyPrice: 20 };
     
     if (dailyRate && days) {
-        // 显示当前选择期间的价格
+        // Display price for currently selected period
         mainPriceDisplay.textContent = '£' + dailyRate.toFixed(0);
         
         if (discountNote) {
@@ -343,7 +343,7 @@ function updateMainPriceDisplay(dailyRate = null, days = null) {
             }
         }
     } else {
-        // 显示最低价格
+        // Display minimum price
         const minPrice = productData.minDailyPrice || 20;
         mainPriceDisplay.textContent = '£' + minPrice.toFixed(0);
         
@@ -354,15 +354,15 @@ function updateMainPriceDisplay(dailyRate = null, days = null) {
 }
 
 /**
- * 初始化价格显示
+ * Initialize price display
  */
 function initPriceDisplay() {
     const productData = window.productData || { minDailyPrice: 20, itemValue: 500 };
     
-    // 设置初始价格显示
+    // Set initial price display
     updateMainPriceDisplay();
     
-    // 设置押金显示
+    // Set deposit display
     const depositDisplay = document.getElementById('depositDisplay');
     if (depositDisplay) {
         depositDisplay.textContent = 'Deposit: £' + (productData.itemValue || 500).toFixed(0);
@@ -372,7 +372,7 @@ function initPriceDisplay() {
 }
 
 /**
- * 标签页切换功能
+ * Tab switching functionality
  */
 function initTabs() {
     const tabButtons = document.querySelectorAll('.tab-btn');
@@ -387,11 +387,11 @@ function initTabs() {
         button.addEventListener('click', function() {
             const targetTab = this.dataset.tab;
             
-            // 移除所有活动状态
+            // Remove all active states
             tabButtons.forEach(btn => btn.classList.remove('active'));
             tabPanels.forEach(panel => panel.classList.remove('active'));
             
-            // 设置当前活动状态
+            // Set current active state
             this.classList.add('active');
             const targetPanel = document.getElementById(targetTab);
             if (targetPanel) {
@@ -406,10 +406,10 @@ function initTabs() {
 }
 
 /**
- * 按钮交互功能
+ * Button interaction functionality
  */
 function initButtons() {
-    // 收藏按钮
+    // Favorite button
     const favoriteBtn = document.getElementById('favoriteBtn');
     if (favoriteBtn) {
         favoriteBtn.addEventListener('click', function() {
@@ -425,7 +425,7 @@ function initButtons() {
         });
     }
     
-    // 加入购物车按钮
+    // Add to cart button
     const addToCartBtn = document.getElementById('addToCartBtn');
     if (addToCartBtn) {
         addToCartBtn.addEventListener('click', function() {
@@ -437,13 +437,13 @@ function initButtons() {
                 return;
             }
             
-            // 添加加载状态
+            // Add loading state
             this.classList.add('loading');
             this.disabled = true;
             const originalText = this.innerHTML;
             this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
             
-            // 模拟添加到购物车
+            // Simulate adding to cart
             setTimeout(() => {
                 this.classList.remove('loading');
                 this.disabled = false;
@@ -453,7 +453,7 @@ function initButtons() {
         });
     }
     
-    // 立即预订按钮
+    // Book now button
     const rentNowBtn = document.getElementById('rentNowBtn');
     if (rentNowBtn) {
         rentNowBtn.addEventListener('click', function() {
@@ -465,13 +465,13 @@ function initButtons() {
                 return;
             }
             
-            // 添加加载状态
+            // Add loading state
             this.classList.add('loading');
             this.disabled = true;
             const originalText = this.innerHTML;
             this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Booking...';
             
-            // 模拟预订流程
+            // Simulate booking process
             setTimeout(() => {
                 this.classList.remove('loading');
                 this.disabled = false;
@@ -481,19 +481,19 @@ function initButtons() {
         });
     }
     
-    // 查看地图按钮
+    // View map button
     const viewMapBtn = document.querySelector('.view-map-btn');
     if (viewMapBtn) {
         viewMapBtn.addEventListener('click', function() {
-            // 获取地址信息
+            // Get address information
             const locationInfo = document.querySelector('.location-info');
             const addressText = locationInfo ? locationInfo.textContent.trim() : '';
             
-            // 获取地址标签
+            // Get address tags
             const locationTag = document.querySelector('.location-tag');
             const areaTag = document.querySelector('.area-tag');
             
-            // 构建搜索查询
+            // Build search query
             let searchQuery = addressText;
             if (locationTag && locationTag.textContent) {
                 searchQuery = locationTag.textContent.trim();
@@ -502,7 +502,7 @@ function initButtons() {
                 searchQuery += ', ' + areaTag.textContent.trim();
             }
             
-            // 如果有地址信息，打开Google地图
+            // If address information is available, open Google Maps
             if (searchQuery) {
                 const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(searchQuery)}`;
                 window.open(mapUrl, '_blank');
@@ -517,7 +517,7 @@ function initButtons() {
 }
 
 /**
- * 工具提示功能
+ * Tooltip functionality
  */
 function initTooltips() {
     const elementsWithTooltips = document.querySelectorAll('[title]');
@@ -527,13 +527,13 @@ function initTooltips() {
             const tooltipText = this.title;
             if (tooltipText) {
                 showTooltip(this, tooltipText);
-                this.title = ''; // 临时移除title避免浏览器默认提示
+                this.title = ''; // Temporarily remove title to avoid browser default tooltip
             }
         });
         
         element.addEventListener('mouseleave', function() {
             hideTooltip();
-            // 恢复title属性
+            // Restore title attribute
             const tooltip = document.querySelector('.custom-tooltip');
             if (tooltip) {
                 this.title = tooltip.textContent;
@@ -543,10 +543,10 @@ function initTooltips() {
 }
 
 /**
- * 显示自定义工具提示
+ * Show custom tooltip
  */
 function showTooltip(element, text) {
-    hideTooltip(); // 先隐藏现有的
+    hideTooltip(); // Hide existing tooltip first
     
     const tooltip = document.createElement('div');
     tooltip.className = 'custom-tooltip';
@@ -571,7 +571,7 @@ function showTooltip(element, text) {
 }
 
 /**
- * 隐藏工具提示
+ * Hide tooltip
  */
 function hideTooltip() {
     const tooltip = document.querySelector('.custom-tooltip');
@@ -581,10 +581,10 @@ function hideTooltip() {
 }
 
 /**
- * 显示Toast消息
+ * Show toast message
  */
 function showToast(message, type = 'info') {
-    // 移除现有的toast
+    // Remove existing toast
     const existingToast = document.querySelector('.toast');
     if (existingToast) {
         existingToast.remove();
@@ -593,7 +593,7 @@ function showToast(message, type = 'info') {
     const toast = document.createElement('div');
     toast.className = `toast toast-${type}`;
     
-    // 根据类型设置图标和颜色
+    // Set icon and color based on type
     let icon = 'fas fa-info-circle';
     let color = '#2d7efe';
     
@@ -637,12 +637,12 @@ function showToast(message, type = 'info') {
     
     document.body.appendChild(toast);
     
-    // 显示动画
+    // Show animation
     setTimeout(() => {
         toast.style.transform = 'translateX(0)';
     }, 10);
     
-    // 自动隐藏
+    // Auto hide
     setTimeout(() => {
         toast.style.transform = 'translateX(400px)';
         setTimeout(() => {
@@ -654,7 +654,7 @@ function showToast(message, type = 'info') {
 }
 
 /**
- * 页面滚动优化
+ * Page scroll optimization
  */
 function initScrollOptimization() {
     let ticking = false;
@@ -662,7 +662,7 @@ function initScrollOptimization() {
     function updateScrollEffects() {
         const scrollY = window.scrollY;
         
-        // 商品图片视差效果
+        // Product image parallax effect
         const gallery = document.querySelector('.gallery-main-image');
         if (gallery) {
             const rect = gallery.getBoundingClientRect();
@@ -686,10 +686,10 @@ function initScrollOptimization() {
 }
 
 /**
- * 性能监控
+ * Performance monitoring
  */
 function initPerformanceMonitoring() {
-    // 监控页面加载性能
+    // Monitor page load performance
     window.addEventListener('load', () => {
         if ('performance' in window) {
             const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
@@ -697,7 +697,7 @@ function initPerformanceMonitoring() {
         }
     });
     
-    // 监控交互性能
+    // Monitor interaction performance
     let interactionCount = 0;
     document.addEventListener('click', () => {
         interactionCount++;
@@ -708,22 +708,22 @@ function initPerformanceMonitoring() {
 }
 
 /**
- * 错误处理
+ * Error handling
  */
 function initErrorHandling() {
     window.addEventListener('error', (e) => {
         console.error('Page error:', e.error);
-        // 可以在这里添加错误上报逻辑
+        // Error reporting logic can be added here
     });
     
     window.addEventListener('unhandledrejection', (e) => {
         console.error('Unhandled Promise error:', e.reason);
-        // 可以在这里添加错误上报逻辑
+        // Error reporting logic can be added here
     });
 }
 
 /**
- * 响应式图片加载
+ * Responsive image loading
  */
 function initLazyLoading() {
     if ('IntersectionObserver' in window) {
@@ -744,7 +744,7 @@ function initLazyLoading() {
     }
 }
 
-// 初始化所有功能
+// Initialize all features
 document.addEventListener('DOMContentLoaded', () => {
     initScrollOptimization();
     initPerformanceMonitoring();
@@ -752,25 +752,25 @@ document.addEventListener('DOMContentLoaded', () => {
     initLazyLoading();
 });
 
-// 页面可见性API - 优化性能
+// Page Visibility API - Performance optimization
 document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'hidden') {
-        // 页面不可见时暂停一些动画或定时器
+        // Pause animations or timers when page is hidden
         console.log('Page hidden, pausing non-essential features');
     } else {
-        // 页面可见时恢复功能
+        // Resume features when page is visible
         console.log('Page visible, resuming features');
     }
 });
 
-// 导出一些方法供其他脚本使用
+// Export methods for use by other scripts
 window.ProductDetail = {
     showToast,
     calculatePrice: () => {
         const startDate = document.getElementById('startDate').value;
         const endDate = document.getElementById('endDate').value;
         if (startDate && endDate) {
-            // 触发价格计算
+            // Trigger price calculation
             document.getElementById('endDate').dispatchEvent(new Event('change'));
         }
     }

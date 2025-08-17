@@ -1,0 +1,516 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Item Rentals - ShareTools{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/components.css' %}">
+<link rel="stylesheet" href="{% static 'css/browse_things.css' %}">
+<style>
+    .owner-rentals-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .page-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 40px;
+        border-radius: 20px;
+        margin-bottom: 30px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    
+    .page-header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+        font-weight: 700;
+    }
+    
+    .page-header p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        margin-bottom: 0;
+    }
+    
+    .stats-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .stat-card {
+        background: white;
+        padding: 25px;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        border: 1px solid #e9ecef;
+        text-align: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+    
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        font-size: 24px;
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #495057;
+        margin-bottom: 10px;
+    }
+    
+    .stat-label {
+        color: #6c757d;
+        font-size: 1rem;
+        font-weight: 500;
+    }
+    
+    .rental-sections {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 30px;
+        margin-bottom: 30px;
+    }
+    
+    .rental-section {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        border: 1px solid #e9ecef;
+        overflow: hidden;
+    }
+    
+    .section-header {
+        background: #f8f9fa;
+        padding: 20px;
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    .section-header h3 {
+        margin: 0;
+        color: #495057;
+        font-size: 1.3rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .section-header .badge {
+        font-size: 0.8rem;
+        padding: 5px 10px;
+    }
+    
+    .rental-list {
+        padding: 0;
+        margin: 0;
+        list-style: none;
+    }
+    
+    .rental-item {
+        padding: 20px;
+        border-bottom: 1px solid #f8f9fa;
+        transition: background-color 0.3s ease;
+    }
+    
+    .rental-item:last-child {
+        border-bottom: none;
+    }
+    
+    .rental-item:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .rental-item:empty {
+        padding: 40px 20px;
+        text-align: center;
+        color: #6c757d;
+    }
+    
+    .rental-item:empty::after {
+        content: "No rentals in this category";
+    }
+    
+    .rental-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 15px;
+    }
+    
+    .rental-info h4 {
+        margin: 0 0 8px 0;
+        color: #495057;
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+    
+    .rental-meta {
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+    
+    .rental-status {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 15px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .status-pending { background-color: #ffc107; color: #000; }
+    .status-confirmed { background-color: #17a2b8; color: #fff; }
+    .status-active { background-color: #28a745; color: #fff; }
+    .status-completed { background-color: #6c757d; color: #fff; }
+    .status-cancelled { background-color: #dc3545; color: #fff; }
+    
+    .rental-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+        flex-wrap: wrap;
+    }
+    
+    .btn-sm {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+        border-radius: 8px;
+    }
+    
+    .btn-view {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+    
+    .btn-view:hover {
+        background-color: #0056b3;
+        border-color: #0056b3;
+    }
+    
+    .btn-confirm {
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+    
+    .btn-confirm:hover {
+        background-color: #218838;
+        border-color: #1e7e34;
+    }
+    
+    .btn-complete {
+        background-color: #6c757d;
+        border-color: #6c757d;
+    }
+    
+    .btn-complete:hover {
+        background-color: #5a6268;
+        border-color: #545b62;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #6c757d;
+    }
+    
+    .empty-state i {
+        font-size: 48px;
+        margin-bottom: 20px;
+        color: #adb5bd;
+    }
+    
+    .empty-state h4 {
+        color: #495057;
+        margin-bottom: 15px;
+    }
+    
+    .empty-state p {
+        margin-bottom: 20px;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        padding: 12px 30px;
+        border-radius: 25px;
+        font-weight: 600;
+        transition: transform 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+    
+    @media (max-width: 768px) {
+        .rental-sections {
+            grid-template-columns: 1fr;
+        }
+        
+        .stats-cards {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .page-header {
+            padding: 30px 20px;
+        }
+        
+        .page-header h1 {
+            font-size: 2rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="owner-rentals-container">
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1><i class="fas fa-handshake me-3"></i>My Item Rentals</h1>
+        <p>Manage rental orders for items you own</p>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="stats-cards">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-number">{{ pending_rentals.count }}</div>
+            <div class="stat-label">Pending Orders</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-number">{{ confirmed_rentals.count }}</div>
+            <div class="stat-label">Confirmed Orders</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-play-circle"></i>
+            </div>
+            <div class="stat-number">{{ active_rentals.count }}</div>
+            <div class="stat-label">Active Rentals</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-flag-checkered"></i>
+            </div>
+            <div class="stat-number">{{ completed_rentals.count }}</div>
+            <div class="stat-label">Completed Rentals</div>
+        </div>
+    </div>
+
+    <!-- Rental Sections -->
+    <div class="rental-sections">
+        <!-- Pending Rentals -->
+        <div class="rental-section">
+            <div class="section-header">
+                <h3>
+                    <i class="fas fa-clock text-warning"></i>
+                    Pending Orders
+                    <span class="badge bg-warning text-dark">{{ pending_rentals.count }}</span>
+                </h3>
+            </div>
+            <ul class="rental-list">
+                {% for rental in pending_rentals %}
+                <li class="rental-item">
+                    <div class="rental-header">
+                        <div class="rental-info">
+                            <h4>{{ rental.item.title }}</h4>
+                            <div class="rental-meta">
+                                <strong>Renter:</strong> {{ rental.renter.username }}<br>
+                                <strong>Dates:</strong> {{ rental.start_date|date:"M d" }} - {{ rental.end_date|date:"M d, Y" }}<br>
+                                <strong>Amount:</strong> £{{ rental.total_amount }}
+                            </div>
+                        </div>
+                        <span class="rental-status status-{{ rental.status }}">
+                            {{ rental.get_status_display }}
+                        </span>
+                    </div>
+                    <div class="rental-actions">
+                        <a href="{% url 'rental:rental_detail' rental.id %}" class="btn btn-view btn-sm">
+                            <i class="fas fa-eye me-1"></i>View Details
+                        </a>
+                        {% if rental.payment_status == 'paid' %}
+                        <a href="{% url 'rental:confirm_rental' rental.id %}" class="btn btn-confirm btn-sm">
+                            <i class="fas fa-check me-1"></i>Confirm
+                        </a>
+                        {% endif %}
+                    </div>
+                </li>
+                {% empty %}
+                <li class="rental-item"></li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Confirmed Rentals -->
+        <div class="rental-section">
+            <div class="section-header">
+                <h3>
+                    <i class="fas fa-check-circle text-info"></i>
+                    Confirmed Orders
+                    <span class="badge bg-info">{{ confirmed_rentals.count }}</span>
+                </h3>
+            </div>
+            <ul class="rental-list">
+                {% for rental in confirmed_rentals %}
+                <li class="rental-item">
+                    <div class="rental-header">
+                        <div class="rental-info">
+                            <h4>{{ rental.item.title }}</h4>
+                            <div class="rental-meta">
+                                <strong>Renter:</strong> {{ rental.renter.username }}<br>
+                                <strong>Dates:</strong> {{ rental.start_date|date:"M d" }} - {{ rental.end_date|date:"M d, Y" }}<br>
+                                <strong>Amount:</strong> £{{ rental.total_amount }}
+                            </div>
+                        </div>
+                        <span class="rental-status status-{{ rental.status }}">
+                            {{ rental.get_status_display }}
+                        </span>
+                    </div>
+                    <div class="rental-actions">
+                        <a href="{% url 'rental:rental_detail' rental.id %}" class="btn btn-view btn-sm">
+                            <i class="fas fa-eye me-1"></i>View Details
+                        </a>
+                    </div>
+                </li>
+                {% empty %}
+                <li class="rental-item"></li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Active Rentals -->
+        <div class="rental-section">
+            <div class="section-header">
+                <h3>
+                    <i class="fas fa-play-circle text-success"></i>
+                    Active Rentals
+                    <span class="badge bg-success">{{ active_rentals.count }}</span>
+                </h3>
+            </div>
+            <ul class="rental-list">
+                {% for rental in active_rentals %}
+                <li class="rental-item">
+                    <div class="rental-header">
+                        <div class="rental-info">
+                            <h4>{{ rental.item.title }}</h4>
+                            <div class="rental-meta">
+                                <strong>Renter:</strong> {{ rental.renter.username }}<br>
+                                <strong>Dates:</strong> {{ rental.start_date|date:"M d" }} - {{ rental.end_date|date:"M d, Y" }}<br>
+                                <strong>Amount:</strong> £{{ rental.total_amount }}
+                            </div>
+                        </div>
+                        <span class="rental-status status-{{ rental.status }}">
+                            {{ rental.get_status_display }}
+                        </span>
+                    </div>
+                    <div class="rental-actions">
+                        <a href="{% url 'rental:rental_detail' rental.id %}" class="btn btn-view btn-sm">
+                            <i class="fas fa-eye me-1"></i>View Details
+                        </a>
+                        <button class="btn btn-complete btn-sm" onclick="markAsCompleted('{{ rental.id }}')">
+                            <i class="fas fa-flag-checkered me-1"></i>Mark Complete
+                        </button>
+                    </div>
+                </li>
+                {% empty %}
+                <li class="rental-item"></li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Completed Rentals -->
+        <div class="rental-section">
+            <div class="section-header">
+                <h3>
+                    <i class="fas fa-flag-checkered text-secondary"></i>
+                    Completed Rentals
+                    <span class="badge bg-secondary">{{ completed_rentals.count }}</span>
+                </h3>
+            </div>
+            <ul class="rental-list">
+                {% for rental in completed_rentals %}
+                <li class="rental-item">
+                    <div class="rental-header">
+                        <div class="rental-info">
+                            <h4>{{ rental.item.title }}</h4>
+                            <div class="rental-meta">
+                                <strong>Renter:</strong> {{ rental.renter.username }}<br>
+                                <strong>Dates:</strong> {{ rental.start_date|date:"M d" }} - {{ rental.end_date|date:"M d, Y" }}<br>
+                                <strong>Amount:</strong> £{{ rental.total_amount }}
+                            </div>
+                        </div>
+                        <span class="rental-status status-{{ rental.status }}">
+                            {{ rental.get_status_display }}
+                        </span>
+                    </div>
+                    <div class="rental-actions">
+                        <a href="{% url 'rental:rental_detail' rental.id %}" class="btn btn-view btn-sm">
+                            <i class="fas fa-eye me-1"></i>View Details
+                        </a>
+                    </div>
+                </li>
+                {% empty %}
+                <li class="rental-item"></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- Empty State -->
+    {% if total_rentals == 0 %}
+    <div class="empty-state">
+        <i class="fas fa-handshake"></i>
+        <h4>No Rentals Yet</h4>
+        <p>You haven't received any rental requests for your items yet. Keep your items available and well-described to attract renters!</p>
+        <a href="{% url 'browse_things' %}" class="btn btn-primary">
+            <i class="fas fa-search me-2"></i>Browse Items
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function markAsCompleted(rentalId) {
+        if (confirm('Are you sure you want to mark this rental as completed? This action cannot be undone.')) {
+            // In a real application, this would make an AJAX call to update the status
+            // For now, we'll just show a message
+            alert('Rental marked as completed! In a real application, this would update the database.');
+        }
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add any additional JavaScript functionality here
+        console.log('Owner rentals page loaded');
+    });
+</script>
+{% endblock %}

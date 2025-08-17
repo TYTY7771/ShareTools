@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "django_filters",
     "apps.core",
+    "apps.rental",
 ]
 
 # 自定义用户模型
