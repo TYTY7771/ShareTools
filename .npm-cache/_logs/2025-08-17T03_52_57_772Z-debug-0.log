@@ -6,12 +6,12 @@
 5 silly config load:file:C:\Program Files\nodejs\node_global\etc\npmrc
 6 verbose title npm exec figma-developer-mcp --stdio
 7 verbose argv "exec" "--yes" "--" "figma-developer-mcp" "--stdio"
-8 verbose logfile logs-max:10 dir:D:\Workspace\ShareTools\.npm-cache\_logs\2025-08-17T01_52_03_871Z-
-9 verbose logfile D:\Workspace\ShareTools\.npm-cache\_logs\2025-08-17T01_52_03_871Z-debug-0.log
+8 verbose logfile logs-max:10 dir:D:\Workspace\ShareTools\.npm-cache\_logs\2025-08-17T03_52_57_772Z-
+9 verbose logfile D:\Workspace\ShareTools\.npm-cache\_logs\2025-08-17T03_52_57_772Z-debug-0.log
 10 silly logfile start cleaning logs, removing 1 files
 11 silly logfile done cleaning log files
 12 silly packumentCache heap:4345298944 maxSize:1086324736 maxEntrySize:543162368
-13 http fetch GET 200 https://registry.npmjs.org/figma-developer-mcp 874ms (cache revalidated)
+13 http fetch GET 200 https://registry.npmjs.org/figma-developer-mcp 932ms (cache revalidated)
 14 silly packumentCache heap:4345298944 maxSize:1086324736 maxEntrySize:543162368
 15 silly packumentCache heap:4345298944 maxSize:1086324736 maxEntrySize:543162368
 16 verbose cwd C:\Users\QTY

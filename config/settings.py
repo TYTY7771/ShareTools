@@ -83,21 +83,15 @@ WSGI_APPLICATION = "config.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# 开发环境使用SQLite数据库（简单快速）
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": BASE_DIR / "db.sqlite3",
-#     }
-# }
+# 
 
-# MySQL数据库配置（现在使用MySQL）
+# MySQL database configuration (now using MySQL)
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
         "NAME": "sharetools_new",
         "USER": "root",
-        "PASSWORD": "123456",  # MySQL密码
+        "PASSWORD": "123456",  # MySQL password
         "HOST": "localhost",
         "PORT": "3306",
         "OPTIONS": {
@@ -160,10 +154,10 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # Django REST Framework settings
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        # 'rest_framework.authentication.SessionAuthentication',  # 临时禁用 Session 认证
+        # 'rest_framework.authentication.SessionAuthentication',  # Temporarily disable session authentication
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny',  # 临时允许所有访问用于测试
+        'rest_framework.permissions.AllowAny',  # Temporarily allow all access for testing
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20,
@@ -186,7 +180,7 @@ CORS_ALLOW_CREDENTIALS = True
 if DEBUG:
     CORS_ALLOW_ALL_ORIGINS = True
 
-# CSRF 配置 - 为 API 端点禁用 CSRF
+# CSRF Configuration - Disable CSRF for API endpoints
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
@@ -195,7 +189,7 @@ CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:8000",
 ]
 
-# 为 API 路径禁用 CSRF
+# Disabling CSRF for API endpoints
 CSRF_EXEMPT_URLS = [
     r'^/api/',
     r'^/auth/',
