@@ -1,5 +1,5 @@
 """
-ShareTools核心应用的视图函数
+ShareTools Core Application View Functions
 """
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
@@ -17,51 +17,51 @@ from .validators import PriceValidator
 
 
 def home(request):
-    """渲染主页"""
+    """Render home page"""
     return render(request, 'index.html')
 
 
 def login_view(request):
-    """渲染登录页面"""
+    """Render login page"""
     return render(request, 'login.html')
 
 
 def register_view(request):
-    """渲染注册页面"""
+    """Render registration page"""
     return render(request, 'register.html')
 
 
 def logout_view(request):
-    """处理用户登出"""
+    """Handle user logout"""
     logout(request)
-    messages.success(request, "您已成功登出")
+    messages.success(request, "You have successfully logged out")
     return redirect('home')
 
 
 def list_item_view(request):
-    """渲染物品发布页面"""
+    """Render item listing page"""
     return render(request, 'list_item.html')
 
 
 def profile_view(request):
-    """渲染个人主页"""
+    """Render profile page"""
     return render(request, 'profile.html')
 
 
 def edit_profile_view(request):
-    """渲染编辑个人资料页面"""
+    """Render edit profile page"""
     return render(request, 'edit_profile.html')
 
 
 def browse_things_view(request):
-    """渲染物品浏览页面"""
+    """Render items browsing page"""
     from .models import Item
 
-    # 获取所有active状态的商品，预加载相关数据以提高性能
+    # Get all active items, preload related data for performance
     items = Item.objects.filter(status='active').select_related(
         'owner', 'category', 'location'
     ).prefetch_related(
-        'images'  # 预加载图片关系，确保primary_image属性能正确工作
+        'images'  # Preload image relationships to ensure primary_image property works correctly
     ).order_by('-created_at')
 
     context = {
@@ -72,10 +72,10 @@ def browse_things_view(request):
 
 
 def locations_view(request):
-    """位置页面"""
+    """Locations page"""
     from .models import Location
     
-    # 获取所有活跃的位置
+    # Get all active locations
     locations = Location.objects.filter(is_active=True).order_by('name')
     
     context = {
@@ -86,52 +86,52 @@ def locations_view(request):
 
 
 def about_view(request):
-    """关于页面"""
+    """About page"""
     return render(request, 'about.html')
 
 
 def view_orders(request):
-    """查看订单页面"""
+    """View orders page"""
     return render(request, 'view_orders.html')
 
 
 def product_detail_view(request, product_id=None):
-    """渲染商品详情页面"""
+    """Render product detail page"""
     from .models import Item
     from django.shortcuts import get_object_or_404
     import json
     from decimal import Decimal
 
-    # 根据product_id从数据库获取商品信息
+    # Get product information from database based on product_id
     if product_id:
         try:
-            # 预加载相关数据以提高性能并避免查询错误
+            # Preload related data for performance and to avoid query errors
             item = Item.objects.select_related(
                 'owner', 'category', 'location'
             ).prefetch_related(
                 'images', 'prices'
             ).get(id=product_id)
 
-            # 增加浏览次数（避免物品所有者浏览自己的物品时增加次数）
+            # Increase view count (avoid incrementing when item owner views their own item)
             if request.user.is_authenticated and request.user != item.owner:
                 Item.objects.filter(pk=item.pk).update(view_count=item.view_count + 1)
-                # 重新加载数据但保持预加载的关系
+                # Reload data while maintaining preloaded relationships
                 item = Item.objects.select_related(
                     'owner', 'category', 'location'
                 ).prefetch_related(
                     'images', 'prices'
                 ).get(id=product_id)
 
-            # 准备商品数据JSON，修正价格显示逻辑
+            # Prepare product data JSON, fix price display logic
             product_data = {
                 'id': str(item.id),
                 'title': item.title,
                 'itemValue': float(item.item_value) if item.item_value else 500,
-                'minDailyPrice': None,  # 将在下面计算
+                'minDailyPrice': None,  # Will be calculated below
                 'prices': []
             }
 
-            # 添加价格信息，确保价格按租期排序
+            # Add price information, ensure prices are sorted by rental period
             active_prices = item.prices.filter(is_active=True).order_by('duration_days')
             if active_prices.exists():
                 for price in active_prices:
@@ -141,18 +141,18 @@ def product_detail_view(request, product_id=None):
                         'dailyPrice': float(price.daily_price)
                     })
                 
-                # 计算最低日租金
+                # Calculate minimum daily rental price
                 min_daily_price = min(price.daily_price for price in active_prices)
                 product_data['minDailyPrice'] = float(min_daily_price)
             else:
-                # 如果没有价格数据，使用默认价格
+                # If no price data, use default prices
                 product_data['prices'] = [
                     {'duration': 1, 'totalPrice': 20, 'dailyPrice': 20},
                     {'duration': 3, 'totalPrice': 54, 'dailyPrice': 18},
                     {'duration': 7, 'totalPrice': 105, 'dailyPrice': 15},
                     {'duration': 30, 'totalPrice': 360, 'dailyPrice': 12}
                 ]
-                product_data['minDailyPrice'] = 12.0  # 30天租期的日租金
+                product_data['minDailyPrice'] = 12.0  # Daily price for 30-day rental
 
             context = {
                 'item': item,
@@ -160,7 +160,7 @@ def product_detail_view(request, product_id=None):
                 'product_data_json': product_data,
             }
         except Item.DoesNotExist:
-            # 如果商品不存在，返回404页面或重定向到商品列表
+            # If product doesn't exist, return 404 page or redirect to product list
             context = {
                 'error': 'Product not found',
                 'product_id': product_id,
@@ -176,7 +176,7 @@ def product_detail_view(request, product_id=None):
                 },
             }
     else:
-        # 如果没有提供product_id，显示演示页面
+        # If no product_id provided, show demo page
         context = {
             'product_id': None,
             'demo_mode': True,
@@ -199,20 +199,20 @@ def product_detail_view(request, product_id=None):
 
 
 def test_api_view(request):
-    """API测试页面"""
+    """API test page"""
     return render(request, 'test_api.html')
 
 
 def test_images_view(request):
-    """图片测试页面"""
+    """Image test page"""
     from .models import Item
 
-    # 获取测试Item
+    # Get test Item
     item = None
     try:
         item = Item.objects.get(id='c4b06a35-426c-4b40-acf5-e8d7849eb6d8')
     except Item.DoesNotExist:
-        # 如果指定的Item不存在，获取第一个有图片的Item
+        # If specified Item doesn't exist, get the first Item with images
         item = Item.objects.filter(images__isnull=False).first()
 
     context = {
@@ -223,13 +223,13 @@ def test_images_view(request):
 
 
 def test_image_display_view(request):
-    """渲染图片显示测试页面"""
+    """Render image display test page"""
     from .models import Item, ItemImage
 
-    # 获取有图片的物品
+    # Get items with images
     items = Item.objects.filter(status='active').prefetch_related('images').order_by('-created_at')[:10]
 
-    # 获取一些测试图片
+    # Get some test images
     test_images = ItemImage.objects.select_related('item').all()[:8]
 
     context = {
@@ -241,26 +241,26 @@ def test_image_display_view(request):
 
 
 def test_image_upload_view(request):
-    """渲染图片上传测试页面"""
+    """Render image upload test page"""
     return render(request, 'test_image_upload.html')
 
 
 def new_image_upload_view(request):
-    """渲染新的图片上传页面"""
+    """Render new image upload page"""
     return render(request, 'new_image_upload.html')
 
 
 def upload_navigation_view(request):
-    """渲染图片上传导航页面"""
+    """Render image upload navigation page"""
     return render(request, 'upload_navigation.html')
 
 
-# ==================== 认证相关API ==================== #
+# ==================== Authentication Related APIs ==================== #
 
 @csrf_exempt
 @require_http_methods(["POST"])
 def register_api(request):
-    """用户注册API"""
+    """User registration API"""
     try:
         data = json.loads(request.body)
         username = data.get('username', '').strip()
@@ -268,56 +268,56 @@ def register_api(request):
         password = data.get('password', '')
         password_confirm = data.get('password_confirm', '')
 
-        # 验证必填字段
+        # Validate required fields
         if not all([username, email, password, password_confirm]):
             return JsonResponse({
                 'success': False,
-                'message': '所有字段都是必填的'
+                'message': 'All fields are required'
             }, status=400)
 
-        # 验证密码确认
+        # Validate password confirmation
         if password != password_confirm:
             return JsonResponse({
                 'success': False,
-                'message': '两次输入的密码不一致'
+                'message': 'Password confirmation does not match'
             }, status=400)
 
-        # 验证用户名是否已存在
+        # Check if username already exists
         if User.objects.filter(username=username).exists():
             return JsonResponse({
                 'success': False,
-                'message': '用户名已存在'
+                'message': 'Username already exists'
             }, status=400)
 
-        # 验证邮箱是否已存在
+        # Check if email already exists
         if User.objects.filter(email=email).exists():
             return JsonResponse({
                 'success': False,
-                'message': '邮箱已被注册'
+                'message': 'Email already registered'
             }, status=400)
 
-        # 验证密码强度
+        # Validate password strength
         try:
             validate_password(password)
         except ValidationError as e:
             return JsonResponse({
                 'success': False,
-                'message': '密码不符合要求：' + ', '.join(e.messages)
+                'message': 'Password does not meet requirements: ' + ', '.join(e.messages)
             }, status=400)
 
-        # 创建用户
+        # Create user
         user = User.objects.create_user(
             username=username,
             email=email,
             password=password
         )
 
-        # 自动登录
+        # Auto login
         login(request, user)
 
         return JsonResponse({
             'success': True,
-            'message': '注册成功',
+            'message': 'Registration successful',
             'user': {
                 'id': str(user.id),
                 'username': user.username,
@@ -328,35 +328,35 @@ def register_api(request):
     except json.JSONDecodeError:
         return JsonResponse({
             'success': False,
-            'message': '无效的JSON数据'
+            'message': 'Invalid JSON data'
         }, status=400)
     except Exception as e:
         return JsonResponse({
             'success': False,
-            'message': f'注册失败：{str(e)}'
+            'message': f'Registration failed: {str(e)}'
         }, status=500)
 
 
 @csrf_exempt
 @require_http_methods(["POST"])
 def login_api(request):
-    """用户登录API"""
+    """User login API"""
     try:
         data = json.loads(request.body)
         username = data.get('username', '').strip()
         password = data.get('password', '')
 
-        # 验证必填字段
+        # Validate required fields
         if not all([username, password]):
             return JsonResponse({
                 'success': False,
-                'message': '用户名和密码都是必填的'
+                'message': 'Username and password are required'
             }, status=400)
 
-        # 尝试用户名登录
+        # Attempt username login
         user = authenticate(request, username=username, password=password)
 
-        # 如果用户名登录失败，尝试邮箱登录
+        # If username login fails, try email login
         if user is None:
             try:
                 user_obj = User.objects.get(email=username)
@@ -369,7 +369,7 @@ def login_api(request):
                 login(request, user)
                 return JsonResponse({
                     'success': True,
-                    'message': '登录成功',
+                    'message': 'Login successful',
                     'user': {
                         'id': str(user.id),
                         'username': user.username,
@@ -380,51 +380,51 @@ def login_api(request):
             else:
                 return JsonResponse({
                     'success': False,
-                    'message': '账户已被禁用'
+                    'message': 'Account has been disabled'
                 }, status=403)
         else:
             return JsonResponse({
                 'success': False,
-                'message': '用户名/邮箱或密码错误'
+                'message': 'Invalid username/email or password'
             }, status=401)
 
     except json.JSONDecodeError:
         return JsonResponse({
             'success': False,
-            'message': '无效的JSON数据'
+            'message': 'Invalid JSON data'
         }, status=400)
     except Exception as e:
         return JsonResponse({
             'success': False,
-            'message': f'登录失败：{str(e)}'
+            'message': f'Login failed: {str(e)}'
         }, status=500)
 
 
 @require_http_methods(["POST"])
 def logout_api(request):
-    """用户登出API"""
+    """User logout API"""
     try:
         if request.user.is_authenticated:
             logout(request)
             return JsonResponse({
                 'success': True,
-                'message': '登出成功'
+                'message': 'Logout successful'
             })
         else:
             return JsonResponse({
                 'success': False,
-                'message': '用户未登录'
+                'message': 'User not logged in'
             }, status=401)
     except Exception as e:
         return JsonResponse({
             'success': False,
-            'message': f'登出失败：{str(e)}'
+            'message': f'Logout failed: {str(e)}'
         }, status=500)
 
 
 @require_http_methods(["GET"])
 def user_info_api(request):
-    """获取当前用户信息API"""
+    """Get current user info API"""
     try:
         if request.user.is_authenticated:
             user = request.user
@@ -445,12 +445,12 @@ def user_info_api(request):
         else:
             return JsonResponse({
                 'success': False,
-                'message': '用户未登录'
+                'message': 'User not logged in'
             }, status=401)
     except Exception as e:
         return JsonResponse({
             'success': False,
-            'message': f'获取用户信息失败：{str(e)}'
+            'message': f'Failed to get user info: {str(e)}'
         }, status=500)
 
 
@@ -458,12 +458,12 @@ def user_info_api(request):
 @csrf_exempt
 @require_http_methods(["POST"])
 def update_profile_api(request):
-    """更新用户资料API"""
+    """Update user profile API"""
     try:
         data = json.loads(request.body)
         user = request.user
 
-        # 可更新的字段
+        # Updatable fields
         updatable_fields = ['phone', 'bio', 'address']
 
         for field in updatable_fields:
@@ -474,7 +474,7 @@ def update_profile_api(request):
 
         return JsonResponse({
             'success': True,
-            'message': '资料更新成功',
+            'message': 'Profile updated successfully',
             'user': {
                 'id': str(user.id),
                 'username': user.username,
@@ -489,12 +489,12 @@ def update_profile_api(request):
     except json.JSONDecodeError:
         return JsonResponse({
             'success': False,
-            'message': '无效的JSON数据'
+            'message': 'Invalid JSON data'
         }, status=400)
     except Exception as e:
         return JsonResponse({
             'success': False,
-            'message': f'更新资料失败：{str(e)}'
+            'message': f'Failed to update profile: {str(e)}'
         }, status=500)
 
 
@@ -502,117 +502,117 @@ def update_profile_api(request):
 @csrf_exempt
 @require_http_methods(["POST"])
 def change_password_api(request):
-    """修改密码API"""
+    """Change password API"""
     try:
         data = json.loads(request.body)
         current_password = data.get('current_password', '')
         new_password = data.get('new_password', '')
         new_password_confirm = data.get('new_password_confirm', '')
 
-        # 验证必填字段
+        # Validate required fields
         if not all([current_password, new_password, new_password_confirm]):
             return JsonResponse({
                 'success': False,
-                'message': '所有字段都是必填的'
+                'message': 'All fields are required'
             }, status=400)
 
-        # 验证新密码确认
+        # Validate new password confirmation
         if new_password != new_password_confirm:
             return JsonResponse({
                 'success': False,
-                'message': '两次输入的新密码不一致'
+                'message': 'New password confirmation does not match'
             }, status=400)
 
-        # 验证当前密码
+        # Validate current password
         user = request.user
         if not user.check_password(current_password):
             return JsonResponse({
                 'success': False,
-                'message': '当前密码错误'
+                'message': 'Current password is incorrect'
             }, status=400)
 
-        # 验证新密码强度
+        # Validate new password strength
         try:
             validate_password(new_password, user)
         except ValidationError as e:
             return JsonResponse({
                 'success': False,
-                'message': '新密码不符合要求：' + ', '.join(e.messages)
+                'message': 'New password does not meet requirements: ' + ', '.join(e.messages)
             }, status=400)
 
-        # 更新密码
+        # Update password
         user.set_password(new_password)
         user.save()
 
-        # 重新登录
+        # Re-login
         login(request, user)
 
         return JsonResponse({
             'success': True,
-            'message': '密码修改成功'
+            'message': 'Password changed successfully'
         })
 
     except json.JSONDecodeError:
         return JsonResponse({
             'success': False,
-            'message': '无效的JSON数据'
+            'message': 'Invalid JSON data'
         }, status=400)
     except Exception as e:
         return JsonResponse({
             'success': False,
-            'message': f'修改密码失败：{str(e)}'
+            'message': f'Failed to change password: {str(e)}'
         }, status=500)
 
 
 @csrf_exempt
 @require_http_methods(["POST"])
 def validate_prices(request):
-    """价格验证API端点"""
+    """Price validation API endpoint"""
     try:
-        # 解析请求数据
+        # Parse request data
         data = json.loads(request.body)
 
-        # 执行验证
+        # Execute validation
         errors = PriceValidator.validate_all(data)
 
-        # 返回结果
+        # Return result
         if errors:
             return JsonResponse({
                 'valid': False,
                 'errors': errors,
-                'message': f'发现 {len(errors)} 个问题'
+                'message': f'Found {len(errors)} issues'
             }, status=400)
         else:
             return JsonResponse({
                 'valid': True,
-                'message': '价格验证通过',
+                'message': 'Price validation passed',
                 'errors': []
             })
 
     except json.JSONDecodeError:
         return JsonResponse({
             'valid': False,
-            'errors': ['无效的JSON数据'],
-            'message': '请求数据格式错误'
+            'errors': ['Invalid JSON data'],
+            'message': 'Request data format error'
         }, status=400)
 
     except Exception as e:
         return JsonResponse({
             'valid': False,
-            'errors': [f'服务器错误: {str(e)}'],
-            'message': '验证过程中发生错误'
+            'errors': [f'Server error: {str(e)}'],
+            'message': 'Error occurred during validation'
         }, status=500)
 
 
 @csrf_exempt
 @require_http_methods(["GET"])
 def get_price_suggestions(request):
-    """获取价格建议API端点"""
+    """Get price suggestions API endpoint"""
     try:
         category = request.GET.get('category', None)
         suggestions = PriceValidator.get_price_suggestions(category)
 
-        # 确保键是字符串类型
+        # Ensure keys are string type
         suggestions_str_keys = {str(k): v for k, v in suggestions.items()}
 
         return JsonResponse({
@@ -631,12 +631,12 @@ def get_price_suggestions(request):
 @csrf_exempt
 @require_http_methods(["POST"])
 def validate_form_data(request):
-    """完整表单数据验证API端点"""
+    """Complete form data validation API endpoint"""
     try:
         data = json.loads(request.body)
         errors = []
 
-        # 基本信息验证
+        # Basic information validation
         title = data.get('title', '').strip()
         description = data.get('description', '').strip()
         category_id = data.get('category_id', '')
@@ -654,11 +654,11 @@ def validate_form_data(request):
         if not category_id:
             errors.append('Please select a category')
 
-        # 价格验证
+        # Price validation
         price_errors = PriceValidator.validate_all(data)
         errors.extend(price_errors)
 
-        # 返回结果
+        # Return result
         if errors:
             return JsonResponse({
                 'valid': False,
@@ -675,13 +675,13 @@ def validate_form_data(request):
     except json.JSONDecodeError:
         return JsonResponse({
             'valid': False,
-            'errors': ['无效的JSON数据'],
-            'message': '请求数据格式错误'
+            'errors': ['Invalid JSON data'],
+            'message': 'Request data format error'
         }, status=400)
 
     except Exception as e:
         return JsonResponse({
             'valid': False,
-            'errors': [f'服务器错误: {str(e)}'],
-            'message': '验证过程中发生错误'
+            'errors': [f'Server error: {str(e)}'],
+            'message': 'Error occurred during validation'
         }, status=500)

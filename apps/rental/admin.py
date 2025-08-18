@@ -129,7 +129,7 @@ class RentalSettingsAdmin(admin.ModelAdmin):
         return True
 
 
-# 自定义管理站点标题
-admin.site.site_header = "ShareTools 租赁管理系统"
-admin.site.site_title = "ShareTools 租赁管理"
-admin.site.index_title = "租赁管理控制台"
+# Custom admin site titles
+admin.site.site_header = "ShareTools Rental Management System"
+admin.site.site_title = "ShareTools Rental Management"
+admin.site.index_title = "Rental Management Console"

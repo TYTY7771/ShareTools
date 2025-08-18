@@ -36,39 +36,39 @@ class Migration(migrations.Migration):
                     "name",
                     models.CharField(
                         choices=[
-                            ("tools", "工具"),
-                            ("electronics", "电子产品"),
-                            ("garden", "园艺设备"),
-                            ("sports", "运动设备"),
-                            ("automotive", "汽车用品"),
-                            ("home", "家居DIY"),
+                            ("tools", "Tools"),
+                            ("electronics", "Electronics"),
+                            ("garden", "Garden Equipment"),
+                            ("sports", "Sports Equipment"),
+                            ("automotive", "Automotive"),
+                            ("home", "Home & DIY"),
                         ],
                         max_length=50,
                         unique=True,
-                        verbose_name="分类名称",
+                        verbose_name="Category Name",
                     ),
                 ),
                 (
                     "display_name",
-                    models.CharField(max_length=100, verbose_name="显示名称"),
+                    models.CharField(max_length=100, verbose_name="Display Name"),
                 ),
-                ("description", models.TextField(blank=True, verbose_name="分类描述")),
+                ("description", models.TextField(blank=True, verbose_name="Description")),
                 (
                     "icon",
-                    models.CharField(blank=True, max_length=50, verbose_name="图标"),
+                    models.CharField(blank=True, max_length=50, verbose_name="Icon"),
                 ),
                 (
                     "is_active",
-                    models.BooleanField(default=True, verbose_name="是否激活"),
+                    models.BooleanField(default=True, verbose_name="Is Active"),
                 ),
                 (
                     "created_at",
-                    models.DateTimeField(auto_now_add=True, verbose_name="创建时间"),
+                    models.DateTimeField(auto_now_add=True, verbose_name="Created At"),
                 ),
             ],
             options={
-                "verbose_name": "物品分类",
-                "verbose_name_plural": "物品分类",
+                "verbose_name": "Category",
+                "verbose_name_plural": "Categories",
                 "ordering": ["display_name"],
             },
         ),
@@ -87,28 +87,28 @@ class Migration(migrations.Migration):
                 (
                     "name",
                     models.CharField(
-                        max_length=100, unique=True, verbose_name="区域名称"
+                        max_length=100, unique=True, verbose_name="Location Name"
                     ),
                 ),
                 (
                     "slug",
                     models.SlugField(
-                        max_length=100, unique=True, verbose_name="URL标识"
+                        max_length=100, unique=True, verbose_name="URL Slug"
                     ),
                 ),
-                ("description", models.TextField(blank=True, verbose_name="区域描述")),
+                ("description", models.TextField(blank=True, verbose_name="Description")),
                 (
                     "is_active",
-                    models.BooleanField(default=True, verbose_name="是否激活"),
+                    models.BooleanField(default=True, verbose_name="Is Active"),
                 ),
                 (
                     "created_at",
-                    models.DateTimeField(auto_now_add=True, verbose_name="创建时间"),
+                    models.DateTimeField(auto_now_add=True, verbose_name="Created At"),
                 ),
             ],
             options={
-                "verbose_name": "地理位置",
-                "verbose_name_plural": "地理位置",
+                "verbose_name": "Location",
+                "verbose_name_plural": "Locations",
                 "ordering": ["name"],
             },
         ),
@@ -191,42 +191,42 @@ class Migration(migrations.Migration):
                 (
                     "email",
                     models.EmailField(
-                        max_length=254, unique=True, verbose_name="邮箱地址"
+                        max_length=254, unique=True, verbose_name="Email Address"
                     ),
                 ),
                 (
                     "phone",
                     models.CharField(
-                        blank=True, max_length=20, null=True, verbose_name="手机号码"
+                        blank=True, max_length=20, null=True, verbose_name="Phone Number"
                     ),
                 ),
                 (
                     "avatar",
                     models.ImageField(
-                        blank=True, null=True, upload_to="avatars/", verbose_name="头像"
+                        blank=True, null=True, upload_to="avatars/", verbose_name="Avatar"
                     ),
                 ),
                 (
                     "bio",
                     models.TextField(
-                        blank=True, max_length=500, verbose_name="个人简介"
+                        blank=True, max_length=500, verbose_name="Bio"
                     ),
                 ),
                 (
                     "address",
-                    models.CharField(blank=True, max_length=255, verbose_name="地址"),
+                    models.CharField(blank=True, max_length=255, verbose_name="Address"),
                 ),
                 (
                     "is_verified",
-                    models.BooleanField(default=False, verbose_name="是否已验证"),
+                    models.BooleanField(default=False, verbose_name="Is Verified"),
                 ),
                 (
                     "created_at",
-                    models.DateTimeField(auto_now_add=True, verbose_name="注册时间"),
+                    models.DateTimeField(auto_now_add=True, verbose_name="Created At"),
                 ),
                 (
                     "updated_at",
-                    models.DateTimeField(auto_now=True, verbose_name="更新时间"),
+                    models.DateTimeField(auto_now=True, verbose_name="Updated At"),
                 ),
                 (
                     "groups",
@@ -252,8 +252,8 @@ class Migration(migrations.Migration):
                 ),
             ],
             options={
-                "verbose_name": "用户",
-                "verbose_name_plural": "用户",
+                "verbose_name": "User",
+                "verbose_name_plural": "Users",
                 "db_table": "sharetools_user",
             },
             managers=[
@@ -274,11 +274,11 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "created_at",
-                    models.DateTimeField(auto_now_add=True, verbose_name="创建时间"),
+                    models.DateTimeField(auto_now_add=True, verbose_name="Created At"),
                 ),
                 (
                     "updated_at",
-                    models.DateTimeField(auto_now=True, verbose_name="更新时间"),
+                    models.DateTimeField(auto_now=True, verbose_name="Updated At"),
                 ),
                 (
                     "user",
@@ -286,13 +286,13 @@ class Migration(migrations.Migration):
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="cart",
                         to=settings.AUTH_USER_MODEL,
-                        verbose_name="用户",
+                        verbose_name="User",
                     ),
                 ),
             ],
             options={
-                "verbose_name": "购物车",
-                "verbose_name_plural": "购物车",
+                "verbose_name": "Cart",
+                "verbose_name_plural": "Carts",
             },
         ),
         migrations.CreateModel(
@@ -307,36 +307,36 @@ class Migration(migrations.Migration):
                         serialize=False,
                     ),
                 ),
-                ("title", models.CharField(max_length=200, verbose_name="物品标题")),
-                ("description", models.TextField(verbose_name="物品描述")),
+                ("title", models.CharField(max_length=200, verbose_name="Item Title")),
+                ("description", models.TextField(verbose_name="Item Description")),
                 (
                     "status",
                     models.CharField(
                         choices=[
-                            ("draft", "草稿"),
-                            ("active", "可租用"),
-                            ("rented", "已租出"),
-                            ("maintenance", "维护中"),
-                            ("inactive", "停用"),
+                            ("draft", "Draft"),
+                            ("active", "Available for Rent"),
+                            ("rented", "Rented"),
+                            ("maintenance", "Under Maintenance"),
+                            ("inactive", "Inactive"),
                         ],
                         default="draft",
                         max_length=20,
-                        verbose_name="状态",
+                        verbose_name="Status",
                     ),
                 ),
                 (
                     "condition",
                     models.CharField(
                         choices=[
-                            ("new", "全新"),
-                            ("excellent", "极佳"),
-                            ("good", "良好"),
-                            ("fair", "一般"),
-                            ("poor", "较差"),
+                            ("new", "New"),
+                            ("excellent", "Excellent"),
+                            ("good", "Good"),
+                            ("fair", "Fair"),
+                            ("poor", "Poor"),
                         ],
                         default="good",
                         max_length=20,
-                        verbose_name="物品状况",
+                        verbose_name="Item Condition",
                     ),
                 ),
                 (
@@ -347,13 +347,13 @@ class Migration(migrations.Migration):
                         validators=[
                             django.core.validators.MinValueValidator(Decimal("0.01"))
                         ],
-                        verbose_name="物品价值",
+                        verbose_name="Item Value",
                     ),
                 ),
                 (
                     "address",
                     models.CharField(
-                        blank=True, max_length=255, verbose_name="具体地址"
+                        blank=True, max_length=255, verbose_name="Address"
                     ),
                 ),
                 (
@@ -363,7 +363,7 @@ class Migration(migrations.Migration):
                         decimal_places=6,
                         max_digits=9,
                         null=True,
-                        verbose_name="纬度",
+                        verbose_name="Latitude",
                     ),
                 ),
                 (
@@ -373,37 +373,37 @@ class Migration(migrations.Migration):
                         decimal_places=6,
                         max_digits=9,
                         null=True,
-                        verbose_name="经度",
+                        verbose_name="Longitude",
                     ),
                 ),
                 (
                     "created_at",
-                    models.DateTimeField(auto_now_add=True, verbose_name="创建时间"),
+                    models.DateTimeField(auto_now_add=True, verbose_name="Created At"),
                 ),
                 (
                     "updated_at",
-                    models.DateTimeField(auto_now=True, verbose_name="更新时间"),
+                    models.DateTimeField(auto_now=True, verbose_name="Updated At"),
                 ),
                 (
                     "published_at",
                     models.DateTimeField(
-                        blank=True, null=True, verbose_name="发布时间"
+                        blank=True, null=True, verbose_name="Published At"
                     ),
                 ),
                 (
                     "view_count",
-                    models.PositiveIntegerField(default=0, verbose_name="浏览次数"),
+                    models.PositiveIntegerField(default=0, verbose_name="View Count"),
                 ),
                 (
                     "booking_count",
-                    models.PositiveIntegerField(default=0, verbose_name="预订次数"),
+                    models.PositiveIntegerField(default=0, verbose_name="Booking Count"),
                 ),
                 (
                     "category",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
                         to="core.category",
-                        verbose_name="分类",
+                        verbose_name="Category",
                     ),
                 ),
                 (
@@ -412,7 +412,7 @@ class Migration(migrations.Migration):
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="owned_items",
                         to=settings.AUTH_USER_MODEL,
-                        verbose_name="所有者",
+                        verbose_name="Owner",
                     ),
                 ),
                 (
@@ -420,13 +420,13 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
                         to="core.location",
-                        verbose_name="所在位置",
+                        verbose_name="Location",
                     ),
                 ),
             ],
             options={
-                "verbose_name": "物品",
-                "verbose_name_plural": "物品",
+                "verbose_name": "Item",
+                "verbose_name_plural": "Items",
                 "ordering": ["-created_at"],
             },
         ),
@@ -442,22 +442,22 @@ class Migration(migrations.Migration):
                         serialize=False,
                     ),
                 ),
-                ("start_date", models.DateField(verbose_name="开始日期")),
-                ("end_date", models.DateField(verbose_name="结束日期")),
+                ("start_date", models.DateField(verbose_name="Start Date")),
+                ("end_date", models.DateField(verbose_name="End Date")),
                 (
                     "duration_days",
-                    models.PositiveSmallIntegerField(verbose_name="租期天数"),
+                    models.PositiveSmallIntegerField(verbose_name="Duration Days"),
                 ),
                 (
                     "daily_price",
                     models.DecimalField(
-                        decimal_places=2, max_digits=8, verbose_name="日租金"
+                        decimal_places=2, max_digits=8, verbose_name="Daily Price"
                     ),
                 ),
                 (
                     "total_price",
                     models.DecimalField(
-                        decimal_places=2, max_digits=10, verbose_name="总价格"
+                        decimal_places=2, max_digits=10, verbose_name="Total Price"
                     ),
                 ),
                 (
@@ -466,46 +466,46 @@ class Migration(migrations.Migration):
                         decimal_places=2,
                         default=Decimal("0.00"),
                         max_digits=10,
-                        verbose_name="押金",
+                        verbose_name="Security Deposit",
                     ),
                 ),
                 (
                     "status",
                     models.CharField(
                         choices=[
-                            ("pending", "待确认"),
-                            ("confirmed", "已确认"),
-                            ("active", "进行中"),
-                            ("completed", "已完成"),
-                            ("cancelled", "已取消"),
-                            ("disputed", "有争议"),
+                            ("pending", "Pending"),
+                            ("confirmed", "Confirmed"),
+                            ("active", "Active"),
+                            ("completed", "Completed"),
+                            ("cancelled", "Cancelled"),
+                            ("disputed", "Disputed"),
                         ],
                         default="pending",
                         max_length=20,
-                        verbose_name="状态",
+                        verbose_name="Status",
                     ),
                 ),
                 (
                     "created_at",
-                    models.DateTimeField(auto_now_add=True, verbose_name="创建时间"),
+                    models.DateTimeField(auto_now_add=True, verbose_name="Created At"),
                 ),
                 (
                     "updated_at",
-                    models.DateTimeField(auto_now=True, verbose_name="更新时间"),
+                    models.DateTimeField(auto_now=True, verbose_name="Updated At"),
                 ),
                 (
                     "confirmed_at",
                     models.DateTimeField(
-                        blank=True, null=True, verbose_name="确认时间"
+                        blank=True, null=True, verbose_name="Confirmed At"
                     ),
                 ),
                 (
                     "renter_notes",
-                    models.TextField(blank=True, verbose_name="租用者备注"),
+                    models.TextField(blank=True, verbose_name="Renter Notes"),
                 ),
                 (
                     "owner_notes",
-                    models.TextField(blank=True, verbose_name="所有者备注"),
+                    models.TextField(blank=True, verbose_name="Owner Notes"),
                 ),
                 (
                     "owner",
@@ -513,7 +513,7 @@ class Migration(migrations.Migration):
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="rental_orders",
                         to=settings.AUTH_USER_MODEL,
-                        verbose_name="物品所有者",
+                        verbose_name="Item Owner",
                     ),
                 ),
                 (
@@ -522,7 +522,7 @@ class Migration(migrations.Migration):
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="bookings",
                         to=settings.AUTH_USER_MODEL,
-                        verbose_name="租用者",
+                        verbose_name="Renter",
                     ),
                 ),
                 (
@@ -531,13 +531,13 @@ class Migration(migrations.Migration):
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="bookings",
                         to="core.item",
-                        verbose_name="物品",
+                        verbose_name="Item",
                     ),
                 ),
             ],
             options={
-                "verbose_name": "预订",
-                "verbose_name_plural": "预订",
+                "verbose_name": "Booking",
+                "verbose_name_plural": "Bookings",
                 "ordering": ["-created_at"],
             },
         ),
@@ -555,25 +555,25 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "image",
-                    models.ImageField(upload_to="items/%Y/%m/", verbose_name="图片"),
+                    models.ImageField(upload_to="items/%Y/%m/", verbose_name="Image"),
                 ),
                 (
                     "alt_text",
                     models.CharField(
-                        blank=True, max_length=200, verbose_name="图片描述"
+                        blank=True, max_length=200, verbose_name="Alt Text"
                     ),
                 ),
                 (
                     "order",
-                    models.PositiveSmallIntegerField(default=0, verbose_name="排序"),
+                    models.PositiveSmallIntegerField(default=0, verbose_name="Order"),
                 ),
                 (
                     "is_primary",
-                    models.BooleanField(default=False, verbose_name="是否为主图"),
+                    models.BooleanField(default=False, verbose_name="Is Primary"),
                 ),
                 (
                     "created_at",
-                    models.DateTimeField(auto_now_add=True, verbose_name="上传时间"),
+                    models.DateTimeField(auto_now_add=True, verbose_name="Created At"),
                 ),
                 (
                     "item",
@@ -581,13 +581,13 @@ class Migration(migrations.Migration):
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="images",
                         to="core.item",
-                        verbose_name="物品",
+                        verbose_name="Item",
                     ),
                 ),
             ],
             options={
-                "verbose_name": "物品图片",
-                "verbose_name_plural": "物品图片",
+                "verbose_name": "Item Image",
+                "verbose_name_plural": "Item Images",
                 "ordering": ["order", "-is_primary"],
             },
         ),
@@ -606,8 +606,8 @@ class Migration(migrations.Migration):
                 (
                     "duration_days",
                     models.PositiveSmallIntegerField(
-                        choices=[(1, "1天"), (3, "3天"), (7, "7天"), (30, "30天")],
-                        verbose_name="租期天数",
+                        choices=[(1, "1 Day"), (3, "3 Days"), (7, "7 Days"), (30, "30 Days")],
+                        verbose_name="Duration Days",
                     ),
                 ),
                 (
@@ -618,16 +618,16 @@ class Migration(migrations.Migration):
                         validators=[
                             django.core.validators.MinValueValidator(Decimal("0.01"))
                         ],
-                        verbose_name="价格",
+                        verbose_name="Price",
                     ),
                 ),
                 (
                     "is_active",
-                    models.BooleanField(default=True, verbose_name="是否激活"),
+                    models.BooleanField(default=True, verbose_name="Is Active"),
                 ),
                 (
                     "created_at",
-                    models.DateTimeField(auto_now_add=True, verbose_name="创建时间"),
+                    models.DateTimeField(auto_now_add=True, verbose_name="Created At"),
                 ),
                 (
                     "item",
@@ -635,13 +635,13 @@ class Migration(migrations.Migration):
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="prices",
                         to="core.item",
-                        verbose_name="物品",
+                        verbose_name="Item",
                     ),
                 ),
             ],
             options={
-                "verbose_name": "物品价格",
-                "verbose_name_plural": "物品价格",
+                "verbose_name": "Item Price",
+                "verbose_name_plural": "Item Prices",
                 "ordering": ["duration_days"],
             },
         ),
@@ -661,29 +661,29 @@ class Migration(migrations.Migration):
                     "rating",
                     models.PositiveSmallIntegerField(
                         choices=[
-                            (1, "1星"),
-                            (2, "2星"),
-                            (3, "3星"),
-                            (4, "4星"),
-                            (5, "5星"),
+                            (1, "1 Star"),
+                            (2, "2 Stars"),
+                            (3, "3 Stars"),
+                            (4, "4 Stars"),
+                            (5, "5 Stars"),
                         ],
-                        verbose_name="评分",
+                        verbose_name="Rating",
                     ),
                 ),
                 (
                     "title",
                     models.CharField(
-                        blank=True, max_length=200, verbose_name="评价标题"
+                        blank=True, max_length=200, verbose_name="Review Title"
                     ),
                 ),
-                ("content", models.TextField(verbose_name="评价内容")),
+                ("content", models.TextField(verbose_name="Review Content")),
                 (
                     "created_at",
-                    models.DateTimeField(auto_now_add=True, verbose_name="创建时间"),
+                    models.DateTimeField(auto_now_add=True, verbose_name="Created At"),
                 ),
                 (
                     "updated_at",
-                    models.DateTimeField(auto_now=True, verbose_name="更新时间"),
+                    models.DateTimeField(auto_now=True, verbose_name="Updated At"),
                 ),
                 (
                     "booking",
@@ -691,7 +691,7 @@ class Migration(migrations.Migration):
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="review",
                         to="core.booking",
-                        verbose_name="预订",
+                        verbose_name="Booking",
                     ),
                 ),
                 (
@@ -700,7 +700,7 @@ class Migration(migrations.Migration):
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="reviews",
                         to="core.item",
-                        verbose_name="物品",
+                        verbose_name="Item",
                     ),
                 ),
                 (
@@ -709,7 +709,7 @@ class Migration(migrations.Migration):
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="received_reviews",
                         to=settings.AUTH_USER_MODEL,
-                        verbose_name="被评价者",
+                        verbose_name="Reviewee",
                     ),
                 ),
                 (
@@ -718,13 +718,13 @@ class Migration(migrations.Migration):
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="given_reviews",
                         to=settings.AUTH_USER_MODEL,
-                        verbose_name="评价者",
+                        verbose_name="Reviewer",
                     ),
                 ),
             ],
             options={
-                "verbose_name": "评价",
-                "verbose_name_plural": "评价",
+                "verbose_name": "Review",
+                "verbose_name_plural": "Reviews",
                 "ordering": ["-created_at"],
             },
         ),
@@ -740,21 +740,21 @@ class Migration(migrations.Migration):
                         verbose_name="ID",
                     ),
                 ),
-                ("start_date", models.DateField(verbose_name="开始日期")),
-                ("end_date", models.DateField(verbose_name="结束日期")),
+                ("start_date", models.DateField(verbose_name="Start Date")),
+                ("end_date", models.DateField(verbose_name="End Date")),
                 (
                     "duration_days",
-                    models.PositiveSmallIntegerField(verbose_name="租期天数"),
+                    models.PositiveSmallIntegerField(verbose_name="Duration Days"),
                 ),
                 (
                     "daily_price",
                     models.DecimalField(
-                        decimal_places=2, max_digits=8, verbose_name="日租金"
+                        decimal_places=2, max_digits=8, verbose_name="Daily Price"
                     ),
                 ),
                 (
                     "added_at",
-                    models.DateTimeField(auto_now_add=True, verbose_name="添加时间"),
+                    models.DateTimeField(auto_now_add=True, verbose_name="Added At"),
                 ),
                 (
                     "cart",
@@ -762,7 +762,7 @@ class Migration(migrations.Migration):
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="items",
                         to="core.cart",
-                        verbose_name="购物车",
+                        verbose_name="Cart",
                     ),
                 ),
                 (
@@ -770,13 +770,13 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
                         to="core.item",
-                        verbose_name="物品",
+                        verbose_name="Item",
                     ),
                 ),
             ],
             options={
-                "verbose_name": "购物车物品",
-                "verbose_name_plural": "购物车物品",
+                "verbose_name": "Cart Item",
+                "verbose_name_plural": "Cart Items",
                 "unique_together": {("cart", "item")},
             },
         ),

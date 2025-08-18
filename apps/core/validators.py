@@ -1,6 +1,6 @@
 """
-ShareTools 价格验证器
-提供统一的价格验证逻辑
+ShareTools Price Validator
+Provides unified price validation logic
 """
 
 from decimal import Decimal
@@ -9,9 +9,9 @@ from django.utils.translation import gettext as _
 
 
 class PriceValidator:
-    """价格验证器"""
+    """Price Validator"""
     
-    # 价格范围配置
+    # Price range configuration
     PRICE_LIMITS = {
         1: {'min': Decimal('0.50'), 'max': Decimal('1000.00')},    # 1天
         3: {'min': Decimal('1.00'), 'max': Decimal('3000.00')},    # 3天
@@ -19,18 +19,18 @@ class PriceValidator:
         30: {'min': Decimal('5.00'), 'max': Decimal('20000.00')},  # 30天
     }
     
-    # 物品价值范围
+    # Item value range
     ITEM_VALUE_LIMITS = {
         'min': Decimal('1.00'),
         'max': Decimal('50000.00')
     }
     
-    # 最大日租金比例（不能超过物品价值的20%）
+    # Maximum daily rental ratio (cannot exceed 20% of item value)
     MAX_DAILY_RATIO = 0.20
     
     @classmethod
     def validate_item_value(cls, value):
-        """验证物品价值"""
+        """Validate item value"""
         errors = []
         
         if not value:
@@ -52,7 +52,7 @@ class PriceValidator:
     
     @classmethod
     def validate_single_price(cls, duration_days, price):
-        """验证单个价格"""
+        """Validate single price"""
         errors = []
         
         if not price:
@@ -70,7 +70,7 @@ class PriceValidator:
             errors.append(f'{duration_days}-day price must be greater than 0')
             return errors
         
-        # 检查价格范围
+        # Check price range
         if duration_days in cls.PRICE_LIMITS:
             limits = cls.PRICE_LIMITS[duration_days]
             if price < limits['min']:
@@ -82,10 +82,10 @@ class PriceValidator:
     
     @classmethod
     def validate_price_consistency(cls, prices):
-        """验证价格一致性（长期租赁应该有折扣）"""
+        """Validate price consistency (long-term rentals should have discounts)"""
         errors = []
         
-        # 获取有效价格
+        # Get valid prices
         valid_prices = {}
         for duration, price in prices.items():
             if price:
@@ -97,7 +97,7 @@ class PriceValidator:
         if not valid_prices:
             return errors
         
-        # 检查长期租赁是否比短期租赁便宜（日均价格）
+        # Check if long-term rentals are cheaper than short-term rentals (average daily price)
         if 1 in valid_prices:
             daily_1 = valid_prices[1]
             
@@ -120,7 +120,7 @@ class PriceValidator:
     
     @classmethod
     def validate_price_ratio(cls, daily_price, item_value):
-        """验证价格比例（租金不应过高）"""
+        """Validate price ratio (rental should not be too high)"""
         errors = []
         
         if not daily_price or not item_value:
@@ -144,10 +144,10 @@ class PriceValidator:
     
     @classmethod
     def validate_all(cls, data):
-        """全面验证价格数据"""
+        """Comprehensive validation of price data"""
         errors = []
         
-        # 提取数据
+        # Extract data
         item_value = data.get('item_value')
         prices = {
             1: data.get('price_1_day'),
@@ -156,25 +156,25 @@ class PriceValidator:
             30: data.get('price_30_days'),
         }
         
-        # 验证物品价值
+        # Validate item value
         errors.extend(cls.validate_item_value(item_value))
         
-        # 验证各个价格
+        # Validate individual prices
         for duration, price in prices.items():
             errors.extend(cls.validate_single_price(duration, price))
         
-        # 验证价格一致性
+        # Validate price consistency
         errors.extend(cls.validate_price_consistency(prices))
         
-        # 验证价格比例
-        if prices[1]:  # 只有1天价格存在时才检查比例
+        # Validate price ratio
+        if prices[1]:  # Only check ratio when 1-day price exists
             errors.extend(cls.validate_price_ratio(prices[1], item_value))
         
         return errors
     
     @classmethod
     def get_price_suggestions(cls, category=None):
-        """获取价格建议"""
+        """Get price suggestions"""
         suggestions = {
             'tools': {1: '15.00', 3: '40.00', 7: '80.00', 30: '300.00'},
             'electronics': {1: '25.00', 3: '65.00', 7: '140.00', 30: '500.00'},
@@ -189,7 +189,7 @@ class PriceValidator:
 
 
 def validate_item_price(value):
-    """Django模型字段验证器"""
+    """Django model field validator"""
     if value <= 0:
         raise ValidationError(_('Price must be greater than 0'))
     
@@ -198,7 +198,7 @@ def validate_item_price(value):
 
 
 def validate_item_value(value):
-    """Django模型字段验证器"""
+    """Django model field validator"""
     validator = PriceValidator()
     errors = validator.validate_item_value(value)
     

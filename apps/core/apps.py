@@ -1,5 +1,5 @@
 """
-Core应用配置
+Core
 """
 from django.apps import AppConfig
 

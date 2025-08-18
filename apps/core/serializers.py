@@ -1,11 +1,11 @@
-"""ShareTools 核心应用的序列化器"""
+"""ShareTools Core Application Serializers"""
 
 from rest_framework import serializers
 from .models import Item, ItemImage, ItemPrice, Category, Location, User
 
 
 class UserSerializer(serializers.ModelSerializer):
-    """用户序列化器"""
+    """User Serializer"""
     class Meta:
         model = User
         fields = ['id', 'username', 'email', 'phone', 'avatar', 'is_verified']
@@ -13,7 +13,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    """分类序列化器"""
+    """Category Serializer"""
     class Meta:
         model = Category
         fields = ['id', 'name', 'display_name', 'description', 'icon', 'is_active']
@@ -21,7 +21,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class LocationSerializer(serializers.ModelSerializer):
-    """位置序列化器"""
+    """Location Serializer"""
     class Meta:
         model = Location
         fields = ['id', 'name', 'slug', 'description', 'is_active']
@@ -29,22 +29,22 @@ class LocationSerializer(serializers.ModelSerializer):
 
 
 class ItemImageSerializer(serializers.ModelSerializer):
-    """物品图片序列化器"""
+    """Item Image Serializer"""
     class Meta:
         model = ItemImage
         fields = ['id', 'item', 'image', 'alt_text', 'order', 'is_primary']
         read_only_fields = ['id']
     
     def validate_image(self, value):
-        """验证图片文件"""
+        """Validate image file"""
         if not value:
             raise serializers.ValidationError("Please select an image file")
         
-        # 检查文件大小 (最大 10MB)
+        # Check file size (max 10MB)
         if value.size > 10 * 1024 * 1024:
             raise serializers.ValidationError("Image file size cannot exceed 10MB")
         
-        # 检查文件格式
+        # Check file format
         allowed_formats = ['JPEG', 'JPG', 'PNG', 'WEBP']
         try:
             from PIL import Image
@@ -52,7 +52,7 @@ class ItemImageSerializer(serializers.ModelSerializer):
             if img.format not in allowed_formats:
                 raise serializers.ValidationError(f"Unsupported image format. Please use: {', '.join(allowed_formats)}")
             
-            # 重置文件指针
+            # Reset file pointer
             value.seek(0)
         except Exception as e:
             raise serializers.ValidationError(f"Invalid image file: {str(e)}")
@@ -60,26 +60,26 @@ class ItemImageSerializer(serializers.ModelSerializer):
         return value
     
     def create(self, validated_data):
-        """创建图片时自动处理主图片逻辑"""
+        """Automatically handle primary image logic when creating image"""
         item = validated_data['item']
         
-        # 如果该物品还没有主图片，将这张图片设为主图片
+        # If the item doesn't have a primary image yet, set this image as primary
         if not item.images.filter(is_primary=True).exists():
             validated_data['is_primary'] = True
         
         return super().create(validated_data)
     
     def to_representation(self, instance):
-        """自定义序列化输出"""
+        """Custom serialization output"""
         data = super().to_representation(instance)
         if instance.image:
-            # 返回相对URL路径，前端可以正确处理
+            # Return relative URL path for frontend to handle correctly
             data['image'] = instance.image.url
         return data
 
 
 class ItemPriceSerializer(serializers.ModelSerializer):
-    """物品价格序列化器"""
+    """Item Price Serializer"""
     daily_price = serializers.ReadOnlyField()
     
     class Meta:
@@ -89,14 +89,14 @@ class ItemPriceSerializer(serializers.ModelSerializer):
 
 
 class ItemSerializer(serializers.ModelSerializer):
-    """物品序列化器"""
+    """Item Serializer"""
     owner = UserSerializer(read_only=True)
     category = CategorySerializer(read_only=True)
     location = LocationSerializer(read_only=True)
     images = ItemImageSerializer(many=True, read_only=True)
     prices = ItemPriceSerializer(many=True, read_only=True)
     
-    # 用于创建/更新时的外键字段
+    # Foreign key fields for create/update operations
     category_id = serializers.PrimaryKeyRelatedField(
         queryset=Category.objects.filter(is_active=True),
         source='category',
@@ -108,7 +108,7 @@ class ItemSerializer(serializers.ModelSerializer):
         write_only=True
     )
     
-    # 计算字段
+    # Computed fields
     min_daily_price = serializers.SerializerMethodField()
     is_available = serializers.SerializerMethodField()
     primary_image = serializers.SerializerMethodField()
@@ -130,39 +130,39 @@ class ItemSerializer(serializers.ModelSerializer):
         ]
     
     def get_min_daily_price(self, obj):
-        """获取最低日租价格"""
+        """Get minimum daily rental price"""
         return obj.get_min_daily_price()
     
     def get_is_available(self, obj):
-        """检查物品是否可用"""
+        """Check if item is available"""
         return obj.is_available()
     
     def get_primary_image(self, obj):
-        """获取主图片"""
+        """Get primary image"""
         primary_image = obj.images.filter(is_primary=True).first()
         if primary_image:
             return ItemImageSerializer(primary_image).data
-        # 如果没有主图片，返回第一张图片
+        # If no primary image, return the first image
         first_image = obj.images.first()
         if first_image:
             return ItemImageSerializer(first_image).data
         return None
     
     def create(self, validated_data):
-        """创建物品"""
-        # 临时测试：不在序列化器中设置 owner，由视图集处理
+        """Create item"""
+        # Temporary test: don't set owner in serializer, handled by viewset
         return super().create(validated_data)
     
     def update(self, instance, validated_data):
-        """更新物品"""
-        # 确保只有物品所有者可以更新
+        """Update item"""
+        # Ensure only item owner can update
         if instance.owner != self.context['request'].user:
-            raise serializers.ValidationError("您只能编辑自己的物品")
+            raise serializers.ValidationError("You can only edit your own items")
         return super().update(instance, validated_data)
 
 
 class ItemListSerializer(serializers.ModelSerializer):
-    """物品列表序列化器（简化版）"""
+    """Item List Serializer (Simplified Version)"""
     owner = UserSerializer(read_only=True)
     category = CategorySerializer(read_only=True)
     location = LocationSerializer(read_only=True)
@@ -180,11 +180,11 @@ class ItemListSerializer(serializers.ModelSerializer):
         ]
     
     def get_min_daily_price(self, obj):
-        """获取最低日租价格"""
+        """Get minimum daily rental price"""
         return obj.get_min_daily_price()
     
     def get_primary_image(self, obj):
-        """获取主图片"""
+        """Get primary image"""
         primary_image = obj.images.filter(is_primary=True).first()
         if primary_image:
             return {
@@ -192,7 +192,7 @@ class ItemListSerializer(serializers.ModelSerializer):
                 'image': primary_image.image.url if primary_image.image else None,
                 'alt_text': primary_image.alt_text
             }
-        # 如果没有主图片，返回第一张图片
+        # If no primary image, return the first image
         first_image = obj.images.first()
         if first_image:
             return {
@@ -204,7 +204,7 @@ class ItemListSerializer(serializers.ModelSerializer):
 
 
 class ItemCreateUpdateSerializer(serializers.ModelSerializer):
-    """物品创建/更新序列化器"""
+    """Item Create/Update Serializer"""
     category_id = serializers.PrimaryKeyRelatedField(
         queryset=Category.objects.filter(is_active=True),
         source='category'
@@ -223,12 +223,12 @@ class ItemCreateUpdateSerializer(serializers.ModelSerializer):
         ]
     
     def create(self, validated_data):
-        """创建物品"""
-        # 临时测试：不在序列化器中设置 owner，由视图集处理
+        """Create item"""
+        # Temporary test: don't set owner in serializer, handled by viewset
         return super().create(validated_data)
     
     def update(self, instance, validated_data):
-        """更新物品"""
+        """Update item"""
         if instance.owner != self.context['request'].user:
-            raise serializers.ValidationError("您只能编辑自己的物品")
+            raise serializers.ValidationError("You can only edit your own items")
         return super().update(instance, validated_data)
